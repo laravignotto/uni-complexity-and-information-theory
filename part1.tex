@@ -1,0 +1,147 @@
+\chapter{Introduction}
+
+Programma:
+\begin{itemize}
+    \item Teoria dell'Informazione
+    \item Teoria della Complessità
+    \item Algoritmi su Grafi ecc \dots
+\end{itemize}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\chapter{Teoria dell'Informazione}
+
+\section{Entropia}
+% LEZIONE 1
+Claude Shannon, 1948, \textit{A Mathematical Theory of Communication}.
+
+Un messaggio è una sequenza di lettere (simboli) da un alfabeto. Qual è l'informazione in una frase (messaggio)? Come possiamo misurare la quantità di informazione? Dipende dal contesto.
+
+\subparagraph{Esempio} Il messaggio è ``Piove!''. Qual è la quantità di informazione? Per il signor Muller, che vive a Vienna, dove piove spesso, la quantità di informazione è bassa. Per Fatima, che vive nel deserto, invece, è alta.\bigskip
+
+Si ha quindi che
+\begin{itemize}
+    \item Bassa probabilità di un evento 
+\end{itemize}
+
+...
+
+% LEZIONE 2
+\section{Teorema di Bayes}
+Sappiamo che nel caso di due \textbf{eventi indipendenti}, la probabilità congiunta è
+$$
+    p(a_i,b_j) = p(a_i)\cdot p(b_j)
+$$
+Nel caso, invece, di due \textbf{eventi dipendenti} si ha
+$$
+    p(a_i,b_j) = p(a_i|b_j)\cdot p(b_j) = p(b_j|a_i)\cdot p(a_i)
+$$
+e quindi
+$$
+p(a_i|b_j) = \dfrac{p(b_j|a_i)\cdot p(a_i)}{p(b_j)}
+$$
+con $p(b_j)$ fattore di normalizzazione.
+
+\textcolor{Red}{TODO: vedere al capitolo 2 del libro il prior, poterior, likelihood, ecc.}
+
+
+
+\section{Proprietà dell'Entropia}
+Libro, pag.~33. Le proprietà della funzione di entropia sono:
+\begin{itemize}
+    \item $H(P)\geq 0$ con uguaglianza iff $p_i=1$ per un qualche $i$. In particolare, $H(P)=0$ iff $\exists i ~p_i=1$, ovvero quando c'è un evento certo l'entropia è nulla.
+    \item L'entropia è massimizzata se la distribuzione $p$ è uniforme.
+\end{itemize}
+Analizziamo meglio e dimostriamo la seconda proprietà.
+
+\begin{property}[Entropia massima] 
+    $$
+        \mathcal{H}(P)\leq \log_2|P|
+    $$
+    con |P| numero di eventi (|X|), e
+    $$
+        \mathcal{H}\left(\frac{1}{k},\frac{1}{k},\dots,\frac{1}{k}\right) = \log_2 k
+    $$
+\end{property}
+
+\subparagraph{Dimostrazione} La dimostrazione è basata su proprietà di funzioni complesse, in particolare sulla diseguaglianza di Jensen, la quale è una disuguaglianza che lega il valore di una funzione convessa al valore della medesima funzione calcolata nel valor medio del suo argomento.
+
+Sia $f(x)=\textcolor{Cerulean}{-x\log_2x}$ (cfr.~definizione di entropia). Vogliamo controllare se è concava o convessa, calcoliamo quindi la sua derivata seconda:
+$$
+    f''(x) = -\frac{1}{x}
+$$
+Sappiamo che $0\leq-\nicefrac{1}{x}\leq 1$ perché è una probabilità, e quindi abbiamo che $x<0$: la funzione è concava. Prendiamo ora due punti $x_1$ e $x_2$, e un punto $x$ tra i due.
+
+\textcolor{Red}{TODO: disegno}
+
+Abbiamo che 
+$$
+    x = \lambda x_1 + (1-\lambda)x_2 \qquad \text{con} \quad 0\leq\lambda\leq 1
+$$
+In particolare, se $\lambda=1$ allora $x=x_1$, se $\lambda=0$ allora $x=x_2$, e se $\lambda=\nicefrac{1}{2}$ allora $x$ si troverà esattamente a metà tra $x_1$ e $x_2$. Se prendiamo la combinazione lineare di $f(x_1)$ e $f(x_2)$, otteniamo la seguente di\-su\-gua\-glian\-za:
+$$
+    \lambda f(x_1) + (1-\lambda)f(x_2) \leq f(\lambda x_1 + (1-\lambda)x_2)
+$$
+Tale disuguaglianza si può generalizzare alla combinazione lineare di un qualsiasi numero di punti. Se $f''(x)\leq 0$, $\forall x\in[x_1,x_n]$ (ovvero $f''(x)$ è concava) si ha la disuguaglianza di Jensen: 
+$$
+\textcolor{ForestGreen}{\sum_{i=1}^n\lambda_if(x_i)} \leq f\left(\sum_{i=1}^n\lambda_ix_i\right)
+$$
+con $\lambda_i\geq0$ e $\sum_{i=1}^n\lambda_i=1$. La disuguaglianza cambia verso ($\geq$) quando la funzione è convessa, cioè $f''(x)\geq 0$. Ricordiamo che vogliamo arrivare alla combinazione lineare dove i punti hanno la stessa probabilità. Quindi con
+$$
+    \lambda_i=\frac{1}{k} \qquad\qquad |P|=|X|=k \qquad\qquad P=\{p1,\dots,p_k\}
+$$
+scriviamo la disuguaglianza di Jensen come
+\begin{eqnarray*}
+    \textcolor{ForestGreen}{\sum_{i=1}^k\frac{1}{k}\left(-p_i\log_2p_i\right)} & \leq &\textcolor{Cerulean}{-\left(\sum_{i=1}^k\frac{1}{k}p_i\right)\log_2\left(\sum_{i=1}^k\frac{1}{k}p_i\right)}\\
+    -\cancelto{\text{\footnotesize semplifichiamo perché $k>0$}}{\frac{1}{k}}\sum_{i=1}^kp_i\log_2p_i & \leq & -\cancel{\frac{1}{k}}\log_2\frac{1}{k}\\
+    \mathcal{H}(P) & \leq & \log_2k=\mathcal{H}\left(\frac{1}{k},\dots,\frac{1}{k}\right)
+\end{eqnarray*}
+Ovvero l'entropia è massima per la distribuzione uniforme. \hfill$\Box$\bigskip 
+
+\begin{property}[Entropia Congiunta]
+    Siano $P,Q$ due distribuzioni, e $x_i,y_j$ coppia di eventi tali che $x_i\in P$ e $y_j\in Q$. L'entropia congiunta di $P,Q$ è:
+    $$
+        \mathcal{H}(P,Q) = -\sum_{i,j}p(x_i,y_j)\log_2(p(x_i,y_j))
+    $$
+    Se $x$ e $y$ sono indipendenti (quindi la probabilità congiunta è il prodotto delle due probabilità) l'entropia è additiva:
+    $$
+        \mathcal{H}(P,Q) = \mathcal{H}(P) + \mathcal{H}(Q)
+    $$
+\end{property}
+La somma è possibile perché usiamo i logaritmi, e una delle loro proprietà è $\log(a\cdot b)=\log(a)+\log(b)$.
+
+
+\subsection{Scomponibilità dell'Entropia}
+Libro, pag.~33. Sia $P$ una distribuzione (vettore) di probabilità, e $X$ delle variabili.
+\begin{eqnarray*}
+    P &=& \{ p_1,~p_2,~...,~p_n\}\\
+    X &=& \{ \underbrace{x_1}_{p_1},\underbrace{x_2,...,x_n}_{1-p_1}\}
+\end{eqnarray*}
+In questo contesto, la probabilità, ad esempio, del secondo evento $x_2$ è, normalizzata, pari a $\nicefrac{p_2}{1-p_1}$, e quella dell'ultimo elemento $x_n$ è $\nicefrac{p_n}{1-p_1}$.
+
+\subparagraph{Esempio} Abbiamo una moneta regolare. Al primo lancio esce $H$, e come risultati desiderati per il secondo e terzo lancio vogliamo $T$ e $T$. Abbiamo quindi:
+\begin{eqnarray*}
+    \underbrace{H}_{\substack{p_1=\frac{1}{2}\\\frac{1}{2}}}~\underbrace{T\quad T}_{\substack{1-p_1=\frac{1}{2}\\\frac{1}{4}\quad\frac{1}{4}}}
+\end{eqnarray*}
+
+La quantità di informazione ricevuta da $P$ è uguale a quella ricevuta dal processo in due passaggi.
+\begin{eqnarray*}
+    \mathcal{H}(P)  & = & \sum p_i\log_2\frac{1}{p_i}\\
+                    & = & \underbrace{\mathcal{H}(p_1,1-p_1)+(1-p_1)\cdot\mathcal{H}\underbrace{\left(\frac{p_2}{1-p_1},\frac{p_3}{1-p_1},\dots,\frac{p_n}{1-p_1}\right)}_{\substack{\text{$p_i$ normalizzati la cui somma è 1}\\1-p_1=p_2+p_3+\dots+p_n}}}_{\text{si possono dividere in diversi punti, ottenendo, ad esempio, tante entropie}}
+\end{eqnarray*}
+
+\textcolor{Red}{TODO: vdere proprietà libro pag 33 sez 2.6?}
+
+
+\section{Inferenza}
+\textcolor{Red}{TODO: capitolo 3, esercizio 3.8 pag 57}
+
+\section{Compressione}
+\textcolor{Red}{TODO: capitolo 4, esercizio 4.1 pag 66}
+
+
+\section{Il Teorema Della Codifica Sorgente}
+

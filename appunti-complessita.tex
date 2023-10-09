@@ -1,0 +1,166 @@
+\documentclass[a4paper,11pt]{book}
+
+\usepackage[italian]{babel}
+% \usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{alltt}
+\usepackage[T1]{fontenc}
+\usepackage{anyfontsize}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage{makeidx}
+\usepackage[italian]{varioref}
+% \usepackage[english]{varioref}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{pifont}
+\DeclareFontFamily{U}{dice3d}{}
+\DeclareFontShape{U}{dice3d}{m}{n}{<-> s*[4] dice3d}{}
+\usepackage{epsdice}
+\usepackage[top=2.2cm,bottom=1.6cm,left=2.4cm,right=1.6cm]{geometry}
+% \usepackage[margin=2cm]{geometry}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{fancyvrb}
+\usepackage[dvipsnames,table,xcdraw]{xcolor}
+\usepackage{mdframed}
+\usepackage{hyperref}
+\usepackage{thmtools}
+\usepackage{enumitem,multicol}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{nicefrac}
+\usepackage{enumitem}
+\usepackage{cancel}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,decorations.markings,math,arrows.meta}
+\usetikzlibrary{positioning}
+\usepackage{eurosym}
+\usepackage{booktabs}
+% \usepackage{multirow}
+\usepackage[pages=some,placement=top]{background}
+
+\usepackage{pgfplots}
+% \pgfmathdeclarefunction{poiss}{1}{%
+%   \pgfmathparse{(#1^x)*exp(-#1)/(x!)}%
+% }
+
+\graphicspath{{./figures/}}
+
+% \makeatletter
+% \newcommand{\chapterkey}[1]{%
+%   \renewcommand{\chapter@key}{#1}%
+% }
+% \newcommand{\chapter@key}{???} % initialize
+% \renewcommand{\thechapter}{\chapter@key}
+% \makeatother
+
+% \renewcommand*{\listtheoremname}{Lista di Teoremi e Definizioni}
+
+% \setlength{\parindent}{2.2cm}
+
+%\newcommand{\vin}{\rotatebox[origin=c]{-90}{$\in$}}
+
+\newmdtheoremenv{theorem}{\color{OrangeRed}Teorema}[section]
+% \newmdtheoremenv{corollary}{\color{RedOrange}Corollario}[theorem]
+\newmdtheoremenv{definition}{\color{JungleGreen}Definizione}[section]
+% \newmdtheoremenv{lemma}[theorem]{\color{DarkOrchid}Lemma}
+\newmdtheoremenv{property}{\color{DarkOrchid}Proprietà}[section]
+
+
+% better circled numbers
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+           \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
+% \normalmarginpar\marginpar{\centering\circled{17}}
+% \reversemarginpar\marginpar{\centering \footnotesize LEZ 6\\(16/10)}
+% \normalmarginpar\marginpar{\centering \texttt{cap 1.2\\p 6--8}}
+
+% \setcounter{tocdepth}{4}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+\makeindex
+
+   
+%%%%%%%%%%
+\title{\fontfamily{cmss}\fontsize{50}{60}\selectfont \textbf{Complessità e Teoria dell'Informazione}}
+\author{\Large \fontfamily{cmss}\selectfont Prof.ssa~Carla Piazza}
+\date{\fontfamily{cmss}\selectfont Appunti di Claudio Desideri e Lara Vignotto -- a.a. 2023/2024}
+
+
+%%%%%%%%%%
+\begin{document}
+
+\backgroundsetup{
+scale=.185,
+angle=0,
+opacity=0.4,  %% adjust
+contents={\includegraphics[keepaspectratio]{pexels-gül-işık-2128249}}
+}
+\BgThispage
+
+\maketitle
+
+\vfill
+% \begin{multicols}{2}
+{
+% \tiny
+% \scriptsize
+\footnotesize
+\begin{quote}
+    \tableofcontents
+\end{quote}
+}
+% \end{multicols}
+
+\newpage
+
+
+%%%%%%%%%% 
+\input{part1}
+% \input{part2}
+% \input{part3}
+% \input{part4}
+% \input{appendice}
+
+%%%%%%%%%%
+
+% \newpage
+
+% \begin{multicols}{2}
+% {
+% % \tiny
+% % \scriptsize
+% \footnotesize
+% \listoftheorems
+% }
+% \end{multicols}
+
+
+%%%%%%%%%% 
+% \newpage
+% \input{domande} 
+%%%%%%%%%%
+
+
+%%%%%%%%%% 
+% \newpage
+\printindex
+%%%%%%%%%%
+
+
+\end{document}
+
+
+
+% \chapter{Regressione Logistica}
+% \chapter{Reti Neurali}
+% \chapter{NLP e Word Embedding}
+% \chapter{Ottimizzazione}
+% \chapter{Computer Vision}
+% \chapter{RNN}
+% \chapter{GANs}
+% \chapter{Attention Models}
+% \chapter{Graph Neural Networks}
