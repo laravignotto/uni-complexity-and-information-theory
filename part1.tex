@@ -61,41 +61,43 @@ Analizziamo meglio e dimostriamo la seconda proprietà.
     $$
         \mathcal{H}(P)\leq \log_2|P|
     $$
-    con |P| numero di eventi (|X|), e
+    con $|P|$ numero di eventi ($|X|$), e
     $$
         \mathcal{H}\left(\frac{1}{k},\frac{1}{k},\dots,\frac{1}{k}\right) = \log_2 k
     $$
+    dove $k$ è il numero di eventi, ovvero $|P|$.
 \end{property}
 
 \subparagraph{Dimostrazione} La dimostrazione è basata su proprietà di funzioni complesse, in particolare sulla diseguaglianza di Jensen, la quale è una disuguaglianza che lega il valore di una funzione convessa al valore della medesima funzione calcolata nel valor medio del suo argomento.
 
-Sia $f(x)=\textcolor{Cerulean}{-x\log_2x}$ (cfr.~definizione di entropia). Vogliamo controllare se è concava o convessa, calcoliamo quindi la sua derivata seconda:
+Sia $\bm{f(x)=-x\log_2x}$ (cfr.~definizione di entropia). Vogliamo controllare se è concava o convessa, calcoliamo quindi la sua derivata seconda:
 $$
     f''(x) = -\frac{1}{x}
 $$
-Sappiamo che $0\leq-\nicefrac{1}{x}\leq 1$ perché è una probabilità, e quindi abbiamo che $x<0$: la funzione è concava. Prendiamo ora due punti $x_1$ e $x_2$, e un punto $x$ tra i due.
+Sappiamo che $0\leq x\leq 1$ perché è una probabilità, e quindi abbiamo che $-\nicefrac{1}{x}<0$: la funzione è con\-ca\-va. Prendiamo ora due punti $x_1$ e $x_2$, e un punto $x$ tra i due.
+% $0\leq-\nicefrac{1}{x}\leq 1$ perché è una probabilità, e quindi abbiamo che $x<0$: la funzione è concava. Prendiamo ora due punti $x_1$ e $x_2$, e un punto $x$ tra i due.
 
 \textcolor{Red}{TODO: disegno}
 
-Abbiamo che 
+Abbiamo che la media pesata di $x_1$ e $x_2$ è
 $$
     x = \lambda x_1 + (1-\lambda)x_2 \qquad \text{con} \quad 0\leq\lambda\leq 1
 $$
-In particolare, se $\lambda=1$ allora $x=x_1$, se $\lambda=0$ allora $x=x_2$, e se $\lambda=\nicefrac{1}{2}$ allora $x$ si troverà esattamente a metà tra $x_1$ e $x_2$. Se prendiamo la combinazione lineare di $f(x_1)$ e $f(x_2)$, otteniamo la seguente di\-su\-gua\-glian\-za:
+con $\lambda$ il peso. In particolare, se $\lambda=1$ allora $x=x_1$, se $\lambda=0$ allora $x=x_2$, e se $\lambda=\nicefrac{1}{2}$ allora $x$ si troverà esattamente a metà tra $x_1$ e $x_2$. Se prendiamo la combinazione lineare di $f(x_1)$ e $f(x_2)$, otteniamo la seguente di\-su\-gua\-glian\-za:
 $$
     \lambda f(x_1) + (1-\lambda)f(x_2) \leq f(\lambda x_1 + (1-\lambda)x_2)
 $$
 Tale disuguaglianza si può generalizzare alla combinazione lineare di un qualsiasi numero di punti. Se $f''(x)\leq 0$, $\forall x\in[x_1,x_n]$ (ovvero $f''(x)$ è concava) si ha la disuguaglianza di Jensen: 
 $$
-\textcolor{ForestGreen}{\sum_{i=1}^n\lambda_if(x_i)} \leq f\left(\sum_{i=1}^n\lambda_ix_i\right)
+\textcolor{ForestGreen}{\sum_{i=1}^n\lambda_if(x_i)} \leq \textcolor{Cerulean}{f\left(\sum_{i=1}^n\lambda_ix_i\right)}
 $$
 con $\lambda_i\geq0$ e $\sum_{i=1}^n\lambda_i=1$. La disuguaglianza cambia verso ($\geq$) quando la funzione è convessa, cioè $f''(x)\geq 0$. Ricordiamo che vogliamo arrivare alla combinazione lineare dove i punti hanno la stessa probabilità. Quindi con
 $$
-    \lambda_i=\frac{1}{k} \qquad\qquad |P|=|X|=k \qquad\qquad P=\{p1,\dots,p_k\}
+    \lambda_i=\frac{1}{k} \qquad\qquad |P|=|X|=k \qquad\qquad P=\{p_1,\dots,p_k\}
 $$
 scriviamo la disuguaglianza di Jensen come
 \begin{eqnarray*}
-    \textcolor{ForestGreen}{\sum_{i=1}^k\frac{1}{k}\left(-p_i\log_2p_i\right)} & \leq &\textcolor{Cerulean}{-\left(\sum_{i=1}^k\frac{1}{k}p_i\right)\log_2\left(\sum_{i=1}^k\frac{1}{k}p_i\right)}\\
+    \textcolor{ForestGreen}{\sum_{i=1}^k\underbrace{\frac{1}{k}}_{\lambda_i}\underbrace{(-p_i\log_2p_i)}_{f(x_i)}} & \leq & \underbrace{\textcolor{Cerulean}{-\left(\sum_{i=1}^k\frac{1}{k}p_i\right)\log_2\left(\sum_{i=1}^k\frac{1}{k}p_i\right)}}_{f(\sum\lambda_ix_i)}\\
     -\cancelto{\text{\footnotesize semplifichiamo perché $k>0$}}{\frac{1}{k}}\sum_{i=1}^kp_i\log_2p_i & \leq & -\cancel{\frac{1}{k}}\log_2\frac{1}{k}\\
     \mathcal{H}(P) & \leq & \log_2k=\mathcal{H}\left(\frac{1}{k},\dots,\frac{1}{k}\right)
 \end{eqnarray*}
@@ -109,6 +111,7 @@ Ovvero l'entropia è massima per la distribuzione uniforme. \hfill$\Box$\bigskip
     Se $x$ e $y$ sono indipendenti (quindi la probabilità congiunta è il prodotto delle due probabilità) l'entropia è additiva:
     $$
         \mathcal{H}(P,Q) = \mathcal{H}(P) + \mathcal{H}(Q)
+        % ESERCIZIO ESAME
     $$
 \end{property}
 La somma è possibile perché usiamo i logaritmi, e una delle loro proprietà è $\log(a\cdot b)=\log(a)+\log(b)$.
@@ -144,4 +147,10 @@ La quantità di informazione ricevuta da $P$ è uguale a quella ricevuta dal pro
 
 
 \section{Il Teorema Della Codifica Sorgente}
-
+Studiamo $\mathcal{H}(\{p,1-p\})$, con $0\leq p\leq 1$
+\begin{eqnarray*}
+    \mathcal{H}(\{p,1-p\})  & = &\\
+                            & = & p\log\frac{1}{p} + (1-p)\log\frac{1}{1-p}\\
+                            & = & -p\log(p) - (1-p)\log(1-p)\\
+                            & = & \mathcal{H}(p)
+\end{eqnarray*}
