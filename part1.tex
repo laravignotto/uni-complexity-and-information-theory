@@ -154,3 +154,142 @@ Studiamo $\mathcal{H}(\{p,1-p\})$, con $0\leq p\leq 1$
                             & = & -p\log(p) - (1-p)\log(1-p)\\
                             & = & \mathcal{H}(p)
 \end{eqnarray*}
+
+\textcolor{Red}{TODO: finire}
+
+
+\textcolor{Red}{LEZ 3}
+
+\textcolor{Red}{TODO: soluzione esercizio 4.1}
+
+\textcolor{Red}{TODO: muddy children puzzle}
+
+
+
+\section{Codici Simbolo}
+
+\begin{definition}[Alfabeti di input/output]
+    \begin{align*}
+        \text{Alfabeto di input} \quad &\mathcal{A}=\{a_1,a_2,\dots,a?\}\\
+        \text{Alfabeto di output} \quad &\mathcal{B}=\{b_1,b_2,\dots,b?\}\\
+    \end{align*}
+\end{definition}
+
+\begin{definition}[Codice]
+    Sia $\mathcal{A}^*$ un messaggio (sequenza di caratteri) sull'alfabeto $\mathcal{A}$. Il \textbf{codice} $c$ è
+    $$
+        c:\mathcal{A}^*\to\mathcal{B}^*
+    $$
+    ovvero un messaggio dall'alfabeto $\mathcal{A}$ all'alfabeto $\mathcal{B}$.
+\end{definition}
+Con $\mathcal{A}^*=\bigcup_{n\in\mathbb{N}}A^n$, ovvero l'insieme di tutte le possibili stringhe che si possono creare utilizzando l'alfabeto $\mathcal{A}$, compresa la stringa vuota.\medskip 
+
+Si vuole comprimere il messaggio in modo da ottenere il messaggio più corto possibile. Per farlo, utilizziamo una codifica.
+\begin{definition}[Codifica]
+    Una codifica è una funzione 
+    $$
+        \varphi:\mathcal{A}\to\mathcal{B}^*
+    $$ 
+    Inoltre
+    $$
+        \varphi(\underbrace{x_1,x_2,\dots,x_m}_{\in\mathcal{A}^*}) = \varphi(x_1)\varphi(x_2)\dots\varphi(x_m)
+    $$
+\end{definition}
+
+\paragraph{Esempio 1} Alfabeti: $\mathcal{A}=\{a,b,c\}$, $\mathcal{B}=\{0,1\}$; codifica: $\varphi(a)=0$, $\varphi(b)=10$, $\varphi(c)=01$. È una buona codifica? No, perché è ambigua. Ad esempio
+$$
+    \varphi(ab) = 010 = \varphi(ca)
+$$
+È iniettiva nella codifica ma non sul messaggio. Una codifica di questo tipo viene detta \textbf{not uniquely decodable} (non univocamente decodificabile).
+
+\begin{definition}[Univocamente decodificabile]
+    Un codice $\varphi:\mathcal{A}\to\mathcal{B}^*$ è univocamente decodificabile (uniquely decodable) se
+    $$
+        \forall m_1,m_2\in\mathcal{A}^* \qquad \varphi(m_1)\neq\varphi(m_2)
+    $$
+\end{definition}
+In questo corso non utilizzeremo codici non univocamente decodificabili.
+
+\paragraph{Esempio 2} Alfabeti: $\mathcal{A}=\{a,b,c\}$, $\mathcal{B}=\{0,1\}$; codifica: $\varphi(a)=0$, $\varphi(b)=01$, $\varphi(c)=011$. Ad esempio, il messaggio $aabcbbca$ viene codificato come $\varphi(aabcbbca)=000101101010110$. È univocamente decodificabile (UD)?
+
+Sì, è UD con delay 1. Ad ogni 0, si controlla il carattere successivo: se è un altro 0, la lettera è $a$, altrimenti si prosegue fino al primo 1 per decidere se è $b$ o $c$. Il delay 1 è riferito allo zero che si incontra, che significa l'inizio di un'altra lettera.
+
+\paragraph{Esempio 3} Alfabeti: $\mathcal{A}=\{a,b,c\}$, $\mathcal{B}=\{0,1\}$; codifica: $\varphi(a)=00$, $\varphi(b)=1$, $\varphi(c)=10$. Ad esempio, il messaggio $bcbaca$ viene codificato come $\varphi(bcbaca)=1101001000$. È UD? 
+
+Sì, si controlla se c'è un numero pari o dispari di 0 dopo un 1: se è pari, si tratta di una $b$ seguita da una o pià $a$, se è dispari di una $c$, eventualmente seguita da una o più $a$. È UD con unbounded delay.\bigskip 
+
+Abbiamo visto che nel caso di distribuzione uniforme, la quantità di informazione è pari all'entropia. Quanto è complesso computare una codifica/decodifica?
+
+Poiché l'alfabeto di input è binario, per rappresentare una codifica si può utilizzare un albero binario. Quello per l'\textbf{Esempio 2} è il seguente:
+\begin{center}
+    \begin{tikzpicture}[grow=right]
+        \node {$\bullet$}
+        child {
+            node {$\bullet$}        
+            edge from parent 
+            node[below] {$1$}
+        }
+        child {
+            node {$a$}        
+            child {
+                    node {$b$}
+                    child {
+                        node {$c$}
+                        edge from parent
+                        node[below] {$1$}
+                    }
+                    child {
+                        node {$\bullet$}
+                        edge from parent
+                        node[above] {$0$}
+                    }
+                    edge from parent
+                    node[below] {$1$}
+                }
+                child {
+                    node {$\bullet$}
+                    edge from parent
+                    node[above] {$0$}
+                }
+            edge from parent         
+            node[above] {$0$}
+        };
+    \end{tikzpicture}
+\end{center}
+Quello per l'\textbf{Esempio 3} è il seguente: \textcolor{Red}{TODO: fixare in modo che gli archi ad $a$ e $c$ siano inclinati}
+\begin{center}
+    \begin{tikzpicture}[grow=right]
+        \node {$\bullet$}
+        child {
+            node {$b$}
+            child {
+                node {$c$}        
+                edge from parent 
+                node[below] {$0$}
+            }        
+            edge from parent 
+            node[below] {$1$}
+        }
+        child {
+            node {$\bullet$} 
+            child {
+                node {$a$}
+                edge from parent
+                node[above] {$0$}
+            }
+            edge from parent         
+            node[above] {$0$}
+        };
+    \end{tikzpicture}
+\end{center}
+Quando si finisce in un nodo con un'etichetta ci si deve chiedere se la conclusione è che ci si può fermare. Il grado (fattore) di diramazione è pari alla cardinalità dell'alfabeto di output. Inoltre, se l'albero ha altezza $h$, tutte le codifiche hanno lunghezza $h$.
+
+Ci chiediamo, qual è una codifica sicuramente UD e senza delay?
+
+\begin{definition}[Codice prefisso]
+    \begin{align*}
+        \varphi : \mathcal{A} \to \mathcal{B}^* \text{ è un prefisso}\\
+        \Updownarrow\\
+        \forall a_i,a_j\in\mathcal{A} \quad \varphi(a_i)\text{ non è un prefisso di }\varphi(a_j)
+    \end{align*}
+\end{definition}
