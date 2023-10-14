@@ -287,9 +287,466 @@ Quando si finisce in un nodo con un'etichetta ci si deve chiedere se la conclusi
 Ci chiediamo, qual è una codifica sicuramente UD e senza delay?
 
 \begin{definition}[Codice prefisso]
-    \begin{align*}
-        \varphi : \mathcal{A} \to \mathcal{B}^* \text{ è un prefisso}\\
-        \Updownarrow\\
-        \forall a_i,a_j\in\mathcal{A} \quad \varphi(a_i)\text{ non è un prefisso di }\varphi(a_j)
-    \end{align*}
+    \begin{eqnarray*}
+        &\varphi : \mathcal{A} \to \mathcal{B}^* \text{ è un prefisso}&\\
+        &\Updownarrow&\\
+        &\forall a_i,a_j\in\mathcal{A} \quad \varphi(a_i)\in\mathcal{B}^*\text{ non è un prefisso di }\varphi(a_j)\in\mathcal{B}^*&
+    \end{eqnarray*}
 \end{definition}
+Al posto di codice prefisso (prefix code) utilizzeremo il termine prefisso (prefix). \textcolor{Red}{è corretto?}
+
+\paragraph{Esempio 3} $c$, ovvero $10$, non è un prefisso, perché la codifica di $b$ è $1$, che è un prefisso di $c$.
+
+\begin{lemma}
+    Se $\varphi$ è un codice prefisso, allora è UD senza delay.
+\end{lemma}
+Per memorizzare l'albero si utilizza CONSTANT SPACE, che è un sottoinsieme di LINEAR TIME. Ciò equivale a dire che è possibile computarlo con un automa.
+
+\paragraph{Esempio 3} $\varphi(bbb)=111$: il messaggio di input ha lunghezza 3, e viene codificato in un messaggio di lunghezza uguale (3). 
+
+$\varphi(aca)=001000$: il messaggio di input ha lunghezza 3, e viene codificato in un messaggio di lunghezza 6.
+
+Il numero di possibili messaggi di lunghezza 3 in output è $2^3=8$.
+
+\begin{definition}[Lunghezza media di una codifica, EL (Expected Length)]
+    Siano $\varphi:\mathcal{A}\to\mathcal{B}^*$ una codifica, e $P$ una distribuzione di probabilità sull'alfabeto di input $\mathcal{A}$
+    $$
+        EL(\varphi) = \sum_{i=1}^n p(a_i)\cdot|\varphi(a_i)|
+    $$
+    con $|\varphi(a_i)|$ lunghezza della codifica di $a_i$ ($l_i$).
+\end{definition}
+
+\paragraph{Esempio} Supponiamo che nell'\textbf{Esempio 3} le probabilità siano $p(a)=\nicefrac{1}{2}$, $p(b)=\nicefrac{1}{4}$, $p(c)=\nicefrac{1}{4}$. La lunghezza media è
+$$
+    EL(\varphi) = \frac{1}{2}\cdot 2 + \frac{1}{4}\cdot 1 + \frac{1}{4}\cdot 2 = 1+\frac{3}{4}
+$$
+Immaginiamo una codifica $\varphi^*$ diversa, per la quale $|\varphi^*(a)|=1$, $|\varphi^*(b)|=2$, $|\varphi^*(c)|=2$. La lunghezza media è
+$$
+    EL(\varphi^*) = \frac{1}{2}\cdot 1 + \frac{1}{4}\cdot 2 + \frac{1}{4}\cdot 2 = \frac{3}{2}
+$$
+Abbiamo che $EL(\varphi)>EL(\varphi^*)$, quindi $\varphi^*$ è migliore di $\varphi$.\bigskip
+
+Si vuole trovare la codifica con la minor EL sotto l'assunzione che la sorgente del messaggio non abbia memoria. Dati $\mathcal{A}$, $\mathcal{B}^*$, $P$, si vuole trovare la miglior codifica $\varphi$. Non è sufficiente considerare solo codici prefix-free.
+
+Possiamo raggiungere il minimo di EL considerando i codici prefisso. EL è codificata da $\mathcal{H}(P)$. I codici possono essere asintotticamente ottimali, o ottimali.
+
+
+\section{Limite imposto dalla Decodificabilità Univoca}
+
+È possibile definire un codice $\varphi:\mathcal{A}\to\mathcal{B}^*$ che sia UD, date le lunghezze delle codifiche $l_1,\dots,l_k$? Definiamo della terminologia:
+$$
+    k=|\mathcal{A}| \qquad \qquad D=|\mathcal{B}|(=2\text{ nel libro})
+$$
+
+\begin{theorem}[Disuguagianza di Kraft-McMillan, o Teorema Inverso]
+    $$
+        \varphi \text{ è UD}
+        \quad \Rightarrow \quad
+        \sum_{i=1}^k \frac{1}{D^{l_i}} \leq 1 ~ = ~ \sum_{i=1}^k D^{-l_i} \leq 1
+    $$
+\end{theorem}
+Se $>1$ non esiste un codice UD con tale lunghezza.
+
+\paragraph{Esempio} $\mathcal{A}=\{a,b,c\}$, $\mathcal{B}=\{0,1\}$, $l_1=1$, $l_2=1$, $l_3=2$ (lunghezze delle codifiche di $a,b,c$). Applicando il teorema si ottiene
+$$
+    \frac{1}{2^1}+\frac{1}{2^1}+\frac{1}{2^2} > 1
+$$
+Infatti, non importa dove si sceglie di codificare la $c$, la codifica non è UD.
+\begin{center}
+    \begin{tikzpicture}[grow=right]
+        \tikzstyle{level 2}=[sibling distance=.9cm]
+        \node {$\bullet$}
+        child {
+            node {$b$}
+            child {
+                [dashed] node[right] {$c$}
+                edge from parent
+            }
+            child {
+                [dashed] node[right] {$c$}
+                edge from parent
+            }    
+            edge from parent
+        }
+        child {
+            node {$a$}
+            child {
+                [dashed] node[right] {$c$}
+                edge from parent
+            }
+            child {
+                [dashed] node[right] {$c$}
+                edge from parent
+            }
+            edge from parent
+        };
+    \end{tikzpicture}
+\end{center}
+
+\paragraph{Esempio} $\mathcal{A}=\{a,b,c\}$, $\mathcal{B}=\{0,1\}$, $l_1=1$, $l_2=2$, $l_3=2$. Applicando il teorema si ottiene
+$$
+    \frac{1}{2^1}+\frac{1}{2^2}+\frac{1}{2^2} = 1
+$$
+è UD (cfr.~anche Teorema Diretto).
+\begin{center}
+    \begin{tikzpicture}[grow=right]
+        \tikzstyle{level 2}=[sibling distance=.9cm]
+        \node {$\bullet$}
+        child {
+            node {$\bullet$}
+            child {
+                node {$c$}
+                edge from parent
+            }
+            child {
+                node {$b$}
+                edge from parent
+            }    
+            edge from parent
+        }
+        child {
+            node {$a$}
+            child {
+                node {$\bullet\}$}
+                edge from parent
+            }
+            child {
+                node {$\bullet\}$}
+                edge from parent
+            }
+            edge from parent
+        };
+    \node[text width=6cm,align=left] at (7.5,.8) {non conviene mettere $b$ o $c$ qui, perché non sarebbero prefix};
+    \draw[->] (4.3,.9) node {} -- (3.3,1.2) [dashed] node {};
+    \draw[->] (4.3,.6) node {} -- (3.3,.3) [dashed] node {};
+    \end{tikzpicture}
+\end{center}
+
+\begin{theorem}[Teorema Diretto]
+    $$
+        \sum_{i=1}^k D^{-l_i} \leq 1
+        \quad \Rightarrow \quad
+        \exists \varphi \text{ prefisso con lunghezze } l_1,\dots,l_k
+    $$
+\end{theorem}
+Prefisso è più forte di UD.\medskip 
+
+I due risultati (teoremi) affermano che, anche se ci limitiamo all'utilizzo di codici prefisso, non perdiamo alcuna potenza nella compressione. È sufficiente l'utilizzo dei codici prefisso, comprimono a sufficienza.
+
+\paragraph{Dimostrazione Teorema Inverso, caso prefisso + Teorema Diretto} Sia $\varphi$ un codice prefisso e $l_1\leq\l_2\leq\dots\leq l_k=l$. Consideriamo l'albero $D$-ario (ogni nodo ha $D$ figli) che rappresenta $\varphi$, di altezza $l$.
+\begin{center}
+    \begin{tikzpicture}[grow=right]
+        \tikzstyle{level 2}=[sibling distance=.5cm]
+        \node {$\bullet$}
+        child {
+            node {$\bullet$}
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }    
+            edge from parent
+        }
+        child {
+            node {$\bullet$}
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            edge from parent
+        }
+        child {
+            node {$\bullet$}
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            edge from parent
+        };
+    \draw[<->] (4,-2.5) node {} -- (0,-2.5) node {};
+    \node[below] at (2,-2.5) {$l$};
+    \end{tikzpicture}
+\end{center}
+
+La codifica più lunga $a_k$ è in una delle foglie. Supponiamo che la codifica $a_i$ sia in uno dei nodi interni. Nessuno dei nodi interni del sottoalbero con $a_i$ come radice può essere utilizzato per un'altra codifica.
+\begin{center}
+    \begin{tikzpicture}[grow=right]
+        \tikzstyle{level 1}=[level distance=2cm,sibling distance=2.4cm]
+        \tikzstyle{level 2}=[level distance=2cm,sibling distance=.8cm]
+        \node {$\bullet$}
+        child {
+            node {$\bullet$}
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }    
+            edge from parent
+        }
+        child {
+            node {$\bullet$}
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad a_k$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }
+            edge from parent
+        }
+        child {
+            node {$\bullet$}
+            child {
+                [dotted] node[right] {$a_i$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }
+            edge from parent
+        };
+        \node[isosceles triangle,
+            isosceles triangle apex angle=30,
+            draw,
+            rotate=180,
+            fill=Gray!30,
+            minimum size=1cm] (T)at (6.1,1.65){};
+        \node at (5.8,1.65) {\tiny VIETATO};
+    \end{tikzpicture}
+\end{center}
+In un tale albero, il numero di foglie è pari a $D^l$. 
+\begin{center}
+    \begin{tikzpicture}[grow=right]
+        \tikzstyle{level 2}=[sibling distance=.5cm]
+        \node {$\bullet$}
+        child {
+            node {$\bullet$}
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }    
+            edge from parent
+        }
+        child {
+            node {$\bullet$}
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            edge from parent
+        }
+        child {
+            node {$\bullet$}
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\dots\bullet$}
+                edge from parent
+            }
+            edge from parent
+        };
+    \draw[<->] (4.5,-2.1) node {} -- (4.5,2.1) node {};
+    \node[right] at (4.5,0) {$D^l$};
+    \end{tikzpicture}
+\end{center}
+Il numero di foglie di un sottoalbero che parte da un nodo interno $a_i$ è $D^{l-l_i}$.
+\begin{center}
+\begin{tikzpicture}
+    \node[isosceles triangle,
+        isosceles triangle apex angle=40,
+        draw,
+        rotate=180,
+        fill=Gray!30,
+        minimum size=2.5cm] (T)at (0,0){};
+    \draw[<->] (-2.55,-1.5) node {} -- (.85,-1.5) node {};
+    \node[below] at (-0.85,-1.5) {$l-l_i$};
+    \node at (-2.55,0) {$\bullet$};
+    \node[left] at (-2.55,0) {$a_i$};
+    \node[right] at (.85,1) {$\bullet$};
+    \node[right] at (.85,0.1) {$\vdots$};
+    \node[right] at (.85,-1) {$\bullet$};
+    \draw[<->] (1.6,1.25) node {} -- (1.6,-1.25) node {};
+    \node[right] at (1.6,0) {$D^{l-l_i}$};
+\end{tikzpicture}
+\end{center}
+Quindi, riassumendo:
+\begin{center}
+    \begin{tikzpicture}[grow=right]
+        \tikzstyle{level 1}=[level distance=2cm,sibling distance=2.4cm]
+        \tikzstyle{level 2}=[level distance=2cm,sibling distance=.8cm]
+        \node {$\bullet$}
+        child {
+            node {$\bullet$}
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }    
+            edge from parent
+        }
+        child {
+            node {$\bullet$}
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad a_k$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }
+            edge from parent
+        }
+        child {
+            node {$\bullet$}
+            child {
+                [dotted] node[right] {$a_i$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\qquad\dots\qquad\bullet$}
+                edge from parent
+            }
+            edge from parent
+        };
+        \node[isosceles triangle,
+            isosceles triangle apex angle=30,
+            draw,
+            rotate=180,
+            fill=Gray!30,
+            minimum size=1cm] (T)at (6.1,1.65){};
+        \draw[<->] (-.1,-4) node {} -- (6.4,-4) node {};
+        \node[below] at (3.15,-4) {$l$};
+        \draw[<->] (6.8,1.15) node {} -- (6.8,2.15) node {};
+        \node[right] at (6.8,1.65) {$D^{l-l_i}$};
+        \draw[<->] (8.2,-3.3) node {} -- (8.2,3.3) node {};
+        \node[right] at (8.2,0) {$D^l$};
+    \end{tikzpicture}
+\end{center}
+Scriviamo che la differenza tra il numero totale di foglie $D^l$ e il numero di foglie dei sottoalberi (ovvero il numero di foglie vietate a causa dei sottoalberi creati da ogni $a_i$) è maggiore o uguale a 1:
+\begin{align*}
+    D^l - \sum_{i=1}^{k-1} D^{l-l_i} & \geq 1\\
+    D^l\left(1-\sum_{i=1}^{k-1} D^{-l_i}\right) & \geq 1\\
+    1 - \sum_{i=1}^{k-1} D^{-l_i} & \geq D^{-l_k}\\
+    1 & \geq \sum_{i=1}^k D^{-l_i} %\qquad \square
+\end{align*}
+\hfill $\square$\medskip
+
+Per il \textbf{Teorema Diretto}, si può leggere la dimostrazione ``al contrario''. In altre parole, vengono date le istruzioni per costruire l'albero, ovvero si disegna l'albero completo e si inizia ad etichettare. Più precisamente, si prende $a_1$, lo si mette a lunghezza $l_1$, e fino alle foglie si segna il resto dell'albero (il sottoalbero con radice $a_1$) come vietato. Si continua così per tutti gli $a_i$. \hfill $\square$
+
+\paragraph{Dimostrazione Teorema Inverso, caso $\bm{\varphi}$ UD} Siano $l_1\leq\dots\leq l_k=l$ le lunghezze delle codifiche di $a_1,\dots,a_k$. Consideriamo $\mathcal{N}(n,h)$ numero di stringhe su $\mathcal{A}^n$ (ovvero di lunghezza $n$) che hanno una codifica $\varphi$ UD di lunghezza $h$ ($\mathcal{B}^h$). Sia $|\mathcal{B}^h|=D^h$. Poiché $\varphi$ è UD, $\mathcal{N}(n,h)\leq D^h$.
+$$
+    \sum_{i=1}^k D^{-l_i} = D^{-l_1} + D^{-l_2} + \dots + D^{-l_k} 
+$$
+
+Studiamo la crescita di tale oggetto alla potenza di $n$, quando $n$ va ad infinito. Questo perché, se la somma è $>1$, allora la potenza va ad infinito; se la somma è $<1$, allora la potenza va a 0 (è limitata); se la somma è $=1$, allora la potenza va a 1.
+$$
+    \forall n \qquad \left(D^{-l_1} + D^{-l_2} + \dots + D^{-l_k}\right)^n \qquad (\text{chiamiamola }\alpha^n)
+$$
+
+Se si svolge l'elevamento a potenza di tale polinomio, si otterrà una serie di addendi del seguente tipo:
+$$
+    D^{-l_1\cdot n} +
+    \dots +
+    D^{(-l_1)+(-l_2)+(-l_1)+\dots} +
+    \dots +
+    D^{-l_k\cdot n}
+$$
+dove $-l_1\cdot n$ è la lunghezza della codifica della stringa $a_1a_1\dots a_1$, con $n$ ripetizioni di $a_1$, ovvero $|\varphi(a_1\dots a_1)|=l_1\cdot n$. Allo stesso modo, $-l_k\cdot n$ è la lunghezza della codifica della stringa $a_ka_k\dots a_k$, con $n$ ripetizioni di $a_k$. Un generico esponente all'interno, ad esempio $-(l_1+l_2+l_1+\dots)$ è una somma di lunghezze di codifiche, e ammonta alla lunghezza di una generica stringa. Ad esempio, $-(10)$, se chiamo $10=h$.
+
+Si ha che $D^{-h}$ si verifica nella somma esattamente $\mathcal{N}(n,h)$ volte (alcune delle quali saranno 0). Quindi, la somma $D^{-l_1\cdot n}+\dots+D^{-l_k\cdot n}$ si può riscrivere come 
+\begin{align*}
+    \mathcal{N}(n,0)D^{-0} + \mathcal{N}(n,1)D^{-1} + \dots + \underbrace{\mathcal{N}(n,n\cdot l)}_{\geq 1}D^{-n\cdot l} & \quad\leq\quad
+    D^0D^{-0} + D^1D^{-1} + \dots + D^{n\cdot l}D^{-n\cdot l}\\
+    1+1+\dots+1 & \quad\leq\quad n\cdot l + 1\\
+    \forall n \qquad \alpha^n &\leq \underbrace{l}_{costante}\cdot n
+\end{align*}
+Da cui si ricava
+$$
+    \alpha \leq 1
+$$
+Quindi
+$$
+    \sum_{i=1}^k D^{-l_i} \leq 1
+$$
+\hfill $\square$
+
+
+
+\section{Compressione Massima}
