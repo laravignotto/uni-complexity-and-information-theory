@@ -170,8 +170,8 @@ Studiamo $\mathcal{H}(\{p,1-p\})$, con $0\leq p\leq 1$
 
 \begin{definition}[Alfabeti di input/output]
     \begin{align*}
-        \text{Alfabeto di input} \quad &\mathcal{A}=\{a_1,a_2,\dots,a?\}\\
-        \text{Alfabeto di output} \quad &\mathcal{B}=\{b_1,b_2,\dots,b?\}\\
+        \text{Alfabeto di input} \quad &\mathcal{A}=\{a_1,a_2,\dots,a_k\}\\
+        \text{Alfabeto di output} \quad &\mathcal{B}=\{b_1,b_2,\dots,b_D\}\\
     \end{align*}
 \end{definition}
 
@@ -180,7 +180,7 @@ Studiamo $\mathcal{H}(\{p,1-p\})$, con $0\leq p\leq 1$
     $$
         c:\mathcal{A}^*\to\mathcal{B}^*
     $$
-    ovvero un messaggio dall'alfabeto $\mathcal{A}$ all'alfabeto $\mathcal{B}$.
+    ovvero un messaggio dall'alfabeto $\mathcal{A}$ all'alfabeto $\mathcal{B}$ (iniettiva).
 \end{definition}
 Con $\mathcal{A}^*=\bigcup_{n\in\mathbb{N}}A^n$, ovvero l'insieme di tutte le possibili stringhe che si possono creare utilizzando l'alfabeto $\mathcal{A}$, compresa la stringa vuota.\medskip 
 
@@ -288,21 +288,21 @@ Ci chiediamo, qual è una codifica sicuramente UD e senza delay?
 
 \begin{definition}[Codice prefisso]
     \begin{eqnarray*}
-        &\varphi : \mathcal{A} \to \mathcal{B}^* \text{ è un prefisso}&\\
+        &\varphi : \mathcal{A} \to \mathcal{B}^* \text{ è un codice prefisso}&\\
         &\Updownarrow&\\
         &\forall a_i,a_j\in\mathcal{A} \quad \varphi(a_i)\in\mathcal{B}^*\text{ non è un prefisso di }\varphi(a_j)\in\mathcal{B}^*&
     \end{eqnarray*}
 \end{definition}
 Al posto di codice prefisso (prefix code) utilizzeremo il termine prefisso (prefix). \textcolor{Red}{è corretto?}
 
-\paragraph{Esempio 3} $c$, ovvero $10$, non è un prefisso, perché la codifica di $b$ è $1$, che è un prefisso di $c$.
+\paragraph{Esempio 3 (vedi sopra)} $\varphi$ non è un prefisso, perché la codifica di $b$ è $1$, che è un prefisso della codifica di $c$, ovvero 10.
 
 \begin{lemma}
-    Se $\varphi$ è un codice prefisso, allora è UD senza delay.
+    $\varphi$ è un codice prefisso \quad $\Rightarrow$ \quad $\varphi$ è UD senza delay
 \end{lemma}
 Per memorizzare l'albero si utilizza CONSTANT SPACE, che è un sottoinsieme di LINEAR TIME. Ciò equivale a dire che è possibile computarlo con un automa.
 
-\paragraph{Esempio 3} $\varphi(bbb)=111$: il messaggio di input ha lunghezza 3, e viene codificato in un messaggio di lunghezza uguale (3). 
+\paragraph{Esempio 3 (vedi sopra)} $\varphi(bbb)=111$: il messaggio di input ha lunghezza 3, e viene codificato in un messaggio di lunghezza uguale (3). 
 
 $\varphi(aca)=001000$: il messaggio di input ha lunghezza 3, e viene codificato in un messaggio di lunghezza 6.
 
@@ -313,7 +313,7 @@ Il numero di possibili messaggi di lunghezza 3 in output è $2^3=8$.
     $$
         EL(\varphi) = \sum_{i=1}^n p(a_i)\cdot|\varphi(a_i)|
     $$
-    con $|\varphi(a_i)|$ lunghezza della codifica di $a_i$ ($l_i$).
+    con $|\varphi(a_i)|=l_i$ lunghezza della codifica di $a_i$.
 \end{definition}
 
 \paragraph{Esempio} Supponiamo che nell'\textbf{Esempio 3} le probabilità siano $p(a)=\nicefrac{1}{2}$, $p(b)=\nicefrac{1}{4}$, $p(c)=\nicefrac{1}{4}$. La lunghezza media è
@@ -797,4 +797,4 @@ Continuiamo la dimostrazione:
     &= -\frac{1}{\log_eD} \underbrace{\left(\sum_{i=1}^k\frac{1}{D^{l_i}}-\underbrace{1}_{\sum p_i}\right)}_{\leq 0}\\
     &\geq 0
 \end{align*}
-\hfill $\square$
+\hfill $\square$ 
