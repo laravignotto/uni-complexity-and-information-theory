@@ -216,7 +216,7 @@ Sì, è UD con delay 1. Ad ogni 0, si controlla il carattere successivo: se è u
 
 \paragraph{Esempio 3} Alfabeti: $\mathcal{A}=\{a,b,c\}$, $\mathcal{B}=\{0,1\}$; codifica: $\varphi(a)=00$, $\varphi(b)=1$, $\varphi(c)=10$. Ad esempio, il messaggio $bcbaca$ viene codificato come $\varphi(bcbaca)=1101001000$. È UD? 
 
-Sì, si controlla se c'è un numero pari o dispari di 0 dopo un 1: se è pari, si tratta di una $b$ seguita da una o pià $a$, se è dispari di una $c$, eventualmente seguita da una o più $a$. È UD con unbounded delay.\bigskip 
+Sì, si controlla se c'è un numero pari o dispari di 0 dopo un 1: se è pari, si tratta di una $b$ seguita da una o più $a$, se è dispari di una $c$, eventualmente seguita da una o più $a$. È UD con unbounded delay.\bigskip 
 
 Abbiamo visto che nel caso di distribuzione uniforme, la quantità di informazione è pari all'entropia. Quanto è complesso computare una codifica/decodifica?
 
@@ -433,7 +433,7 @@ Prefisso è più forte di UD.\medskip
 
 I due risultati (teoremi) affermano che, anche se ci limitiamo all'utilizzo di codici prefisso, non perdiamo alcuna potenza nella compressione. È sufficiente l'utilizzo dei codici prefisso, comprimono a sufficienza.
 
-\paragraph{Dimostrazione Teorema Inverso, caso prefisso + Teorema Diretto} Sia $\varphi$ un codice prefisso e $l_1\leq\l_2\leq\dots\leq l_k=l$. Consideriamo l'albero $D$-ario (ogni nodo ha $D$ figli) che rappresenta $\varphi$, di altezza $l$.
+\paragraph{Dimostrazione Teorema Inverso, caso prefisso + Teorema Diretto} Sia $\varphi$ un codice prefisso e $l_1\leq l_2\leq\dots\leq l_k=l$. Consideriamo l'albero $D$-ario (ogni nodo ha $D$ figli) che rappresenta $\varphi$, di altezza $l$.
 \begin{center}
     \begin{tikzpicture}[grow=right]
         \tikzstyle{level 2}=[sibling distance=.5cm]
@@ -491,7 +491,7 @@ I due risultati (teoremi) affermano che, anche se ci limitiamo all'utilizzo di c
     \end{tikzpicture}
 \end{center}
 
-La codifica più lunga $a_k$ è in una delle foglie. Supponiamo che la codifica $a_i$ sia in uno dei nodi interni. Nessuno dei nodi interni del sottoalbero con $a_i$ come radice può essere utilizzato per un'altra codifica.
+La codifica più lunga $a_k$ è in una delle foglie. Supponiamo che la codifica $a_i$ sia in uno dei nodi interni. Nessuno dei nodi interni (e in particolare nessuna delle foglie) del sottoalbero con $a_i$ come radice può essere utilizzato per un'altra codifica.
 \begin{center}
     \begin{tikzpicture}[grow=right]
         \tikzstyle{level 1}=[level distance=2cm,sibling distance=2.4cm]
@@ -710,7 +710,7 @@ Scriviamo che la differenza tra il numero totale di foglie $D^l$ e il numero di 
 
 Per il \textbf{Teorema Diretto}, si può leggere la dimostrazione ``al contrario''. In altre parole, vengono date le istruzioni per costruire l'albero, ovvero si disegna l'albero completo e si inizia ad etichettare. Più precisamente, si prende $a_1$, lo si mette a lunghezza $l_1$, e fino alle foglie si segna il resto dell'albero (il sottoalbero con radice $a_1$) come vietato. Si continua così per tutti gli $a_i$. \hfill $\square$
 
-\paragraph{Dimostrazione Teorema Inverso, caso $\bm{\varphi}$ UD} Siano $l_1\leq\dots\leq l_k=l$ le lunghezze delle codifiche di $a_1,\dots,a_k$. Consideriamo $\mathcal{N}(n,h)$ numero di stringhe su $\mathcal{A}^n$ (ovvero di lunghezza $n$) che hanno una codifica $\varphi$ UD di lunghezza $h$ ($\mathcal{B}^h$). Sia $|\mathcal{B}^h|=D^h$. Poiché $\varphi$ è UD, $\mathcal{N}(n,h)\leq D^h$.
+\paragraph{Dimostrazione Teorema Inverso, caso $\bm{\varphi}$ UD} Siano $l_1\leq\dots\leq l_k=l$ le lunghezze delle codifiche di $a_1,\dots,a_k$. Consideriamo $\mathcal{N}(n,h)$ numero di stringhe su $\mathcal{A}^n$ (ovvero di lunghezza $n$) che hanno una codifica $\varphi$ UD di lunghezza $h$. Sia $|\mathcal{B}^h|=D^h$ (numero di stringhe di lunghezza $h$ su $\mathcal{B}$). Poiché $\varphi$ è UD, $\mathcal{N}(n,h)\leq D^h$.
 $$
     \sum_{i=1}^k D^{-l_i} = D^{-l_1} + D^{-l_2} + \dots + D^{-l_k} 
 $$
@@ -735,7 +735,7 @@ Si ha che $D^{-h}$ si verifica nella somma esattamente $\mathcal{N}(n,h)$ volte 
     \mathcal{N}(n,0)D^{-0} + \mathcal{N}(n,1)D^{-1} + \dots + \underbrace{\mathcal{N}(n,n\cdot l)}_{\geq 1}D^{-n\cdot l} & \quad\leq\quad
     D^0D^{-0} + D^1D^{-1} + \dots + D^{n\cdot l}D^{-n\cdot l}\\
     1+1+\dots+1 & \quad\leq\quad n\cdot l + 1\\
-    \forall n \qquad \alpha^n &\leq \underbrace{l}_{costante}\cdot n
+    \forall n \qquad \alpha^n &\quad\leq\quad \underbrace{l}_{costante}\cdot~ n
 \end{align*}
 Da cui si ricava
 $$
