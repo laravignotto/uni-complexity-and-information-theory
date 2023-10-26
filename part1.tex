@@ -802,10 +802,76 @@ Continuiamo la dimostrazione:
 
 % LEZIONE 5
 \section{Shannon Code}
-Dal \textbf{Teorema $\bm{1^\circ}$ Shannon} abbiamo:
+Dal Teorema $1^\circ$ Shannon abbiamo:
 $$
-EL(\varphi) = \sum_{i=1}^k p_il_i ~ \geq ~ \mathcal{H}_D(P) = \sum_{i=1}^k p_i\log\frac{1}{p_i}
+EL(\varphi) = \sum_{i=1}^k p_il_i ~ \geq ~ \mathcal{H}_D(P) = \sum_{i=1}^k p_i\log_D\frac{1}{p_i}
 $$
+La differenza sta in $l_i$ e $\log_D\frac{1}{p_i}$, quindi vogliamo provare ad eguagliarli:
+$$
+    l_i = \log_D\frac{1}{p_i}
+$$
+Ma $\log_D\frac{1}{p_i}$ non è necessariamente intero. Decidiamo quindi di considerare il suo primo intero più grande:
+$$
+l_i = \left\lceil\log_D\frac{1}{p_i}\right\rceil = \left\lceil-\log_Dpi\right\rceil
+$$
+È sempre possibile definire un codice UD con tali lunghezze? Possiamo utilizzare Kraft-McMillan. Vogliamo controllare se
+$$
+    \sum_{i=1}^k D^{-\lceil-\log_Dpi\rceil}
+    \stackrel{?}{\leq}
+    1
+$$
+Sappiamo che 
+$$
+    \lceil-\log_Dpi\rceil = -log_Dp_i+\beta_i \qquad\qquad 0\leq\beta_i<1
+$$
+Quindi possiamo scrivere
+\begin{align*}
+    \sum_{i=1}^k D^{-(-log_Dp_i+\beta_i)} &= \sum_{i=1}^k D^{log_Dp_i}\cdot D^{\beta_i}\\
+    &= \sum_{i=1}^k p_i\cdot D^{-\beta_i}\\
+    &= \sum_{i=1}^k p_i\cdot \frac{1}{D^{\beta_i}}
+\end{align*}
+Ricordiamo che $0\leq\beta_i<1$ e $D>1$, di conseguenza $\frac{1}{D^{\beta_i}}\leq 1$. Quindi
+\begin{align*}
+    \sum_{i=1}^k p_i\cdot \frac{1}{D^{\beta_i}} &\leq 1\\
+    \sum_{i=1}^k D^{-\lceil-\log_Dpi\rceil} &\leq 1
+\end{align*}
+Esiste quindi un prefix code con lunghezze $l_i=\lceil-\log_Dpi\rceil$ definibile utilizzando una strategia greedy sull'albero $D$-ario.
+\begin{center}
+    \begin{tikzpicture}[grow=right]
+        \tikzstyle{level 1}=[level distance=2cm,sibling distance=2cm]
+        \tikzstyle{level 2}=[level distance=2cm,sibling distance=1.2cm]
+        \node {$\bullet$}
+        child {
+            [dotted] node { }
+            edge from parent
+        }
+        child {
+            node {$\bullet$}
+            edge from parent
+        }
+        child {
+            node {$\bullet$}
+            child {
+                [dotted] node[right] { }
+                edge from parent
+            }
+            child {
+                [dotted] node[right] { }
+                edge from parent
+            }
+            child {
+                [dotted] node[right] {$\varphi(a_1)$}
+                edge from parent
+            }
+            edge from parent
+        };
+
+        \draw [decorate,
+            decoration = {brace,amplitude=10pt}] (-0.2,0.3) -- (3.8,3.5);
+        \node[rotate=40] at (1.3,2.4) {$\lceil-\log_Dpi\rceil$};
+    \end{tikzpicture}
+\end{center}
+
 \textcolor{Red}{TODO: finire lezione 5}
 
 
