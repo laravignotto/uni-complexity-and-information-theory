@@ -812,17 +812,17 @@ $$
 $$
 Ma $\log_D\frac{1}{p_i}$ non è necessariamente intero. Decidiamo quindi di considerare il suo primo intero più grande:
 $$
-l_i = \left\lceil\log_D\frac{1}{p_i}\right\rceil = \left\lceil-\log_Dpi\right\rceil
+l_i = \left\lceil\log_D\frac{1}{p_i}\right\rceil = \left\lceil-\log_Dp_i\right\rceil
 $$
 È sempre possibile definire un codice UD con tali lunghezze? Possiamo utilizzare Kraft-McMillan. Vogliamo controllare se
 $$
-    \sum_{i=1}^k D^{-\lceil-\log_Dpi\rceil}
+    \sum_{i=1}^k D^{-\lceil-\log_Dp_i\rceil}
     \stackrel{?}{\leq}
     1
 $$
 Sappiamo che 
 $$
-    \lceil-\log_Dpi\rceil = -log_Dp_i+\beta_i \qquad\qquad 0\leq\beta_i<1
+    \lceil-\log_Dp_i\rceil = -log_Dp_i+\beta_i \qquad\qquad 0\leq\beta_i<1
 $$
 Quindi possiamo scrivere
 \begin{align*}
@@ -833,7 +833,7 @@ Quindi possiamo scrivere
 Ricordiamo che $0\leq\beta_i<1$ e $D>1$, di conseguenza $\frac{1}{D^{\beta_i}}\leq 1$. Quindi
 \begin{align*}
     \sum_{i=1}^k p_i\cdot \frac{1}{D^{\beta_i}} &\leq 1\\
-    \sum_{i=1}^k D^{-\lceil-\log_Dpi\rceil} &\leq 1
+    \sum_{i=1}^k D^{-\lceil-\log_Dp_i\rceil} &\leq 1
 \end{align*}
 Esiste quindi un prefix code con lunghezze $l_i=\lceil-\log_Dpi\rceil$ definibile utilizzando una strategia greedy sull'albero $D$-ario.
 \begin{center}
@@ -868,11 +868,59 @@ Esiste quindi un prefix code con lunghezze $l_i=\lceil-\log_Dpi\rceil$ definibil
 
         \draw [decorate,
             decoration = {brace,amplitude=10pt}] (-0.2,0.3) -- (3.8,3.5);
-        \node[rotate=40] at (1.3,2.4) {$\lceil-\log_Dpi\rceil$};
+        \node[rotate=40] at (1.3,2.4) {$\lceil-\log_Dp_1\rceil$};
     \end{tikzpicture}
 \end{center}
 
+\paragraph{Esempio} Siano $\mathcal{A}=\{a,b\}$, $\mathcal{B}=\{0,1\}$, $P=\{1-\frac{1}{32},\frac{1}{32}\}$. Abbiamo che
+$$
+    l_2 = -\log_232 = 5 \qquad\qquad l_1 = \left\lceil -\log_2\left(1-\frac{1}{32}\right)\right\rceil = 1
+$$
+Ciò significa che lo shannon code codifica l'alfabeto come
+$$
+    \varphi(a) = 0 \qquad\qquad \varphi(b) = 10000
+$$
+\begin{center}
+    \begin{tikzpicture}[grow=right]
+        \node {$\bullet$}
+        child {
+            node {$\bullet$}
+            child {
+                    node {$\bullet$}
+                    child {
+                        node {$\bullet$}
+                        child {
+                            node {$\bullet$}
+                            child {
+                                node {$b$}
+                                edge from parent
+                                node[below] {$0$}
+                            }
+                            edge from parent
+                            node[below] {$0$}
+                        }
+                        edge from parent
+                        node[below] {$0$}
+                    }
+                    edge from parent
+                    node[below] {$0$}
+                }     
+            edge from parent 
+            node[below] {$1$}
+        }
+        child {
+            node {$a$}
+            edge from parent         
+            node[above] {$0$}
+        };
+    \end{tikzpicture}
+\end{center}
+
+
+
 \textcolor{Red}{TODO: finire lezione 5}
+
+\textcolor{Red}{TODO: osservazione su $\varphi_{SF}$ in appunti lez 6}
 
 
 % LEZIONE 6
@@ -891,4 +939,280 @@ Ci chiediamo perché Huffmann (merge delle foglie) è ottimale, mentre Shannon-F
 
 
 \subsection{LZ77}
+Immaginiamo un messaggio come uno stream (vettore) di caratteri su $\mathcal{A}^*$.
+
+\begin{center}
+    \begin{tikzpicture}%[scale=0.5]
+        % buffers
+        \draw[fill=RoyalBlue!15,draw=none] (1.5,0) rectangle (4,0.5);
+        \draw[fill=Red!15,draw=none] (4,0) rectangle (10,0.5);
+
+        % Draw the horizontal strip
+        \draw (0,0) -- (10,0);
+        \draw (0,.5) -- (10,.5);
+      
+        % Draw the squares
+        \foreach \x in {0.5,1,...,9.5} {
+          \draw (\x,0) -- (\x,.5);
+        }
+
+        \draw[<->,color=RoyalBlue] (1.52,-.35) -- (3.98,-.35);
+        \node[below,color=RoyalBlue] at (2.75,-.35) {search buffer};
+        \draw[<-,color=Red] (4.02,-.35) -- (10,-.35);
+        \node[below,color=Red] at (7,-.35) {look-ahead buffer};
+        \draw[->,color=Black!80] (0,-1) -- (4,-1);
+        \node[below,color=Black!80] at (2,-1) {messaggio già codificato};
+    \end{tikzpicture}
+\end{center}
+Cerchiamo il prefisso più lungo del look-ahead buffer che sia presente nel search buffer. Se lo troviamo, lo sostituiamo con un puntatore alla sua posizione nel search buffer e la sua lunghezza. Se non lo troviamo, scriviamo il carattere e passiamo al carattere successivo.
+
+Ad ogni iterazione, l'algoritmo produce triple della forma $(o,l,s)$, dove
+\begin{itemize}
+    \item $o$ è l'offset, ovvero la distanza tra $i$ (primo carattere del look-ahead buffer) e $j$ (primo carattere del prefisso nel search buffer)
+    \item $l$ è la lunghezza del prefisso
+    \item $s$ è il primo carattere mismatching
+\end{itemize}
+\begin{center}
+    \begin{tikzpicture}%[scale=0.5]
+        % buffers
+        \draw[fill=RoyalBlue!15,draw=none] (1.5,0) rectangle (4,0.5);
+        \draw[fill=Red!15,draw=none] (4,0) rectangle (8,0.5);
+
+        % Draw the horizontal strip
+        \draw (0,0) -- (8,0);
+        \draw (0,.5) -- (8,.5);
+      
+        %  Draw the squares
+        \foreach \x in {0.5,1,...,7.5} {
+          \draw (\x,0) -- (\x,.5);
+        }
+
+        % Label the squares
+        \foreach \x in {2.25,2.75,3.25,4.25,4.75,5.25} {
+          \node[above] at (\x,0) {$*$};
+        }
+        \node[above] at (3.75,0) {$a$};
+        \node[above] at (5.75,0) {$b$};
+
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (2,-0.1) -- (3.5,-0.1);
+        \node[below] at (2.75,-0.2) {$l$};
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (2,-0.8) -- (4,-0.8);
+        \node[below] at (3,-0.9) {$o$};
+        \node[above] at (2.25,0.5) {$j$};
+        \node[above] at (4.25,0.5) {$i$};
+        \node[below] at (5.75,0) {$s$};
+    \end{tikzpicture}
+\end{center}
+
+\paragraph{Esempio LZ77} Abbiamo un search buffer di lunghezza 5, e la stringa $babbababbabbabba$. All'inizio, il search buffer è vuoto, e possiamo quindi immaginarlo con caratteri al di fuori dell'alfabeto.
+\begin{center}
+    \begin{tikzpicture}%[scale=0.5]
+        % buffers
+        \draw[fill=RoyalBlue!15,draw=none] (0,0) rectangle (2.5,0.5);
+        \draw[fill=Red!15,draw=none] (2.5,0) rectangle (11,0.5);
+
+        % Draw the horizontal strip
+        \draw (0,0) -- (11,0);
+        \draw (0,.5) -- (11,.5);
+      
+        %  Draw the squares
+        \foreach \x in {0.5,1,...,10.5} {
+          \draw (\x,0) -- (\x,.5);
+        }
+
+        % Label the squares
+        \foreach \x in {0.25,0.75,...,2.25} {
+          \node[above] at (\x,0) {$\#$};
+        }
+
+        \foreach \x/\y in {2.75/$b$,3.25/$a$,3.75/$b$,4.25/$b$,4.75/$a$,5.25/$b$,5.75/$a$,6.25/$b$,6.75/$b$,7.25/$a$,7.75/$b$,8.25/$b$,8.75/$a$,9.25/$b$,9.75/$b$,10.25/$a$} {
+          \node[above] at (\x,0) {\y};
+        }
+
+        % \node[above] at (2.25,0.5) {$j$};
+        \node[above] at (2.75,0.5) {$i$};
+    \end{tikzpicture}
+\end{center}
+La prima tripla $(o,l,s)$ della codifica è quindi $(0,0,b)$. Proseguiamo spostando il search buffer di un carattere a destra:
+\begin{center}
+    \begin{tikzpicture}%[scale=0.5]
+        % buffers
+        \draw[fill=RoyalBlue!15,draw=none] (0.5,0) rectangle (3,0.5);
+        \draw[fill=Red!15,draw=none] (3,0) rectangle (11,0.5);
+
+        % Draw the horizontal strip
+        \draw (0,0) -- (11,0);
+        \draw (0,.5) -- (11,.5);
+      
+        %  Draw the squares
+        \foreach \x in {0.5,1,...,10.5} {
+          \draw (\x,0) -- (\x,.5);
+        }
+
+        % Label the squares
+        \foreach \x in {0.25,0.75,...,2.25} {
+          \node[above] at (\x,0) {$\#$};
+        }
+
+        \foreach \x/\y in {2.75/$b$,3.25/$a$,3.75/$b$,4.25/$b$,4.75/$a$,5.25/$b$,5.75/$a$,6.25/$b$,6.75/$b$,7.25/$a$,7.75/$b$,8.25/$b$,8.75/$a$,9.25/$b$,9.75/$b$,10.25/$a$} {
+          \node[above] at (\x,0) {\y};
+        }
+
+        % \node[above] at (2.25,0.5) {$j$};
+        \node[above] at (3.25,0.5) {$i$};
+    \end{tikzpicture}
+\end{center}
+Il prefisso del look-ahead buffer inizia per $a$, e quindi non è presente nel search buffer. La seconda tripla è $(0,0,a)$, e il search buffer viene spostato di un carattere a destra:
+\begin{center}
+    \begin{tikzpicture}%[scale=0.5]
+        % buffers
+        \draw[fill=RoyalBlue!15,draw=none] (1,0) rectangle (3.5,0.5);
+        \draw[fill=Red!15,draw=none] (3.5,0) rectangle (11,0.5);
+
+        % Draw the horizontal strip
+        \draw (0,0) -- (11,0);
+        \draw (0,.5) -- (11,.5);
+      
+        %  Draw the squares
+        \foreach \x in {0.5,1,...,10.5} {
+          \draw (\x,0) -- (\x,.5);
+        }
+
+        \draw[color=RoyalBlue,fill=RoyalBlue!30,ultra thick] (2.5,0) rectangle (3,0.5);
+        \draw[color=Red,fill=Red!30,ultra thick] (3.5,0) rectangle (4,0.5);
+
+        % Label the squares
+        \foreach \x in {0.25,0.75,...,2.25} {
+          \node[above] at (\x,0) {$\#$};
+        }
+
+        \foreach \x/\y in {2.75/$b$,3.25/$\cancel{a}$,3.75/$b$,4.25/$\cancel{b}$,4.75/$a$,5.25/$b$,5.75/$a$,6.25/$b$,6.75/$b$,7.25/$a$,7.75/$b$,8.25/$b$,8.75/$a$,9.25/$b$,9.75/$b$,10.25/$a$} {
+          \node[above] at (\x,0) {\y};
+        }
+
+        \node[above] at (2.75,0.5) {$j$};
+        \node[above] at (3.75,0.5) {$i$};
+    \end{tikzpicture}
+\end{center}
+Confrontiamo nuovamente il prefisso del look-ahead buffer con il search buffer. Il prefisso inizia per $b$, che è presente anche nel search buffer. Continua con $b$, ma nel search buffer la $b$ è seguita da una $a$. Il prefisso è quindi $b$, di lunghezza 1, la distanza tra $j$ e $i$ è 2, e il primo carattere mismatching è $b$. La terza tripla è quindi $(2,1,b)$, e il search buffer viene spostato di due caratteri a destra:
+\begin{center}
+    \begin{tikzpicture}%[scale=0.5]
+        % buffers
+        \draw[fill=RoyalBlue!15,draw=none] (2,0) rectangle (4.5,0.5);
+        \draw[fill=Red!15,draw=none] (4.5,0) rectangle (11,0.5);
+
+        % Draw the horizontal strip
+        \draw (0,0) -- (11,0);
+        \draw (0,.5) -- (11,.5);
+
+        \draw[color=RoyalBlue,fill=RoyalBlue!30,ultra thick] (3,0) rectangle (4,0.5);
+        \draw[color=Red,fill=Red!30,ultra thick] (4.5,0) rectangle (5.5,0.5);
+      
+        %  Draw the squares
+        \foreach \x in {0.5,1,...,10.5} {
+          \draw (\x,0) -- (\x,.5);
+        }
+
+        \draw[color=RoyalBlue,ultra thick] (3,0) -- (3,.5);
+        \draw[color=RoyalBlue,ultra thick] (4,0) -- (4,.5);
+        \draw[color=Red,ultra thick] (4.5,0) -- (4.5,.5);
+        \draw[color=Red,ultra thick] (5.5,0) -- (5.5,.5);
+
+        % Label the squares
+        \foreach \x in {0.25,0.75,...,2.25} {
+          \node[above] at (\x,0) {$\#$};
+        }
+
+        \foreach \x/\y in {2.75/$b$,3.25/$a$,3.75/$b$,4.25/$\cancel{b}$,4.75/$a$,5.25/$b$,5.75/$\cancel{a}$,6.25/$b$,6.75/$b$,7.25/$a$,7.75/$b$,8.25/$b$,8.75/$a$,9.25/$b$,9.75/$b$,10.25/$a$} {
+          \node[above] at (\x,0) {\y};
+        }
+
+        \node[above] at (3.25,0.5) {$j$};
+        \node[above] at (4.75,0.5) {$i$};
+    \end{tikzpicture}
+\end{center}
+Anche in questo caso cominciamo a guardare i caratteri del look-ahead buffer, e cerchiamo il più lungo prefisso presente anche nel search buffer. Il prefisso è $ab$ (lunghezza 2), la distanza tra $j$ e $i$ è 3, e il primo carattere mismatching è una $a$. La tripla è quindi $(3,2,a)$, e proseguiamo spostando il search buffer di tre caratteri a destra. Gli ultimi due passaggi sono i seguenti:
+\begin{center}
+    \begin{tikzpicture}%[scale=0.5]
+        % buffers
+        \draw[fill=RoyalBlue!15,draw=none] (3.5,0) rectangle (6,0.5);
+        \draw[fill=Red!15,draw=none] (6,0) rectangle (11,0.5);
+
+        % Draw the horizontal strip
+        \draw (0,0) -- (11,0);
+        \draw (0,.5) -- (11,.5);
+
+        \draw[color=RoyalBlue,fill=RoyalBlue!30,ultra thick] (3.5,0) rectangle (5.5,0.5);
+        \draw[color=Red,fill=Red!30,ultra thick] (6,0) rectangle (8,0.5);
+      
+        %  Draw the squares
+        \foreach \x in {0.5,1,...,10.5} {
+          \draw (\x,0) -- (\x,.5);
+        }
+
+        \draw[color=RoyalBlue,ultra thick] (3.5,0) -- (3.5,.5);
+        \draw[color=RoyalBlue,ultra thick] (5.5,0) -- (5.5,.5);
+        \draw[color=Red,ultra thick] (6,0) -- (6,.5);
+        \draw[color=Red,ultra thick] (8,0) -- (8,.5);
+
+        % Label the squares
+        \foreach \x in {0.25,0.75,...,2.25} {
+          \node[above] at (\x,0) {$\#$};
+        }
+
+        \foreach \x/\y in {2.75/$b$,3.25/$a$,3.75/$b$,4.25/$b$,4.75/$a$,5.25/$b$,5.75/$\cancel{a}$,6.25/$b$,6.75/$b$,7.25/$a$,7.75/$b$,8.25/$\cancel{b}$,8.75/$a$,9.25/$b$,9.75/$b$,10.25/$a$} {
+          \node[above] at (\x,0) {\y};
+        }
+
+        \node[above] at (3.75,0.5) {$j$};
+        \node[above] at (6.25,0.5) {$i$};
+    \end{tikzpicture}
+\end{center}
+\begin{center}
+    \begin{tikzpicture}%[scale=0.5]
+        % buffers
+        \draw[fill=RoyalBlue!15,draw=none] (6,0) rectangle (8.5,0.5);
+        \draw[fill=Red!15,draw=none] (8.5,0) rectangle (11,0.5);
+
+        % Draw the horizontal strip
+        \draw (0,0) -- (11,0);
+        \draw (0,.5) -- (11,.5);
+
+        \draw[color=RoyalBlue,fill=RoyalBlue!30,ultra thick] (7,0) rectangle (8.5,0.5);
+        \draw[color=Red,fill=Red!30,ultra thick] (8.5,0) rectangle (10,0.5);
+      
+        %  Draw the squares
+        \foreach \x in {0.5,1,...,10.5} {
+          \draw (\x,0) -- (\x,.5);
+        }
+
+        \draw[color=RoyalBlue,ultra thick] (7,0) -- (7,.5);
+        \draw[color=RoyalBlue,ultra thick] (8.48,0) -- (8.48,.5);
+        \draw[color=Red,ultra thick] (8.52,0) -- (8.52,.5);
+        \draw[color=Red,ultra thick] (10,0) -- (10,.5);
+
+        % Label the squares
+        \foreach \x in {0.25,0.75,...,2.25} {
+          \node[above] at (\x,0) {$\#$};
+        }
+
+        \foreach \x/\y in {2.75/$b$,3.25/$a$,3.75/$b$,4.25/$b$,4.75/$a$,5.25/$b$,5.75/$a$,6.25/$b$,6.75/$b$,7.25/$a$,7.75/$b$,8.25/$b$,8.75/$a$,9.25/$b$,9.75/$b$,10.25/$\cancel{a}$} {
+          \node[above] at (\x,0) {\y};
+        }
+
+        \node[above] at (7.25,0.5) {$j$};
+        \node[above] at (8.75,0.5) {$i$};
+    \end{tikzpicture}
+\end{center}
+Corrispondenti alle triple $(5,4,b)$ e $(3,3,a)$ rispettivamente.
+
+La codifica del messaggio $babbababbabbabba$ con l'algoritmo LZ77 è quindi rappresentata dalla sequenza di triple $(0,0,b)(0,0,a)(2,1,b)(3,2,a)(5,4,b)(3,3,a)$.\bigskip
+
+L'esempio appena mostrato utilizza un messaggio piuttosto corto, e quindi non è possibile apprezzare la compressione. Per messaggi più lunghi, la dimensione delle triple è molto più piccola della dimensione del messaggio originale.
+
+In quale caso LZ77 comprime molto? Immaginiamo di avere il messaggio $aaaaaaaaaaaaaaab$. Il primo mismatch si trova solo all'ultimo carattere, tutta la parte di ripetizione di $a$ è il prefisso più lungo. Nel caso migliore, si può ottenere una compressione esponenziale.
+
+Per questo tipo di codifica, il decodificatore deve essere a conoscenza dell'alfabeto e della lunghezza del search buffer. Più precisamente, deve avere un buffer di lunghezza almeno pari alla lunghezza del buffer del codificatore.
 
