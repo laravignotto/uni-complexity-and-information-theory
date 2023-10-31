@@ -1,4 +1,4 @@
-\chapter{Introduction}
+\chapter*{Introduction}
 
 Programma:
 \begin{itemize}
@@ -12,9 +12,11 @@ Programma:
 
 
 %%%%%%%%%%%%%%%%%%
-\chapter{Teoria dell'Informazione}
+\part{Teoria dell'Informazione}
 
-\section{Entropia}
+\chapter{Introduzione}
+
+\section{Probabilità, Entropia e Inferenza}
 % LEZIONE 1
 Claude Shannon, 1948, \textit{A Mathematical Theory of Communication}.
 
@@ -30,7 +32,7 @@ Si ha quindi che
 ...
 
 % LEZIONE 2
-\section{Teorema di Bayes}
+\subsection{Teorema di Bayes}
 Sappiamo che nel caso di due \textbf{eventi indipendenti}, la probabilità congiunta è
 $$
     p(a_i,b_j) = p(a_i)\cdot p(b_j)
@@ -49,7 +51,7 @@ con $p(b_j)$ fattore di normalizzazione.
 
 
 
-\section{Proprietà dell'Entropia}
+\subsection{Proprietà dell'Entropia}
 Libro, pag.~33. Le proprietà della funzione di entropia sono:
 \begin{itemize}
     \item $H(P)\geq 0$ con uguaglianza iff $p_i=1$ per un qualche $i$. In particolare, $H(P)=0$ iff $\exists i ~p_i=1$, ovvero quando c'è un evento certo l'entropia è nulla.
@@ -117,7 +119,7 @@ Ovvero l'entropia è massima per la distribuzione uniforme. \hfill$\Box$\bigskip
 La somma è possibile perché usiamo i logaritmi, e una delle loro proprietà è $\log(a\cdot b)=\log(a)+\log(b)$.
 
 
-\subsection{Scomponibilità dell'Entropia}
+\subsubsection{Scomponibilità dell'Entropia}
 Libro, pag.~33. Sia $P$ una distribuzione (vettore) di probabilità, e $X$ delle variabili.
 \begin{eqnarray*}
     P &=& \{ p_1,~p_2,~...,~p_n\}\\
@@ -139,10 +141,11 @@ La quantità di informazione ricevuta da $P$ è uguale a quella ricevuta dal pro
 \textcolor{Red}{TODO: vdere proprietà libro pag 33 sez 2.6?}
 
 
-\section{Inferenza}
+\subsection{Inferenza}
 \textcolor{Red}{TODO: capitolo 3, esercizio 3.8 pag 57}
 
-\section{Compressione}
+
+\chapter{Compressione}
 \textcolor{Red}{TODO: capitolo 4, esercizio 4.1 pag 66}
 
 
@@ -331,7 +334,7 @@ Si vuole trovare la codifica con la minor EL sotto l'assunzione che la sorgente 
 Possiamo raggiungere il minimo di EL considerando i codici prefisso. EL è codificata da $\mathcal{H}(P)$. I codici possono essere asintotticamente ottimali, o ottimali.
 
 
-\section{Limite imposto dalla Decodificabilità Univoca}
+\subsection{Limite imposto dalla Decodificabilità Univoca}
 
 È possibile definire un codice $\varphi:\mathcal{A}\to\mathcal{B}^*$ che sia UD, date le lunghezze delle codifiche $l_1,\dots,l_k$? Definiamo della terminologia:
 $$
@@ -749,7 +752,7 @@ $$
 
 
 
-\section{Compressione Massima}
+\subsection{Compressione Massima}
 La sorgente che genera il messaggio del codice è stazionaria e senza memoria (Fig.~\vref{fig:shannon-paper}).
 \begin{figure}[htb]
     \centering
@@ -801,7 +804,7 @@ Continuiamo la dimostrazione:
 
 
 % LEZIONE 5
-\section{Shannon Code}
+\subsection{Shannon Code}
 Dal Teorema $1^\circ$ Shannon abbiamo:
 $$
 EL(\varphi) = \sum_{i=1}^k p_il_i ~ \geq ~ \mathcal{H}_D(P) = \sum_{i=1}^k p_i\log_D\frac{1}{p_i}
@@ -934,11 +937,11 @@ $$
 Ci chiediamo perché Huffmann (merge delle foglie) è ottimale, mentre Shannon-Fano (splitting dalla radice) non lo è?
 
 
-\section{Lempel-Ziv}
+\subsection{Lempel-Ziv}
 \textcolor{Red}{TODO: scrivere la storia}
 
 
-\subsection{LZ77}
+\subsubsection{LZ77}
 Immaginiamo un messaggio come uno stream (vettore) di caratteri su $\mathcal{A}^*$.
 
 \begin{center}
@@ -1216,3 +1219,29 @@ In quale caso LZ77 comprime molto? Immaginiamo di avere il messaggio $aaaaaaaaaa
 
 Per questo tipo di codifica, il decodificatore deve essere a conoscenza dell'alfabeto e della lunghezza del search buffer. Più precisamente, deve avere un buffer di lunghezza almeno pari alla lunghezza del buffer del codificatore.
 
+% LEZIONE 7
+\paragraph{Note} La sorgente che genera le lettere del messaggio è stazionaria e senza memoria. Le probabilità non cambiano nel tempo. 
+
+LZ esegue i cambiamenti sulle probabilità durante la codifica, mentre S e SF no. Questi ultimi due dovrebbero costruire un altro albero se le probabilità cambiano.
+
+
+
+
+\section{Mutual Information}
+
+\subsection{Divergenza di Kullback-Leibler}
+La divergenza di Kullback-Leibler è una misura della differenza tra due distribuzioni di probabilità. Siano $P$ e $Q$ due distribuzioni di probabilità su $X$. La divergenza di Kullback-Leibler tra $P$ e $Q$ è definita come
+\begin{align*}
+    D(P||Q) &= \sum_{x\in X} P(x)\log\left(\frac{P(x)}{Q(x)}\right)\\
+    &= \sum_{x\in X} P(x) \left( \log\left(\frac{1}{Q(x)}\right) - \log\left(\frac{1}{P(x)}\right) \right)
+\end{align*}
+Notiamo che $\sum_{x\in X} P(x)\log\left(\frac{P(x)}{Q(x)}\right)$ è il vaore atteso di $\log\left(\frac{P(x)}{Q(x)}\right)$ rispetto a $P$. Inoltre, $\log\left(\frac{P(x)}{Q(x)}\right)$ può essere espresso come $\log\left(\frac{1}{Q(x)}\right) - \log\left(\frac{1}{P(x)}\right)$, con $-P(x)\log\left(\frac{1}{P(x)}\right)$ entropia della distribuzione $P$.
+
+Il significato della divergenza, in questo contesto, è ``quanti bit in più devo usare per codificare una sorgente utilizzando $Q$ al posto di $P$'', con $P$ distribuzione reale dei dati.
+
+\textcolor{Red}{TODO: finire lez 7}
+
+
+
+
+\section{Kolmogorov Complexity}
