@@ -150,7 +150,9 @@ La quantità di informazione ricevuta da $P$ è uguale a quella ricevuta dal pro
 
 
 \section{Il Teorema Della Codifica Sorgente}
-Studiamo $\mathcal{H}(\{p,1-p\})$, con $0\leq p\leq 1$
+Capitolo 4 del libro di testo. In questo capitolo discuteremo come misurare il contenuto informativo del risultato di un esperimento aleatorio.\bigskip
+
+\noindent Studiamo $\mathcal{H}(\{p,1-p\})$, con $0\leq p\leq 1$
 \begin{eqnarray*}
     \mathcal{H}(\{p,1-p\})  & = &\\
                             & = & p\log\frac{1}{p} + (1-p)\log\frac{1}{1-p}\\
@@ -170,6 +172,9 @@ Studiamo $\mathcal{H}(\{p,1-p\})$, con $0\leq p\leq 1$
 
 
 \section{Codici Simbolo}
+Capitolo 5 del libro di testo. Nell'ultimo capitolo abbiamo visto una prova dello status fondamentale dell'entropia come misura del contenuto informativo medio. Abbiamo definito uno schema di compressione dei dati utilizzando codici a blocchi di lunghezza fissa. Abbiamo così verificato la possibilità di compressione dei dati, ma la codifica a blocchi definita nella dimostrazione non ha fornito un algoritmo pratico. In questo capitolo studieremo algoritmi pratici di compressione dei dati.
+
+Immagina un guanto di gomma pieno d'acqua. Se comprimiamo due dita del guanto, qualche altra parte del guanto deve espandersi, perché il volume totale dell'acqua è costante (l'acqua è essenzialmente incomprimibile). Allo stesso modo, quando accorciamo le parole in codice per alcuni risultati, ci devono essere altre parole in codice che si allungano, se lo schema non è \emph{lossy}. In questo capitolo scopriremo l'equivalente teorico dell'informazione del volume dell'acqua.
 
 \begin{definition}[Alfabeti di input/output]
     \begin{align*}
@@ -937,11 +942,15 @@ $$
 Ci chiediamo perché Huffmann (merge delle foglie) è ottimale, mentre Shannon-Fano (splitting dalla radice) non lo è?
 
 
-\subsection{Lempel-Ziv}
+\section{Codici Stream}
+Capitolo 6 del libro di testo. In questo capitolo discuteremo uno schema di compressione dei dati. La codifica Lempel-Ziv è un metodo ``universale'', progettato secondo la filosofia per cui vorremmo un unico algoritmo di compressione che faccia un lavoro ragionevole per qualsiasi fonte. In effetti, per molte fonti della vita reale, le proprietà universali di questo algoritmo valgono solo nel limite di quantità di dati eccessivamente grandi, ma, comunque, la compressione Lempel-Ziv è ampiamente utilizzata e spesso efficace.
+
+
+\subsection{Un po' di Storia}
 \textcolor{Red}{TODO: scrivere la storia}
 
 
-\subsubsection{LZ77}
+\subsection{Lempel-Ziv}
 Immaginiamo un messaggio come uno stream (vettore) di caratteri su $\mathcal{A}^*$.
 
 \begin{center}
@@ -998,18 +1007,19 @@ Ad ogni iterazione, l'algoritmo produce triple della forma $(o,l,s)$, dove
         \node[above] at (5.75,0) {$b$};
 
         \draw [decorate,
-            decoration = {brace,mirror,amplitude=5pt}] (2,-0.1) -- (3.5,-0.1);
-        \node[below] at (2.75,-0.2) {$l$};
+            decoration = {brace,mirror,amplitude=5pt}] (4.03,-0.1) -- (5.5,-0.1);
+        \node[below] at (4.75,-0.2) {$l$};
         \draw [decorate,
-            decoration = {brace,mirror,amplitude=5pt}] (2,-0.8) -- (4,-0.8);
-        \node[below] at (3,-0.9) {$o$};
+            decoration = {brace,mirror,amplitude=5pt}] (2,-0.1) -- (3.97,-0.1);
+        \node[below] at (3,-0.2) {$o$};
         \node[above] at (2.25,0.5) {$j$};
         \node[above] at (4.25,0.5) {$i$};
         \node[below] at (5.75,0) {$s$};
     \end{tikzpicture}
 \end{center}
 
-\paragraph{Esempio LZ77} Abbiamo un search buffer di lunghezza 5, e la stringa $babbababbabbabba$. All'inizio, il search buffer è vuoto, e possiamo quindi immaginarlo con caratteri al di fuori dell'alfabeto.
+\subsubsection{LZ77}
+Abbiamo un search buffer di lunghezza 5, e la stringa $babbababbabbabba$. All'inizio, il search buffer è vuoto, e possiamo quindi immaginarlo con caratteri al di fuori dell'alfabeto.
 \begin{center}
     \begin{tikzpicture}%[scale=0.5]
         % buffers
@@ -1227,9 +1237,14 @@ LZ esegue i cambiamenti sulle probabilità durante la codifica, mentre S e SF no
 
 
 
-\section{Mutual Information}
+\chapter{Codifica di Canale Rumoroso}
 
-\subsection{Divergenza di Kullback-Leibler}
+\section{Variabili Aleatorie Dipendenti}
+Capitolo 8 del libro di testo. Negli precedenti capitoli sulla compressione dei dati ci siamo concentrati sui vettori aleatori $x$ provenienti da una distribuzione di probabilità estremamente semplice, ovvero la distribuzione separabile in cui ciascuna componente $x_n$ è indipendente dalle altre.
+
+In questo capitolo considereremo insiemi congiunti in cui le variabili aleatorie sono dipendenti. Questo materiale ha due motivazioni. Innanzitutto, i dati del mondo reale hanno correlazioni interessanti, quindi per eseguire una buona compressione dei dati, dobbiamo sapere come lavorare con modelli che includono dipendenze. In secondo luogo, un canale rumoroso con input $x$ e output $y$ definisce un insieme congiunto in cui $x$ e $y$ sono dipendenti (se fossero indipendenti, sarebbe impossibile comunicare sul canale) quindi la comunicazione sui canali rumorosi è descritto in termini di entropia degli insiemi congiunti.
+
+\subsection{Divergenza e Disuguagianza di Gibbs}
 La divergenza di Kullback-Leibler è una misura della differenza tra due distribuzioni di probabilità. Siano $P$ e $Q$ due distribuzioni di probabilità su $X$. La divergenza di Kullback-Leibler tra $P$ e $Q$ è definita come
 \begin{align*}
     D(P||Q) &= \sum_{x\in X} P(x)\log\left(\frac{P(x)}{Q(x)}\right)\\
@@ -1239,9 +1254,27 @@ Notiamo che $\sum_{x\in X} P(x)\log\left(\frac{P(x)}{Q(x)}\right)$ è il vaore a
 
 Il significato della divergenza, in questo contesto, è ``quanti bit in più devo usare per codificare una sorgente utilizzando $Q$ al posto di $P$'', con $P$ distribuzione reale dei dati.
 
-\textcolor{Red}{TODO: finire lez 7}
+\paragraph{Esempio} Se si hanno dei caratteri con probabilità 0, si utilizzerà per essi una codifica molto lunga, così da conservare codifiche brevi per altri caratteri con probabilità maggiori.
+\begin{align*}
+    \mathcal{A} &= \{a,b,c,d,e\}\\
+    P &= \{\dots,\dots,\dots,0,0\}\\
+    Q &= \{0.2,0.2,0.2,0.2,0.2\}
+\end{align*}
+Non conosciamo la distribuzione reale dei dati $P$, ma abbiamo dedotto $Q$.
+
+\paragraph{Proprietà} La divergenza non è simmetrica.
+$$
+    D(P||Q) \neq D(Q||P)
+$$
+La divergenza è sempre non negativa, e vale 0 se e solo se $P=Q$.
+$$
+    D(P||Q) \geq 0 \qquad\qquad D(P||Q) = 0 \Leftrightarrow P=Q
+$$
+Quest'ultima proprietà è una conseguenza della \textbf{disuguaglianza di Gibbs}.
+
+% \textcolor{Red}{TODO: finire lez 7}
 
 
 
 
-\section{Kolmogorov Complexity}
+\chapter{Kolmogorov Complexity}
