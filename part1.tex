@@ -150,7 +150,7 @@ La quantità di informazione ricevuta da $P$ è uguale a quella ricevuta dal pro
 
 
 \section{Il Teorema Della Codifica Sorgente}
-Capitolo 4 del libro di testo. In questo capitolo discuteremo come misurare il contenuto informativo del risultato di un esperimento aleatorio.\bigskip
+Capitolo 4 del libro di MacKay. In questo capitolo discuteremo come misurare il contenuto informativo del risultato di un esperimento aleatorio.\bigskip
 
 \noindent Studiamo $\mathcal{H}(\{p,1-p\})$, con $0\leq p\leq 1$
 \begin{eqnarray*}
@@ -172,7 +172,7 @@ Capitolo 4 del libro di testo. In questo capitolo discuteremo come misurare il c
 
 
 \section{Codici Simbolo}
-Capitolo 5 del libro di testo. Nell'ultimo capitolo abbiamo visto una prova dello status fondamentale dell'entropia come misura del contenuto informativo medio. Abbiamo definito uno schema di compressione dei dati utilizzando codici a blocchi di lunghezza fissa. Abbiamo così verificato la possibilità di compressione dei dati, ma la codifica a blocchi definita nella dimostrazione non ha fornito un algoritmo pratico. In questo capitolo studieremo algoritmi pratici di compressione dei dati.
+Capitolo 5 del libro di MacKay. Nell'ultimo capitolo abbiamo visto una prova dello status fondamentale dell'entropia come misura del contenuto informativo medio. Abbiamo definito uno schema di compressione dei dati utilizzando codici a blocchi di lunghezza fissa. Abbiamo così verificato la possibilità di compressione dei dati, ma la codifica a blocchi definita nella dimostrazione non ha fornito un algoritmo pratico. In questo capitolo studieremo algoritmi pratici di compressione dei dati.
 
 Immagina un guanto di gomma pieno d'acqua. Se comprimiamo due dita del guanto, qualche altra parte del guanto deve espandersi, perché il volume totale dell'acqua è costante (l'acqua è essenzialmente incomprimibile). Allo stesso modo, quando accorciamo le parole in codice per alcuni risultati, ci devono essere altre parole in codice che si allungano, se lo schema non è \emph{lossy}. In questo capitolo scopriremo l'equivalente teorico dell'informazione del volume dell'acqua.
 
@@ -943,7 +943,7 @@ Ci chiediamo perché Huffmann (merge delle foglie) è ottimale, mentre Shannon-F
 
 
 \section{Codici Stream}
-Capitolo 6 del libro di testo. In questo capitolo discuteremo uno schema di compressione dei dati. La codifica Lempel-Ziv è un metodo ``universale'', progettato secondo la filosofia per cui vorremmo un unico algoritmo di compressione che faccia un lavoro ragionevole per qualsiasi fonte. In effetti, per molte fonti della vita reale, le proprietà universali di questo algoritmo valgono solo nel limite di quantità di dati eccessivamente grandi, ma, comunque, la compressione Lempel-Ziv è ampiamente utilizzata e spesso efficace.
+Capitolo 6 del libro di MacKay. In questo capitolo discuteremo uno schema di compressione dei dati. La codifica Lempel-Ziv è un metodo ``universale'', progettato secondo la filosofia per cui vorremmo un unico algoritmo di compressione che faccia un lavoro ragionevole per qualsiasi fonte. In effetti, per molte fonti della vita reale, le proprietà universali di questo algoritmo valgono solo nel limite di quantità di dati eccessivamente grandi, ma, comunque, la compressione Lempel-Ziv è ampiamente utilizzata e spesso efficace.
 
 
 \subsection{Un po' di Storia}
@@ -1240,7 +1240,7 @@ LZ esegue i cambiamenti sulle probabilità durante la codifica, mentre S e SF no
 \chapter{Codifica di Canale Rumoroso}
 
 \section{Variabili Aleatorie Dipendenti}
-Capitolo 8 del libro di testo. Negli precedenti capitoli sulla compressione dei dati ci siamo concentrati sui vettori aleatori $x$ provenienti da una distribuzione di probabilità estremamente semplice, ovvero la distribuzione separabile in cui ciascuna componente $x_n$ è indipendente dalle altre.
+Capitolo 8 del libro di MacKay. Negli precedenti capitoli sulla compressione dei dati ci siamo concentrati sui vettori aleatori $x$ provenienti da una distribuzione di probabilità estremamente semplice, ovvero la distribuzione separabile in cui ciascuna componente $x_n$ è indipendente dalle altre.
 
 In questo capitolo considereremo insiemi congiunti in cui le variabili aleatorie sono dipendenti. Questo materiale ha due motivazioni. Innanzitutto, i dati del mondo reale hanno correlazioni interessanti, quindi per eseguire una buona compressione dei dati, dobbiamo sapere come lavorare con modelli che includono dipendenze. In secondo luogo, un canale rumoroso con input $x$ e output $y$ definisce un insieme congiunto in cui $x$ e $y$ sono dipendenti (se fossero indipendenti, sarebbe impossibile comunicare sul canale) quindi la comunicazione sui canali rumorosi è descritto in termini di entropia degli insiemi congiunti.
 
@@ -1272,9 +1272,122 @@ $$
 $$
 Quest'ultima proprietà è una conseguenza della \textbf{disuguaglianza di Gibbs}.
 
-% \textcolor{Red}{TODO: finire lez 7}
+
+\subsection{Entropia e Mutual Information}
+Siano $X,Y$ variabili aleatorie. Come abbiamo già visto, l'entropia congiunta è 
+$$
+    \mathcal{H}(X,Y) = \sum_{\substack{x\in X\\y\in Y}} p(x,y)\log \left(\frac{1}{p(x,y)}\right)
+$$
+L'entropia è additiva sse $X$ e $Y$ sono indipendenti
+$$
+    \mathcal{H}(X,Y) = \mathcal{H}(X) + \mathcal{H}(Y)
+    \quad \Leftrightarrow \quad
+    p(x,y) = p(x)p(y)
+$$
+L'entropia condizionale di $X$ dato $Y=y$, ovvero se si conosce il valore di una delle due variabili, è l'entropia della distribuzione di probabilità $P(x|y)$
+$$
+    \mathcal{H}(X|Y=y) = \sum_{x\in X} p(x|y)\log \left(\frac{1}{p(x|y)}\right)
+$$
+L'entropia condizionale di $X$ dato $Y$ è la media, su tutti i valori di $Y$, dell'entropia condizionale di $X$ dato $Y=y$.
+L'incertezza del valore di $X$ se si conosce il valore di $Y$ è quindi
+\begin{align*}
+    \mathcal{H}(X|Y) &= \sum_{y\in Y} p(y)\mathcal{H}(X|Y=y)\\
+    &= \sum_{\substack{x\in X\\y\in Y}} p(x,y)\log \left(\frac{1}{p(x|y)}\right)
+\end{align*}
+
+
+\paragraph{$\bm{X}$ e $\bm{Y}$ indipendenti} Se $X$ e $Y$ sono indipendenti, allora
+\begin{align*}
+    p(x,y) &= p(x)p(y)\\
+    p(x|y) = p(x) \quad &\Rightarrow \quad \mathcal{H}(X,Y) = \mathcal{H}(X)
+\end{align*}
+(Dimostrare che se $X$ e $Y$ sono indipendenti, allora $\mathcal{H}(X,Y) = \mathcal{H}(X)$)
+
+\paragraph{$\bm{X}$ e $\bm{Y}$ dipendenti} Conosciuta anche come \emph{chain rule} per l'entropia. L'entropia congiunta, $\mathcal{H}(X,Y)$, l'entropia condizionale, $\mathcal{H}(X|Y)$ o $\mathcal{H}(Y|X)$, e l'entropia marginale, $\mathcal{H}(X)$ o $\mathcal{H}(Y)$, sono legate dalla seguente relazione
+\begin{align*}
+    \mathcal{H}(X,Y) &= \mathcal{H}(X) + \mathcal{H}(Y|X)\\
+    &= \mathcal{H}(Y) + \mathcal{H}(X|Y)
+\end{align*}
+Abbiamo un analogo al caso delle probabilità, solo con l'addizione al posto della moltiplicazione, in quanto passiamo alla funzione logaritmo.
+
+
+\subsubsection{Mutual Information}
+La \textbf{mutual information} è una misura della dipendenza tra due variabili aleatorie. È definita come
+\begin{align*}
+    I(X,Y) &= \mathcal{H}(X) - \mathcal{H}(X|Y)\\
+    &= \mathcal{H}(Y) - \mathcal{H}(Y|X)
+\end{align*}
+Misura la riduzione media dell'incertezza su $X$ se si conosce il valore di $Y$, o viceversa. 
+Vale che $I(X,Y)\geq0$, e in particolare $I(X,Y)=0$ se $X$ e $Y$ sono indipendenti. 
+Inoltre, $I(X,Y)$ è massimo quando l'incertezza su $X$ se si conosce $Y$ (o viceversa) è nulla:
+$$
+    X=Y \quad \Rightarrow \quad \mathcal{H}(X|Y)=0 \quad \Rightarrow \quad I(X,Y) = \mathcal{H}(X)
+$$
+
+\paragraph{Rappresentazione visuale} $I(X,Y) = \mathcal{H}(X) + \mathcal{H}(Y) - \mathcal{H}(X,Y)$
+\begin{center}
+    \begin{tikzpicture}%[scale=0.5]
+        % H(X,Y)
+        \draw[fill=RubineRed!15] (0,0) rectangle (10,0.5);
+        \node at (5,0.25) {$\mathcal{H}(X,Y)$};
+
+        % H(X)
+        \draw[fill=RoyalBlue!15] (0,-1) rectangle (4.5,-0.5);
+        \node at (2.25,-0.75) {$\mathcal{H}(X)$};
+
+        % H(Y)
+        \draw[fill=Red!15] (3,-2) rectangle (10,-1.5);
+        \node at (6.5,-1.75) {$\mathcal{H}(Y)$};
+
+        % H(X|Y)
+        \draw[fill=Plum!15] (0,-3) rectangle (3,-2.5);
+        \node at (1.5,-2.75) {$\mathcal{H}(X|Y)$};
+
+        % I(X,Y)
+        \draw[fill=BurntOrange!15] (3,-3) rectangle (4.5,-2.5);
+        \node at (3.75,-2.75) {$I(X,Y)$};
+
+        % H(Y|X)
+        \draw[fill=ForestGreen!15] (4.5,-3) rectangle (10,-2.5);
+        \node at (7.25,-2.75) {$\mathcal{H}(Y|X)$};
+
+        % vertical lines
+        \draw[dashed] (3,-2.5) -- (3,-2);
+        \draw[dashed] (3,-1.5) -- (3,-0.5);
+        \draw[dashed] (4.5,-2.5) -- (4.5,-1);
+    \end{tikzpicture}
+\end{center}
+
+\begin{theorem}
+    La mutual information è pari alla divergenza tra la distribuzione congiunta e il prodotto delle distribuzioni marginali
+    $$
+        I(X,Y) = D(XY||X\otimes Y)
+    $$
+    con $XY$ distribuzione congiunta $p(X,Y)$, e $X\otimes Y$ prodotto delle distribuzioni marginali $p(X)\cdot p(Y)$.
+\end{theorem}
+Se $X$ e $Y$ sono indipendenti, allora $p(X,Y) = p(X)\cdot p(Y)$, e quindi $I(X,Y)=0$.
 
 
 
 
 \chapter{Kolmogorov Complexity}
+Prerequisiti al capitolo 2 del libro di Papadimitriou. Argomenti al capitolo 8 del libro di T.~Cover, nel libro di Li e Vitanyi, al capitolo 3 del libro di Papadimitriou.
+
+\section{Nozioni Preliminari}
+La complessità di Kolmogorov è una nozione di complessità algoritmica. Questo argomento è un ``ponte'' tra le due parti di questo corso.
+
+Mentre negli anni '40 Shannon (Princeton, Bell Labs, MIT), Fano (PoliTO, MIT), e Huffmann (MIT, UCAL Santa Cruz) lavoravano nella parte occidentale del mondo, dall'altra parte della cortina di ferro, nel 1965 Kolmogorov (Moscow University) analizzava la nozione di casualità (randomness) delle stringhe.
+
+Ad esempio, se si riceve la stringa $0100110100111010$, o la stringa $1111111111111111$, quale delle due è più casuale? Poiché la sorgente che le genera è stazionaria e senza memoria, entrambe le stringhe sono equiprobabili. Kolmogorov non era soddisfatto di questa nozione di casualità.
+
+Intuitivamente, la sua definizione di complessità di un oggetto è la lunghezza del programma più corto in grado di generarlo.
+
+
+\subsection{Macchine di Turing}
+
+
+
+\section{Complessità di Kolmogorov}
+
+
+% \textcolor{Red}{TODO: finire lez 7}
