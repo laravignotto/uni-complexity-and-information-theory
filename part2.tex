@@ -1,0 +1,153 @@
+\part{Complessità}
+% LEZIONE 9
+
+
+\chapter{Introduzione}
+
+Libro di Papadimitriou main reference.
+
+In questa parte utilizzeremo come modello di computazione le \textbf{macchine di Turing} (TM). Esistono diversi modelli di TM: macchine di Turing multinastro, macchine di Turing input/output, macchine di Turing con oracolo, macchine di Turing nondeterministiche. Le TM verranno utilizzate per confrontare i diversi risultati di complessità che possiamo ottenere.
+
+Ci concentreremo sia su \textbf{complessità temporale} (time complexity) che \textbf{spaziale} (space complexity). Il focus non sarà sulla complessità di un dato algoritmo, ma sulla complessità di un problema. I \textbf{problemi} possono essere classificati come di decisione (decision problems), di funzione (function problems), o di ottimizzazione (optimization problems).
+\begin{itemize}
+    \item \textbf{Decision problem} $P:\text{inputs}\to\{yes,no\}$
+    \item \textbf{Function problem} computare una data funzione, ad esempio l'ordinamento di una lista
+    \item \textbf{Optimization problem} tra tutti i possibili output, si vuole trovare quello che minimizza o massimizza una funzione di costo. 
+\end{itemize}
+
+\paragraph{Esempio} Sia $G=(V,E)$ un grafo, e $u,v\in V$ due nodi. 
+\begin{itemize}
+    \item[--] decidere se esiste un cammino da $u$ a $v$ è un problema di decisione
+    \item[--] trovare un cammino da $u$ a $v$ è un problema di funzione
+    \item[--] trovare il cammino più corto da $u$ a $v$ è un problema di ottimizzazione
+\end{itemize}
+
+In questo corso ci concentreremo sui problemi di decisione. Se si ha una soluzione per un problema di funzione o di ottimizzazione, si possiede automaticamente una soluzione per il problema di decisione.\medskip
+
+% (disegno nelle note)
+Immaginiamo tutti gli input possibili al problema dell'esempio precedente come ad un insieme infinito di tuple $(G,u,v)$. Questo insieme si può dividere in due: il sottoinsieme dei \emph{yes} di tutte le codifiche binarie di triple $(G,u,v)$ tali che esiste un cammino in $G$ da $u$ a $v$, e, inversamente, il sottoinsieme \emph{no}.
+\begin{center}
+    \begin{tikzpicture}
+        \node[ellipse,
+            draw,
+            minimum width=6cm,
+            minimum height=3cm] (A) at (0,0) { };
+        \draw (0,-1.5) -- (0,1.5);
+        \node[above left] at (A.north west) {$L$};
+        \node[below] at (A.220) {\emph{yes}};
+        \node[below] at (A.-40) {\emph{no}};
+
+        \node at (-2,0.4) {$\bullet$};
+        \node at (-0.8,0.2) {$\bullet$};
+        \node at (-1.2,-0.4) {$\bullet$};
+        \node at (-0.8,-0.8) {$\dots$};
+        \node at (1.6,-0.2) {$\bullet$};
+        \node at (1.2,0.4) {$\bullet$};
+        \node at (0.8,-0.8) {$\dots$};
+    \end{tikzpicture}
+\end{center}
+La codifica binaria di una tripla è una stringa del tipo $1011\dots$. Più precisamente, è una stringa sull'alfabeto $\Sigma=\{0,1\}$. L'insieme di tutte le possibili stringhe binarie è $\Sigma^*$. Questo insieme è quindi il linguaggio $L$ sottoinsieme di $\Sigma^*$, ovvero $L\subseteq\Sigma^*$.
+$$
+    L = \{ \bin(G,u,v)|ln~G~u\to v \}
+$$
+
+\paragraph{Esempio} Consideriamo interi rappresentati in binario. Vogliamo decidere se un dato intero $x$ è divisibile per 4.
+$$
+    \bin(x) = 10\dots11
+$$
+in questo caso non è divisibile per 4. Un numero binario è divisibile per 4 se e solo se i due bit meno significativi sono 0.
+$$
+    \bin(x) = x_n,x_{n-1},\dots,x_1,x_0 \quad \Leftrightarrow \quad x_0 = 0 \text{ and } x_1 = 0
+$$
+Il linguaggio denoted da questo decision problem è
+$$
+    L = \{ x\in\{0,1\}^* | x=x_n,x_{n-1},\dots,x_1,x_0 \land x_0 = 0 \land x_1 = 0 \}
+$$
+
+
+\paragraph{Esempio} Decidere se una stringa è palindroma, con $\Sigma = \{0,1\}$.
+$$
+    x_1,x_2,x_3,\dots,x_3,x_2,x_1
+$$
+Ad esempio, $x=101$ è palindroma, mentre $x=1010$ non lo è. Cerchiamo il linguaggio $L=\{x|x \text{ è palindroma}\}$.
+
+Disegno nella nota.
+
+Come controllare in C (o in un altro linguaggio) se una stringa è palindroma?
+
+Disegno nella nota.
+
+Qual è la complessità del programma? $O(|x|)$.
+
+Si può dimostrare che con mdT con 1 stringa non si può fare meglio di $O(|x|^2)$.
+
+Vedremo con degli esempi che esiste la Extended Turing Church Thesis che ci verrà in aiuto.
+
+
+\paragraph{Tesi di Turing Church Estesa} La tesi di Turing Church afferma che ogni cosa che può essere computata, può essere computata da una TM.
+
+La versione estesa afferma che tutti i modelli (ragionevoli) di calcolo sono correlati polinomialmente.. Questo significa che se un problema è risolvibile in tempo polinomiale in un modello di computazione, allora è risolvibile in tempo polinomiale in ogni modello di computazione.
+
+$$
+    \substack{P}_{problem} \to TM 
+$$
+Disegno nella nota.
+
+
+\chapter{Chap.~2}
+
+\begin{definition}[Configurazione]
+    Vedi disegno note.
+
+    La configurazione è una tripla $(q,w,u)$ ecc
+\end{definition}
+
+
+\begin{definition}[Configurazione Iniziale]
+    La configurazione iniziale su una stringa $x$ è una tripla 
+    $$
+    (1,\triangle,x)
+    $$
+\end{definition}
+
+\begin{definition}[Configurazioni Finali]
+    Le configurazioni finali su una stringa $x$ sono una tripla 
+    $$
+    (H,w,u)
+    $$
+    dove $H\in\{yes,no,halt\}$.
+\end{definition}
+
+
+\begin{definition}[Passo di Computazione]
+    $$
+        (q,w,u) \to_{applying~\delta} (q',w',u') 
+    $$
+\end{definition}
+
+
+\paragraph{Esempio} Vedi note.
+
+
+\begin{definition}[Time Complexity]
+    La time complexity per una MdT $\mathcal{M}$ sull'input $x$. $\mathcal{M}$ ha time complexity $t$ su $x$ se dopo esattamente $t$ passi raggiungo una configurazione finale.
+    Vedi note.
+\end{definition}
+
+Considerazioni: la dimensione dell'input è $|x|$ (bit length of the input). Questa è una complessità nel caso peggiore ($\leq$).
+
+Non stiamo utilizzando la notazione big-O.
+
+
+
+\section{Unlimited Register Machines (URM)}
+
+Vedi note.
+
+Macchina con un unbounded number of registers.
+
+All'inizio, l'input $x$ è in $R_o$. Abbiamo una specie di counter.
+
+\paragraph{Esempio} Dati $x,y\in\mathbb{N}$, decidere se $x=y$.
+
+Vedi note. 
