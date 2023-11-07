@@ -44,6 +44,9 @@ Immaginiamo tutti gli input possibili al problema dell'esempio precedente come a
         \node at (1.6,-0.2) {$\bullet$};
         \node at (1.2,0.4) {$\bullet$};
         \node at (0.8,-0.8) {$\dots$};
+
+        \draw[->,decorate,decoration=snake] (-2,0.4) -- (-3.6,1);
+        \node[left] at (-3.6,1) {$(G,u,v)$};
     \end{tikzpicture}
 \end{center}
 La codifica binaria di una tripla è una stringa del tipo $1011\dots$. Più precisamente, è una stringa sull'alfabeto $\Sigma=\{0,1\}$. L'insieme di tutte le possibili stringhe binarie è $\Sigma^*$. Questo insieme è quindi il linguaggio $L$ sottoinsieme di $\Sigma^*$, ovvero $L\subseteq\Sigma^*$.
@@ -59,54 +62,116 @@ in questo caso non è divisibile per 4. Un numero binario è divisibile per 4 se
 $$
     \bin(x) = x_n,x_{n-1},\dots,x_1,x_0 \quad \Leftrightarrow \quad x_0 = 0 \text{ and } x_1 = 0
 $$
-Il linguaggio denoted da questo decision problem è
+Il linguaggio indicato da questo problema di decisione è
 $$
     L = \{ x\in\{0,1\}^* | x=x_n,x_{n-1},\dots,x_1,x_0 \land x_0 = 0 \land x_1 = 0 \}
 $$
 
 
-\paragraph{Esempio} Decidere se una stringa è palindroma, con $\Sigma = \{0,1\}$.
+\paragraph{Esempio (palindromo)} Decidere se una stringa è palindroma, con $\Sigma = \{0,1\}$.
 $$
     x_1,x_2,x_3,\dots,x_3,x_2,x_1
 $$
-Ad esempio, $x=101$ è palindroma, mentre $x=1010$ non lo è. Cerchiamo il linguaggio $L=\{x|x \text{ è palindroma}\}$.
+Ad esempio, $x=101$ è palindroma, mentre $x=1010$ non lo è. Cerchiamo il linguaggio $L=\{x|x \text{ è palindroma}\}$. Utilizziamo una macchina di Turing.
+\begin{center}
+    \begin{tikzpicture}
+        % Draw the horizontal strip
+        \draw (0,0) -- (5,0);
+        \draw (0,.5) -- (5,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,...,4.5} {
+          \draw (\x,0) -- (\x,.5);
+        }
 
-Disegno nella nota.
+        % Label the squares
+        % \foreach \x in {2.25,2.75,3.25,4.25,4.75,5.25} {
+        %   \node[above] at (\x,0) {$*$};
+        % }
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$x_1$};
+        \node[above] at (1.75,0) {$x_2$};
+        \node[above] at (3.75,0) {$x_n$};
+        \node[above] at (2.8,0.1) {\Huge \dots};
+        \node[above] at (4.25,0) {$\sqcup$};
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (1,-0.1) -- (4,-0.1);
+        \node[below] at (2.5,-0.2) {$x$};
+        \node[below] at (0.75,0) {\LARGE$\substack{\uparrow\\s}$};
+        % \node at (0.75,-0.65) {$s$};
+    \end{tikzpicture}
+\end{center}
+Si parte dallo stato $s$ e si vuole finire nello stato $p$ solo quando $x$ è palindroma. Per decidere se $x$ è palindroma, si può leggere $x_1$, ricordarne il valore nello stato del puntatore, e poi confrontarlo con $x_n$. Se sono uguali, si ripete lo stesso procedimento con $x_2$ e $x_{n-1}$, e così via. Se si arriva a $x_n$ e $x_1$ senza aver trovato una discrepanza, allora $x$ è palindroma. Se invece si trova una discrepanza, allora $x$ non è palindroma. Le transizioni sono le seguenti:
+\begin{align*}
+    \delta(s,\rhd) &= (q,\rhd,\to)\\
+    \delta(q,1) &= (q_1,\rhd,\to)\\
+    \delta(q,0) &= (q_0,\rhd,\to)\\
+\end{align*}
+\textcolor{Red}{TODO: finire di scrivere le transizioni}
+Questa macchina eseguirà un numero quadratico di passi per controllare se la stringa $x$ è palinfroma: $O(|x|^2)$.\medskip
 
-Come controllare in C (o in un altro linguaggio) se una stringa è palindroma?
-
-Disegno nella nota.
-
-Qual è la complessità del programma? $O(|x|)$.
-
-Si può dimostrare che con mdT con 1 stringa non si può fare meglio di $O(|x|^2)$.
-
-Vedremo con degli esempi che esiste la Extended Turing Church Thesis che ci verrà in aiuto.
+Se si vuole controllare in C (o in un altro linguaggio) se una stringa è palindroma, si può scrivere un programma che confronta il primo e l'ultimo carattere, poi il secondo e il penultimo, e così via, eseguendo un numero lineare di passi. La complessità è $O(|x|)$. Questo è un esempio di come la complessità di un problema dipenda dal modello di computazione utilizzato.
 
 
-\paragraph{Tesi di Turing Church Estesa} La tesi di Turing Church afferma che ogni cosa che può essere computata, può essere computata da una TM.
+\section{Tesi di Church-Turing Estesa} La tesi di Church-Turing afferma che ogni cosa che può essere computata, può essere computata da una macchina di Turing.
 
-La versione estesa afferma che tutti i modelli (ragionevoli) di calcolo sono correlati polinomialmente.. Questo significa che se un problema è risolvibile in tempo polinomiale in un modello di computazione, allora è risolvibile in tempo polinomiale in ogni modello di computazione.
+La versione estesa afferma che tutti i modelli (ragionevoli) di calcolo sono correlati polinomialmente. Questo significa che se un problema è risolvibile in tempo polinomiale in un modello di computazione, allora è risolvibile in tempo polinomiale in ogni modello di computazione.
 
+In altre parole, la tesi di Church-Turing estesa afferma che la complessità computazionale di un problema è indipendente dal modello di calcolo utilizzato per risolverlo.
 $$
-    \substack{P}_{problem} \to TM 
+    \underset{\text{problema}}{P} \to \text{TMs }O(f(n)) \to \underset{\text{modello}}{M}~O(p(f(n)))  
 $$
-Disegno nella nota.
+Ma è vera anche la direzione contraria. \textcolor{Red}{TODO: ???}
 
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Chap.~2}
 
-\begin{definition}[Configurazione]
-    Vedi disegno note.
 
-    La configurazione è una tripla $(q,w,u)$ ecc
+\section{Definizioni}
+
+\begin{definition}[Configurazione]
+    Una configurazione è una tripla $(q,w,u)$, con
+    \begin{itemize}
+        \item $q\in K\cup\{\text{yes, no, halt}\}$
+        \item $w,u\in\Sigma^*$
+    \end{itemize}
 \end{definition}
+Ad esempio, graficamente, una configurazione è
+\begin{center}
+    \begin{tikzpicture}
+        % Draw the horizontal strip
+        \draw (0,0) -- (6,0);
+        \draw (0,.5) -- (6,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,1.5,2,3,3.5,4.5,5,5.5} {
+          \draw (\x,0) -- (\x,.5);
+        }
+
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$x_1$};
+        \node[above] at (1.75,0) {$x_2$};
+        \node[above] at (2.5,0) {\dots};
+        \node[above] at (3.25,0) {$x_i$};
+        \node[above] at (4,0) {\dots};
+        \node[above] at (4.75,0) {$x_n$};
+        \node[above] at (5.25,0) {$\sqcup$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (0.5,0.6) -- (3.48,0.6);
+        \node[above] at (2,0.7) {$w$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (3.52,0.6) -- (5,0.6);
+        \node[above] at (4.25,0.7) {$u$};
+        \node[below] at (3.25,0) {\LARGE$\substack{\uparrow\\q}$};
+    \end{tikzpicture}
+\end{center}
 
 
 \begin{definition}[Configurazione Iniziale]
     La configurazione iniziale su una stringa $x$ è una tripla 
     $$
-    (1,\triangle,x)
+    (1,\rhd,x)
     $$
 \end{definition}
 
@@ -115,39 +180,139 @@ Disegno nella nota.
     $$
     (H,w,u)
     $$
-    dove $H\in\{yes,no,halt\}$.
+    dove $H\in\{\text{yes, no, halt}\}$.
 \end{definition}
 
 
 \begin{definition}[Passo di Computazione]
     $$
-        (q,w,u) \to_{applying~\delta} (q',w',u') 
+        (q,w,u) \overset{\delta}{\to} (q',w',u') 
     $$
 \end{definition}
+Ad esempio, il passo di computazione è $(s,\rhd,001)\to(q,\rhd 0,01)$
+\begin{center}
+    \begin{tikzpicture}
+        % Draw the horizontal strip
+        \draw (0,0) -- (4,0);
+        \draw (0,.5) -- (4,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,...,3.5} {
+          \draw (\x,0) -- (\x,.5);
+        };
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$0$};
+        \node[above] at (1.75,0) {$0$};
+        \node[above] at (2.25,0) {$1$};
+        \node[above] at (2.75,0) {$\sqcup$};
+        \node[above] at (3.25,0) {$\sqcup$};
+        \node[below] at (0.75,0) {\LARGE\cancel{$\substack{\uparrow\\s}$}};
+        \node[below] at (1.25,0) {\LARGE$\substack{\uparrow\\q}$};
+    \end{tikzpicture}
+\end{center}
+Eseguito applicando $\delta(s,\rhd)=(q,\rhd,\to)$.
 
 
-\paragraph{Esempio} Vedi note.
+\begin{definition}[Time Complexity per una MdT $\bm{\mathcal{M}}$ sull'input $\bm{x}$]
+    $\mathcal{M}$ ha time complexity $t$ su $x$ se dopo esattamente $t$ passi si raggiunge una configurazione finale.
+    $$
+        (s,\rhd,x)\underbrace{\to\dots\to}_{t\text{ passi}}(H,w,u)
+    $$
+    Indicata in breve con $(s,\rhd,x)\to^t(H,w,u)$.\medskip
 
-
-\begin{definition}[Time Complexity]
-    La time complexity per una MdT $\mathcal{M}$ sull'input $x$. $\mathcal{M}$ ha time complexity $t$ su $x$ se dopo esattamente $t$ passi raggiungo una configurazione finale.
-    Vedi note.
+    \noindent $\mathcal{M}$ ha time complexity $f:\mathbb{N}\to\mathbb{N}$ se, $\forall x\in\Sigma^*$, $(s,\rhd,x)\to^t(H,w,u)$ con $t\leq f(|x|)$.
 \end{definition}
-
-Considerazioni: la dimensione dell'input è $|x|$ (bit length of the input). Questa è una complessità nel caso peggiore ($\leq$).
-
-Non stiamo utilizzando la notazione big-O.
+La dimensione dell'input (bit length dell'input) è $|x|$. Questa è una complessità nel caso peggiore ($\leq$). Non stiamo utilizzando la notazione big-O.
 
 
 
-\section{Unlimited Register Machines (URM)}
+\section{Unlimited Register Machines}
+Una Unlimited Register Machine (URM) è una macchina di Turing con un numero illimitato di registri. 
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c|c|}
+    \cline{2-2}
+    $R_0$ & $r_0$ \\ \cline{2-2} 
+    $R_1$ & $r_1$ \\ \cline{2-2} 
+          & \dots \\ \cline{2-2} 
+    $R_m$ & $r_m$ \\ \cline{2-2} 
+          & \dots 
+    \end{tabular}
+\end{table}
+Ogni registro contiene un numero naturale. Quindi, il contenuto del registro $R_m$ sarà $r_m\in\mathbb{N}$. Le operazioni possibili sono:
+\begin{itemize}
+    \item \textbf{incremento} $S(i)$: $r_i:=r_i+1$
+    \item \textbf{azzeramento} $Z(i)$: $r_i:=0$
+    \item \textbf{trasferimento} $T(i,j)$: $r_j:=r_i$, ovvero trasferisco il contenuto del registro $R_i$ nel registro $R_j$
+    \item \textbf{jump} $J(i,j,k)$: se $r_i=r_j$ allora salta all'istruzione $k$, altrimenti prosegue con l'istruzione successiva
+\end{itemize}
 
-Vedi note.
+% Macchina con un unbounded number of registers.
 
-Macchina con un unbounded number of registers.
-
-All'inizio, l'input $x$ è in $R_o$. Abbiamo una specie di counter.
+% All'inizio, l'input $x$ è in $R_0$. Abbiamo una specie di counter.
 
 \paragraph{Esempio} Dati $x,y\in\mathbb{N}$, decidere se $x=y$.
 
-Vedi note. 
+\subparagraph{Con una MdT} Si può utilizzare una macchina di Turing che contiene la rappresentazione binaria dei due interi, separati da un separatore.
+\begin{center}
+    \begin{tikzpicture}
+        % Draw the horizontal strip
+        \draw (0,0) -- (6.5,0);
+        \draw (0,.5) -- (6.5,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,1.5,2.5,3,3.5,4,5,5.5,6} {
+          \draw (\x,0) -- (\x,.5);
+        };
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$x_1$};
+        \node[above] at (2,0) {\dots};
+        \node[above] at (2.75,0) {$x_n$};
+        \node[above] at (3.25,0) {$\sqcup$};
+        \node[above] at (3.75,0) {$y_1$};
+        \node[above] at (4.5,0) {\dots};
+        \node[above] at (5.25,0) {$y_m$};
+        \node[above] at (5.75,0) {$\sqcup$};
+        \node[below] at (0.75,0) {\LARGE$\substack{\uparrow\\s}$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1,0.6) -- (3,0.6);
+        \node[above] at (2,0.7) {$x$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (3.5,0.6) -- (5.5,0.6);
+        \node[above] at (4.5,0.7) {$y$};
+    \end{tikzpicture}
+\end{center}
+Questa macchina richiede, nel caso peggiore, un numero quadratico di passi per terminare. La complessità è $\Theta(|x|^2)$.
+
+\subparagraph{Con una URM} Possiamo utilizzare una URM con $x$ e $y$ rispettivamente nei registri $R_0$ e $R_1$.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c|c|}
+    \cline{2-2}
+    $R_0$ & $x$ \\ \cline{2-2} 
+    $R_1$ & $y$ \\ \cline{2-2} 
+          &    
+    \end{tabular}
+\end{table}
+\noindent Alla fine, scriveremo 1 in $R_0$ se $x=y$, 0 altrimenti. Le istruzioni sono le seguenti:
+\begin{enumerate}
+    \item $J(0,1,4)$
+    \item $Z(0)$
+    \item $J(0,0,100)$
+    \item $Z(0)$
+    \item $S(0)$
+\end{enumerate}
+In questo caso, la complessità si può calcolare in due modi.
+
+\begin{definition}[Time Complexity su URM]~
+    \begin{itemize}
+        \item \emph{Uniform cost criterium} (criterio del costo uniforme): numero di istruzioni eseguite.
+        \item \emph{Logarithmic cost criterium} (criterio del costo logaritmico): ogni istruzione ha un costro proporzionale al numero di cifre coinvolte.
+    \end{itemize}
+\end{definition}
+Quindi, per questa macchina, la complessità è 
+\begin{itemize}
+    \item utilizzando il criterio del costo uniforme: $\Theta(1)$
+    \item utilizzando il criterio del costo logaritmico: $\Theta(|x|+|y|)$
+\end{itemize}
+Nel secondo caso, ci si avvicina al costo per la macchina di Turing. 
+
+Mentre le macchine di Turing sono un modello di computazione sequenziale, nelle unlimited register machines si ha l'istruzione \emph{jump}.
