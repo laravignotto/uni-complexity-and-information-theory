@@ -1383,8 +1383,64 @@ Ad esempio, se si riceve la stringa $0100110100111010$, o la stringa $1111111111
 Intuitivamente, la sua definizione di complessità di un oggetto è la lunghezza del programma più corto in grado di generarlo.
 
 
+% LEZIONE 8
 \subsection{Macchine di Turing}
-\textcolor{Red}{TODO: lez 8}
+Una macchina di Turing è un modello di calcolo inventato da Alan Turing nel 1936. È possibile immaginarla come un nastro, o registro, con un numero infinito di celle. In ogni cella si possono scrivere dei simboli dall'alfabeto $\Sigma$, o dei simboli speciali. In un dato momento, con un puntatore è possibile leggere il contenuto di una cella, eventualmente cambiarlo, cambiare lo stato del puntatore, e spostarsi a destra o a sinistra di una cella (o rimanere fermi). 
+
+\begin{definition}[Macchina di Turing]
+    Una macchina di Turing è una tupla $\mathcal{M}(K,\Sigma,\delta,s)$, dove
+    \begin{itemize}
+        \item $K$ è un insieme finito di stati, di cui $s\in K$ è quello iniziale
+        \item $\Sigma$ è un alfabeto finito, e $\rhd,\sqcup\in\Sigma$. Inoltre, $\Sigma\cap K = \emptyset$
+        \item $\delta$ è la funzione di transizione, definita come $\delta: K\times\Sigma \rightarrow K\cup\{\text{yes, no, halt}\}\times\Sigma\times\{\to,\gets,-\}$
+    \end{itemize}
+    $\forall q\in K$ con $\delta(q,\rhd)=(q',\rhd,\to)$.
+\end{definition}
+Il simbolo $\rhd$ si legge \emph{start}, $\sqcup$ si legge \emph{blank}, e $\to,\gets,-$ indicano rispettivamente il movimento a destra (\emph{right}), a sinistra (\emph{left}), o l'immobilità del puntatore (\emph{stay}).
+
+\paragraph{Esempio: raddoppia un numero} Siano $\Sigma=\{0,1,\rhd,\sqcup\}$, $K=\{s\}$. Le funzioni di transizione per la macchina di Turing che raddoppia un numero sono
+\begin{align*}
+    \delta(s,\rhd) &= (s,\rhd,\to)\\
+    \delta(s,0) &= (s,0,\to)\\
+    \delta(s,1) &= (s,1,\to)\\
+    \delta(s,\sqcup) &= (\text{\emph{halt}},0,-)
+\end{align*}
+Partendo dalla stringa $1011$ e dalla macchina di Turing appena definita, si ottiene la stringa $10110$.
+\begin{center}
+    \begin{tikzpicture}
+        % Draw the horizontal strip
+        \draw (0,0) -- (4,0);
+        \draw (0,.5) -- (4,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,...,3.5} {
+          \draw (\x,0) -- (\x,.5);
+        };
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$1$};
+        \node[above] at (1.75,0) {$0$};
+        \node[above] at (2.25,0) {$1$};
+        \node[above] at (2.75,0) {$1$};
+        \node[above] at (3.25,0) {$\sqcup$};
+        \node[below] at (0.75,0) {\LARGE$\substack{\uparrow\\s}$};
+
+        \node[above] at (5,0) {$\Rightarrow$};
+
+        % Draw the horizontal strip
+        \draw (6,0) -- (10,0);
+        \draw (6,.5) -- (10,.5);
+        %  Draw the squares
+        \foreach \x in {6.5,7,...,9.5} {
+          \draw (\x,0) -- (\x,.5);
+        };
+        \node[above] at (6.75,0) {$\rhd$};
+        \node[above] at (7.25,0) {$1$};
+        \node[above] at (7.75,0) {$0$};
+        \node[above] at (8.25,0) {$1$};
+        \node[above] at (8.75,0) {$1$};
+        \node[above] at (9.25,0) {$0$};
+        \node[below] at (9.25,0) {\LARGE$\substack{\uparrow\\\text{\emph{halt}}}$};
+    \end{tikzpicture}
+\end{center}
 
 
 \section{Complessità di Kolmogorov}
