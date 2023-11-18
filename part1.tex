@@ -1445,5 +1445,324 @@ Partendo dalla stringa $1011$ e dalla macchina di Turing appena definita, si ott
 
 \section{Complessità di Kolmogorov}
 
+\begin{definition}[Macchine di Turing Universali]
+    Una macchina di Turing universale è una macchina di Turing $\mathcal{U}$ che prende in input un'altra macchina di Turing $\mathcal{M}$ e un input $x$, e simula l'esecuzione di $\mathcal{M}$ su $x$.
+    $$
+        \mathcal{U}(\mathcal{M};x) = \mathcal{M}(x)
+    $$
+\end{definition}
 
+La tesi di Church-Turing afferma che ogni funzione calcolabile può essere calcolata da una macchina di Turing. Di conseguenza, le macchine di Turing universali devono esistere. Intuitivamente, una ma\-chi\-na di Turing universale può essere vista come un compilatore.
 
+\begin{definition}[Kolmogorov Complexity]
+    La complessità di Kolmogorov di una stringa $x\in\Sigma^*$ è la lunghezza della macchina di Turing $\mathcal{M}$ più corta tale che $\mathcal{U}(\mathcal{M})=x$.
+    $$
+        K_\mathcal{U}(x) = \min_{\mathcal{M}:\mathcal{U}(\mathcal{M})=x} |\mathcal{M}|
+    $$
+    con $\mathcal{U}$ una macchina di Turing universale fissata.
+\end{definition}
+Il nastro della macchina universale $\mathcal{U}$ è composto da due parti: la prima parte contiene la codifica binaria della macchina $\mathcal{M}$, e la seconda parte contiene l'input $x$.
+
+\paragraph{Esempio} Macchina di Turing $\mathcal{M}$ che non prende nulla in input e produce in output la stringa $0110$.
+
+Per descrivere $\mathcal{M}$, è necessario specificare $K,\Sigma,\delta,s$, con $\delta(s,\rhd)=(q_1,\rhd,\to)$, $\delta(q_1,\sqcup)=(q_2,0,\to)$, $\delta(q_2,\sqcup)=(q_3,1,\to)$, $\delta(q_3,\sqcup)=(q_4,1,\to)$, $\delta(q_4,\sqcup)=(\text{\emph{halt}},0,-)$. Per codificare $\mathcal{M}$ in binario, bisogna specificare in binario gli argomenti descritti precedentemente.
+
+Se si considerano le macchine di Turing che producono 0110 in output e non prendono nulla in input, la lunghezza della più corta è la complessità di Kolmogorov della stringa $0110$.
+
+\begin{definition}[Complessità di Kolmogorov Condizionale]
+    ~
+    $$
+        K_\mathcal{U}(x|y) = \min_{\mathcal{M}:\mathcal{U}(\mathcal{M};y)=x} |\mathcal{M}|
+    $$
+\end{definition}
+La macchina $\mathcal{M}$ conosce qualcosa della stringa $x$ che deve produrre in output: $\mathcal{U}(\mathcal{M};y) = \mathcal{M}(y) = x$. Quindi
+$$
+K_\mathcal{U}(x) \geq K_\mathcal{U}(x|y)
+$$
+La complessità di Kolmogorov condizionale è la lunghezza della macchina di Turing più corta che produce in output $x$ se si conosce $y$. La conoscenza di $y$ dà informazioni su $x$, e quindi aiuta a costruire una macchina $\mathcal{M}$ più corta.
+
+\paragraph{Esempio} Sia $000\dots0$ una sequenza di $m$ 0, che vogliamo produrre in output. Se non conosciamo $m$, si ha qualcosa del tipo
+\begin{align*}
+    m\begin{cases}
+        \texttt{print }0\\
+        \texttt{print }0\\
+        \dots\\
+        \texttt{print }0
+    \end{cases}
+\end{align*}
+Ma, dato $m$, si ha
+\begin{align*}
+    &\texttt{for (}i=1\texttt{ to }m\texttt{)\{}\\
+    &\quad \texttt{print }0\\
+    &\texttt{\}}
+\end{align*}
+In questo esempio abbiamo quindi $K_\mathcal{U}(x||x|)$.\bigskip 
+
+Cosa succederebbe se cambiassimo da $\mathcal{U}$ ad un'altra macchina di Turing universale $\mathcal{A}$?
+\begin{theorem}
+    Siano $\mathcal{U}$ e $\mathcal{A}$ due macchine di Turing universali. Consideriamo $K_\mathcal{U}(x|y)$ e $K_\mathcal{A}(x|y)$. Allora 
+    $$
+        K_\mathcal{U}(x|y) \leq K_\mathcal{A}(x|y) + c_{\mathcal{A}\mathcal{U}}
+    $$
+    con $c_{\mathcal{A}\mathcal{U}}$ costante che dipende solo da $\mathcal{A}$ e $\mathcal{U}$.
+\end{theorem}
+\paragraph{Dimostrazione} Sia $P_\mathcal{A}$ il programma più corto per $\mathcal{A}$ che produce $x$ dato $y$:
+$$
+    K_\mathcal{A}(x|y) = |P_\mathcal{A}|
+$$
+Questo significa
+$$
+    \mathcal{A}(P_\mathcal{A};y) = P_\mathcal{A}(y) = x
+$$
+Sia $\mathcal{U}$ una macchina di Turing universale. Allora $\mathcal{U}$ con in input $\mathcal{C}_\mathcal{A}$ (codifica di $\mathcal{A}$) seguito da $P_\mathcal{A}$ e $y$ produce in output $x$:
+$$
+    \mathcal{U}(\underbrace{\mathcal{C}_\mathcal{A};P_\mathcal{A};}_{\substack{\text{programma}\\\text{per $\mathcal{U}$ che,}\\\text{dato $y$,}\\\text{produce $x$}}}y) = \mathcal{A}(P_\mathcal{A};y) = P_\mathcal{A}(y) = x
+$$
+Quindi
+\begin{align*}
+    K_\mathcal{U}(x|y) &\leq |\mathcal{C}_\mathcal{A};P_\mathcal{A}|\\
+    &= |\mathcal{C}_\mathcal{A}| + |P_\mathcal{A}| + 1\\
+    &= K_\mathcal{A}(x|y) + \underbrace{|\mathcal{C}_\mathcal{A}| + 1}_{c_{\mathcal{A}\mathcal{U}}}
+\end{align*}
+\hfill $\square$
+
+\begin{corollary}
+    ~
+    $$
+        |K_\mathcal{U}(x|y) - K_\mathcal{A}(x|y)| \leq c_{\mathcal{A}\mathcal{U}} \qquad \forall x,y
+    $$
+    Quando $y=\varepsilon$
+    $$
+        |K_\mathcal{U}(x) - K_\mathcal{A}(x)| \leq c_{\mathcal{A}\mathcal{U}} \qquad \forall x
+    $$
+\end{corollary}
+D'ora in poi, quindi, sapendo che cambia solo una costrante, si ometterà la macchina di Turing universale, e si scriverà semplicemente $K(x)$, o $K(x|y)$.
+
+\paragraph{Esempio} Vogliamo produrre in output la stringa $x=010$, e abbiamo il programma $P$
+\begin{align*}
+    \texttt{print }0\\
+    \texttt{print }1\\
+    \texttt{print }0
+\end{align*}
+Codificandolo in binario, si ha, ad esempio, $\bin(P)=300$. Si può concludere che la complessità di Kolmogorov di $x$ è al massimo 300:
+$$
+    K(010) \leq 300
+$$
+Per poter scrivere $=$ invece che $\leq$, bisognerebbe dimostrare che tutti i programmi di lunghezza 299 non producono in output la stringa $010$. Ma almeno uno di essi potrebbe non terminare, e è impossibile dimostrarlo.\bigskip
+
+Dall'esempio precedente abbiamo visto come non sia possibile calcolare la complessità di Kolmogorov di una stringa. Tuttavia, possiamo calcolare la complessità di Kolmogorov di una stringa con una certa precisione dando dei \emph{bounds}.
+
+\begin{theorem}[Teorema sui Limiti alla Complessità di Kolmogorov sulle Stringhe]~
+    $$
+        K(x) \leq |x| + c
+    $$    
+\end{theorem}
+Nel libro di T.~Cover viene utilizzato un alfabeto con solo due simboli, $\Sigma=\{0,1\}$. Questo dà un risultato diverso (più debole) rispetto a quello che si raggiunge utilizzando l'alfabeto $\Sigma=\{0,1,\sqcup\}$.
+
+\paragraph{Dimostrazione (intuizione)} Il programma che produce in output $x=x_1x_2\dots x_n$ è della forma 
+\begin{align*}
+    \bin(P)\begin{cases}
+        \texttt{print }x_1\\
+        \texttt{print }x_2\\
+        \dots\\
+        \texttt{print }x_n
+    \end{cases}
+\end{align*}
+con $\bin(P)$ della forma $010011\dots 11$. Dando $\bin(P)$ in input ad una macchina di Turing universale $\mathcal{U}$ utilizzando l'alfabeto $\Sigma=\{0,1\}$, si avrà
+\begin{center}
+    \begin{tikzpicture}
+        % Draw the horizontal strip
+        \draw (0,0) -- (6,0);
+        \draw (0,.5) -- (6,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,1.5,2,3,3.5,4,4.5,5,5.5} {
+          \draw (\x,0) -- (\x,.5);
+        }
+
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$0$};
+        \node[above] at (1.75,0) {$1$};
+        \node[above] at (2.5,0) {\dots};
+        \node[above] at (3.25,0) {$1$};
+        \node[above] at (3.75,0) {$0$};
+        \node[above] at (4.25,0) {$0$};
+        \node[above] at (4.75,0) {$0$};
+        \node[above] at (5.25,0) {$0$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1,0.6) -- (3.5,0.6);
+        \node[above] at (2.25,0.7) {$\bin(P)$};
+        % \node[below] at (3.25,0) {\LARGE$\substack{\uparrow\\q}$};
+    \end{tikzpicture}
+\end{center}
+C'è quindi un problema: utilizzando $0$ invece di $\sqcup$, come si può capire dove finisce $\bin(P)$? Una possibile soluzione è quella di raddoppiare ogni bit, e codificare lo stop con una coppia ``non valida'', ad esempio $10$. Ad esempio, se $\bin(P)=010011$, si avrà
+$$
+    0~0~1~1~0~0~0~0~1~1~1~1\underbrace{1~0}_{\text{stop}}
+$$
+Utilizzando questo metodo, quando si vuole $x$ in output si può settare il primo bit (dopo $\rhd$) a 0 o a 1, dando due significati diversi alla stringa che li segue. In particolare, se la prima cifra è 
+\begin{itemize}
+    \item 0, segue un generico programma $P$ (ovvero $0=$ esegui)
+    \item 1, segue la codifica di $x$ con il raddoppio dei bit (ovvero $1=$ stampa)
+\end{itemize}
+Così facendo, con l'alfabeto $\Sigma=\{0,1\}$, si ha
+$$
+    K(x) \leq 2|x| + 3
+$$
+con 3 pari alla somma del primo bit (0 o 1) e della coppia ``non valida'' (10) che indica lo stop.
+
+Analizziamo un'altra soluzione con un esempio. Sia $x=0101$, e $|x|=4$. Codifichiamo la lunghezza di $x$ in binario come $|x|=4=100$, e raddoppiamo i bit, ottenendo $110000$. Quindi si avrà
+\begin{center}
+    \begin{tikzpicture}
+        \fill [RoyalBlue!15] (1,0) rectangle (1.5,0.5);
+        \fill [RubineRed!15] (4.5,0) rectangle (5.5,0.5);
+
+        % Draw the horizontal strip
+        \draw (0,0) -- (8,0);
+        \draw (0,.5) -- (8,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,...,7.5} {
+          \draw (\x,0) -- (\x,.5);
+        }
+
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$1$};
+        \node[above] at (1.75,0) {$1$};
+        \node[above] at (2.25,0) {$1$};
+        \node[above] at (2.75,0) {$0$};
+        \node[above] at (3.25,0) {$0$};
+        \node[above] at (3.75,0) {$0$};
+        \node[above] at (4.25,0) {$0$};
+        \node[above] at (4.75,0) {$1$};
+        \node[above] at (5.25,0) {$0$};
+        \node[above] at (5.75,0) {$0$};
+        \node[above] at (6.25,0) {$1$};
+        \node[above] at (6.75,0) {$0$};
+        \node[above] at (7.25,0) {$1$};
+        \node[below] at (1.25,0) {\LARGE$\substack{\uparrow\\\text{\footnotesize stampa}}$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1.5,0.6) -- (4.5,0.6);
+        \node[above] at (3,0.7) {$|x|$};
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (4.5,-0.1) -- (5.5,-0.1);
+        \node[below] at (5,-0.2) {stop};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (5.5,0.6) -- (7.5,0.6);
+        \node[above] at (6.5,0.7) {$x$};
+    \end{tikzpicture}
+\end{center}
+In questo caso 
+$$
+    K(x) \leq 2\log|x| + 2 + 1 + |x|
+$$
+Quando $x$ è molto lunga, $2\log|x|$ è molto più piccolo di $|x|$, e quindi si può trascurare. Quindi questa proposta è più corta (migliore) della precedente.
+$$
+    K(x) \leq 2\log|x| + 2 + 1 + |x| \leq 2|x| + 3
+$$
+
+Un'ulteriore soluzione è quella di utilizzare il trucco precedente sulla lunghezza della lunghezza di $x$, e così via. In generale, si ha
+$$
+    K(x) \leq \dots \leq \dots \leq 2\log^*|x| + |x| + c
+$$
+Ma ciò che il teorema afferma è più forte. Utilizzando l'alfabeto $\Sigma=\{0,1,\sqcup\}$, si ha
+\begin{center}
+    \begin{tikzpicture}
+        \fill [RoyalBlue!15] (1,0) rectangle (1.5,0.5);
+        % Draw the horizontal strip
+        \draw (0,0) -- (5,0);
+        \draw (0,.5) -- (5,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,...,4.5} {
+          \draw (\x,0) -- (\x,.5);
+        }
+
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (4.25,0) {$\sqcup$};
+        \node[below] at (1.25,0) {\LARGE$\substack{\uparrow\\\text{\footnotesize 0 = esegui}\\\text{\footnotesize 1 = stampa}}$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1.5,0.6) -- (4,0.6);
+        \node[above] at (2.75,0.7) {$x$};
+    \end{tikzpicture}
+\end{center}
+Quindi
+$$
+    K(x) \leq |x| + 1
+$$
+con $1=c$ nel caso generico. \hfill $\square$\bigskip
+
+Quante stringhe possono avere complessità di Kolmogorov minore di un dato valore $k$? Per stringhe di lunghezza 0 (stringa vuota) esiste 1 macchina di Turing (di lunghezza 0) che la produce in output. Per stringhe di lunghezza 1, esistono 2 macchine di Turing: quella la cui codifica è 0, e quella la cui codifica è 1, e così via.
+\begin{table}[H]
+    \centering
+    \def\arraystretch{1.2}
+    \begin{tabular}{cc}
+    \rowcolor[HTML]{C0C0C0} 
+    \begin{tabular}[c]{@{}c@{}}lunghezza\\ stringa\end{tabular} & \begin{tabular}[c]{@{}c@{}}numero di\\ macchine\end{tabular} \\
+    0         & 0                  \\
+    \rowcolor[HTML]{EFEFEF} 
+    1         & 2                  \\
+    $\vdots$  & $\vdots$           \\
+    \rowcolor[HTML]{EFEFEF} 
+    $h$       & $2^h$              \\
+    $\vdots$  & $\vdots$           \\
+    \rowcolor[HTML]{EFEFEF} 
+    $k-1$     & $2^{k-1}$        
+    \end{tabular}
+\end{table}
+In generale
+$$
+    \sum_{i=0}^{k-1}2^i = 2^k - 1
+$$
+ovvero al massimo $2^k-1$ stringhe possono avere complessità di Kolmogorov minore di $k$. 
+
+\begin{theorem}~
+    $$
+        \exists x \qquad K(x) \geq |x|
+    $$
+\end{theorem}
+\paragraph{Dimostrazione} Sia $|x|=k$. Allora ci sono $2^k$ stringhe di lunghezza $k$. Ma esistono al massimo $2^k-1$ stringhe di lunghezza minore di $k$. Quindi esiste almeno una stringa di lunghezza $k$ che ha complessità di Kolmogorov almeno pari a $k$. \hfill $\square$\bigskip
+
+Abbiamo trovato un limite superiore e inferiore alla complessità di Kolmogorov di una stringa. 
+$$
+    |x| \leq K(x) \leq |x| + c
+$$
+
+\subsection{Complessità di Kolmogorov vs Entropia di Shannon} 
+\paragraph{Da Complessità a Entropia} Consideriamo 
+$$
+    \varphi_K(x) = \bin(\mathcal{M})
+$$
+con $\varphi_K(x)$ codifica di Kolmogorov di $x$, e $\mathcal{M}$ la più corta macchina di Turing che produce $x$ in output (con input vuoto). $\varphi_K(x)$ è UD. $\mathcal{U}$ decodifica $\varphi_K(x)$, ovvero invio un programma, io e il ricevente abbiamo la stessa macchina di Turing universale (il ``compilatore''), e il ricevente riceve in programma.
+$$
+    |\varphi_K(x)| = K(x)
+$$
+Consideriamo tutti i possibili messaggi di lunghezza $n$
+$$
+    EL_n(\varphi_K(x)) = \sum_{x\in\Sigma^n} p(x)K(x) = E_n(K(x))
+$$
+con $E_n(K(x))$ complessità di Kolmogorov media su tutti i messaggi di lunghezza $n$. Per il Teorema di Shannon
+$$
+    EL_n(\varphi_K(x)) \geq \mathcal{H}(P^n) = n\mathcal{H}(P)
+$$
+con $P$ distribuzione di probabilità sull'alfabeto $\Sigma$. Quindi
+$$
+    E_n(K(x)) \geq n\mathcal{H}(P)
+$$
+La complessità di Kolmogorov media di un singolo carattere è 
+$$
+    \frac{E_n(K(x))}{n} \geq \mathcal{H}(P)
+$$
+
+\paragraph{Da Entropia a Complessità} Ogni codice $\varphi(x)$ può essere interpretato come un particolare programma che produce in output la stringa (codificata) $x$. Quindi 
+$$
+    K(x) \leq |\varphi(x)| + \text{Decoder }\varphi
+$$
+Per lo Shannon code abbiamo visto che
+$$
+    EL_n(\varphi) \leq n\mathcal{H}(P) + 1
+$$
+Ciò significa che 
+$$
+    E_n(K(x)) \leq n\mathcal{H}(P) + 1 + K(P)
+$$
+con $K(P)=|\text{Decoder }\varphi|$ complessità di Kolmogorov del Decoder (posso inviare il codice più corto possibile che produce in output il Decoder). Quindi
+$$
+    \frac{E_n(K(x))}{n} \leq \mathcal{H}(P) + \underbrace{\frac{1+K(P)}{n}}_{\substack{\text{perché}\\\text{consideriamo}\\\text{lo Shannon}\\\text{code}}}
+$$

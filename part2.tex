@@ -316,3 +316,37 @@ Quindi, per questa macchina, la complessità è
 Nel secondo caso, ci si avvicina al costo per la macchina di Turing. 
 
 Mentre le macchine di Turing sono un modello di computazione sequenziale, nelle unlimited register machines si ha l'istruzione \emph{jump}.
+
+
+% LEZIONE 11
+% parte 1
+Possiamo definire la classe $P$:
+$$
+    P = \bigcup_{h\in\mathbb{N}} \text{TIME}(n^h)
+$$
+ovvero l'unione di tutti i problemi che possono essere risolti in tempo polinomiale. La classe $P$ ci piace così tanto perché abbiamo la tesi di Church-Turing estesa. Questa classe è \textbf{invariante} rispetto alla scelta del modello di computazione.
+
+Possiamo definire la classe EXP:
+$$
+    \text{EXP} = \bigcup_{h\in\mathbb{N}} \text{TIME}(2^{n^h})
+$$
+
+La classe $\mathbb{L}$, PSPACE, e EXPSPACE
+\begin{align*}
+    \mathbb{L} &= \text{SPACE}(\log n)\\
+    \text{PSPACE} &= \bigcup_{h\in\mathbb{N}} \text{SPACE}(n^h)\\
+    \text{EXPSPACE} &= \bigcup_{h\in\mathbb{N}} \text{SPACE}(2^{n^h}) 
+\end{align*}
+
+\begin{property}~
+    $$
+        \text{TIME}(f(n)) \subseteq \text{SPACE}(f(n))
+    $$    
+\end{property}
+
+% book, section 2.6
+RAM, random access machine. (1)
+
+
+% pausa
+% parte 2
