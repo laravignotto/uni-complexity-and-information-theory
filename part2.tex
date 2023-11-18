@@ -252,7 +252,7 @@ Ogni registro contiene un numero naturale. Quindi, il contenuto del registro $R_
 
 \paragraph{Esempio} Dati $x,y\in\mathbb{N}$, decidere se $x=y$.
 
-\subparagraph{Con una MdT} Si può utilizzare una macchina di Turing che contiene la rappresentazione binaria dei due interi, separati da un separatore.
+\subparagraph{MdT} Si può utilizzare una macchina di Turing che contiene la rappresentazione binaria dei due interi, separati da un separatore.
 \begin{center}
     \begin{tikzpicture}
         % Draw the horizontal strip
@@ -282,7 +282,7 @@ Ogni registro contiene un numero naturale. Quindi, il contenuto del registro $R_
 \end{center}
 Questa macchina richiede, nel caso peggiore, un numero quadratico di passi per terminare. La complessità è $\Theta(|x|^2)$.
 
-\subparagraph{Con una URM} Possiamo utilizzare una URM con $x$ e $y$ rispettivamente nei registri $R_0$ e $R_1$.
+\subparagraph{URM} Possiamo utilizzare una URM con $x$ e $y$ rispettivamente nei registri $R_0$ e $R_1$.
 \begin{table}[H]
     \centering
     \begin{tabular}{c|c|}
@@ -315,18 +315,308 @@ Quindi, per questa macchina, la complessità è
 \end{itemize}
 Nel secondo caso, ci si avvicina al costo per la macchina di Turing. 
 
-Mentre le macchine di Turing sono un modello di computazione sequenziale, nelle unlimited register machines si ha l'istruzione \emph{jump}.
+Mentre le macchine di Turing sono un modello di computazione sequenziale, nelle URM si ha l'istruzione \emph{jump}. % LEZIONE 10
+In altre parole:
+\begin{itemize}
+    \item \textbf{MdT} 1 bit di informazione in ogni cella $\to$ tempo: numero di passi
+    \item \textbf{URM} registri, un intero di lunghezza arbitraria (più bit) in ogni registro $\to$ tempo: numero di istruzioni (uniform time complexity)
+\end{itemize}
+
+\paragraph{Esempio} Computare $x+1$, $x\in\mathbb{N}$.
+\subparagraph{MdT} Si ha una macchina di Turing che contiene $x$ in binario.
+\begin{center}
+    \begin{tikzpicture}
+        % Draw the horizontal strip
+        \draw (0,0) -- (4,0);
+        \draw (0,.5) -- (4,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,1.5,2.5,3,3.5} {
+          \draw (\x,0) -- (\x,.5);
+        };
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$x_1$};
+        \node[above] at (2,0) {\dots};
+        \node[above] at (2.75,0) {$x_n$};
+        \node[above] at (3.25,0) {$\sqcup$};
+        % \node[below] at (0.75,0) {\LARGE$\substack{\uparrow\\s}$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1,0.6) -- (3,0.6);
+        \node[above] at (2,0.7) {$x$};
+    \end{tikzpicture}
+\end{center}
+Nel caso peggiore $x=111\dots1$, quindi la complessità è lineare $\Theta(n)$.
+
+\subparagraph{URM} Si ha una URM con $x$ nel registro $R_0$. È suffieciente una singola istruzione $S(0)$, quindi la complessità è $\Theta(1)$.
+
+
+\subsection{URM + Prodotto}
+Cambiamo il modello di computazione URM, considerando URM + prodotto. Oltre alle istruzioni $S(i)$, $Z(i)$, $T(i,j)$, e $J(i,j,k)$, aggiungiamo l'istruzione $P(i)$, che esegue l'operazione $r_i:=r_i* r_i$.
+
+\paragraph{Esempio di programma per URM + prodotto} Dati $x,y\in\mathbb{N}$, decidere se $x=y$.
+\begin{enumerate}
+    \item $J(1,2,5)$
+    \item $P(0)$
+    \item $S(2)$
+    \item $J(3,3,1)$
+\end{enumerate}
+Pertendo da un input di $x$ in $R_0$, $x$ in $R_1$, e $0$ in tutti gli altri registri. Si avrà:
+\begin{table}[H]
+    \centering
+    \def\arraystretch{1.3}
+    \begin{tabular}{c|c|cc|c|cc|c|cc|c|cccc|c|}
+    \cline{2-2} \cline{5-5} \cline{8-8} \cline{11-11} \cline{16-16}
+    $R_0$ & $x$      &       & $R_0$ & $x^2$    &       & $R_0$ & $(x^2)^2$ &       & $R_0$ & $(x^4)^2$ &       &         &       & $R_0$ & $x^{2^i}$  \\ \cline{2-2} \cline{5-5} \cline{8-8} \cline{11-11} \cline{16-16} 
+    $R_1$ & $x$      &       & $R_1$ & $x$      &       & $R_1$ & $x$       &       & $R_1$ & $x$       &       &         &       & $R_1$ & $x$      \\ \cline{2-2} \cline{5-5} \cline{8-8} \cline{11-11} \cline{16-16} 
+    $R_2$ & 0        & ~ $\to$ ~ & $R_2$ & 1        & ~ $\to$ ~ & $R_2$ & 2         & ~ $\to$ ~ & $R_2$ & 3         & ~ $\to$ & $\dots$ & $\to$ ~ & $R_2$ & $2^i$    \\ \cline{2-2} \cline{5-5} \cline{8-8} \cline{11-11} \cline{16-16} 
+    $R_3$ & 0        &       & $R_3$ & 0        &       & $R_3$ & 0         &       & $R_3$ & 0         &       &         &       & $R_3$ & 0        \\ \cline{2-2} \cline{5-5} \cline{8-8} \cline{11-11} \cline{16-16} 
+    $R_4$ & $\vdots$ &       & $R_4$ & $\vdots$ &       & $R_4$ & $\vdots$  &       & $R_4$ & $\vdots$  &       &         &       & $R_4$ & $\vdots$
+    \end{tabular}
+\end{table}
+Il numero di istruzioni è lineare $\Theta(n)$.
+
+\subparagraph{MdT} Se si eseguisse la stessa computazione su una macchina di Turing, si avrebbe 
+\begin{center}
+    \begin{tikzpicture}
+        % Draw the horizontal strip
+        \draw (0,2) -- (4,2);
+        \draw (0,2.5) -- (4,2.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,1.5,2.5,3,3.5} {
+          \draw (\x,2) -- (\x,2.5);
+        };
+        \node[above] at (0.75,2) {$\rhd$};
+        \node[above] at (1.25,2) {$x_1$};
+        \node[above] at (2,2) {\dots};
+        \node[above] at (2.75,2) {$x_n$};
+        \node[above] at (3.25,2) {$\sqcup$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1,2.6) -- (3,2.6);
+        \node[above] at (2,2.7) {$x$};
+
+        \node at (2,1.3) {$\vdots$};
+
+        % Draw the horizontal strip
+        \draw (0,0) -- (4,0);
+        \draw (0,.5) -- (4,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,1.5,2.5,3,3.5} {
+          \draw (\x,0) -- (\x,.5);
+        };
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$y_1$};
+        \node[above] at (2,0) {\dots};
+        \node[above] at (2.75,0) {$y_m$};
+        \node[above] at (3.25,0) {$\sqcup$};
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (1,-.1) -- (3,-.1);
+        \node[below] at (2,-.2) {$x^{2^x}$};
+    \end{tikzpicture}
+\end{center}
+Quindi $\Omega(\log(x^{2^x}))=\Omega(2^x \log(x))$.\bigskip
+
+Questo risultato sembra contraddire la tesi di Church-Turing estesa, che afferma che tuttti i modelli \textbf{ragionevoli} di computazione sono correlati polinomialmente. Ma cosa significa \emph{ragionevole}? Non si può avere una operazione che fa crescere ``troppo'' l'input (nell'esempio, il prodotto), si deve utilizzare il creiterio logaritmico.
+
+In altre parole, se l'algoritmo utilizza operazioni che in un numero polinomiale di passi fanno crescere l'input esponenzialmente, e queste sono utilizzate un numero di volte che dipende dalla dimensione dell'input, allora si deve utilizzare un criterio logaritmico. Quando non si è sicuri della potenza delle operazioni della macchina, il costo di ogni singola operazione dev'essere proporzionale al numero di bit manipolati.
+\begin{table}[H]
+    \centering
+    \def\arraystretch{1.3}
+    \begin{tabular}{ccc}
+    \rowcolor[HTML]{C0C0C0} 
+    istruzione & uniform     & logarithmic                        \\
+    $S(i)$     & $\Theta(1)$ & $\Theta(\log(r_i))$                \\
+    \rowcolor[HTML]{EFEFEF} 
+    $Z(i)$     & $\Theta(1)$ & $\Theta(1)$                        \\
+    $T(i,j)$   & $\Theta(1)$ & $\Theta(\log(r_i))$                \\
+    \rowcolor[HTML]{EFEFEF} 
+    $J(i,j,k)$ & $\Theta(1)$ & $\Theta(\min(\log(r_i),\log(r_j)))$\\
+    $P(i)$     & $\Theta(1)$ & $\Theta((\log(r_i))^2)$            
+    \end{tabular}
+\end{table}
+Con $r_i$ contenuto del registro $i$. In particolare per $P(i)$, nella moltiplicazione di un numero $x$ per se stesso si ha $x_1,x_2,\dots,x_n \times x_1,x_2,\dots,x_n$. Si hanno $x^n$ bit operazioni, quindi $O((\log(x))^2)$.
+
+
+
+\section{Ulteriori Definizioni}
+Come abbiamo visto, nei problemi di decisione si ha un input $x\in\Sigma^*$ e un output in $\{\text{yes},\text{no}\}$. Possiamo definire un linguaggio $L$ come l'insieme di tutte le stringhe che hanno output yes. 
+$$
+    L \subseteq (\Sigma \backslash \{ \sqcup \} )^*
+$$
+Un problema $P$ è una funzione
+$$
+    P:\Sigma^*\to\{\text{yes},\text{no}\}
+$$
+
+\begin{definition}[Decidibilità di un Linguaggio da una MdT]
+    \begin{eqnarray*}
+        &\text{Una macchina di Turing $\mathcal{M}$ decide un linguaggio $L$}&\\
+        &\Updownarrow&\\
+        &\forall x\in(\Sigma\backslash\{\sqcup\})^* \begin{cases*}
+            x\in L \to \mathcal{M}(x)=\text{yes}\\
+            x\notin L \to \mathcal{M}(x)=\text{no}
+        \end{cases*}&
+    \end{eqnarray*}
+    Il linguaggio $L$ si dice \textbf{ricorsivo}.
+\end{definition}
+
+\begin{definition}[Accettazione di un Linguaggio da una MdT]
+    \begin{eqnarray*}
+        &\text{Una macchina di Turing $\mathcal{M}$ accetta un linguaggio $L$}&\\
+        &\Updownarrow&\\
+        &\forall x\in(\Sigma\backslash\{\sqcup\})^* \begin{cases*}
+            x\in L \to \mathcal{M}(x)=\text{yes}\\
+            x\notin L \to \mathcal{M}(x)\uparrow \text{ (non termina)}
+        \end{cases*}&
+    \end{eqnarray*}
+    Il linguaggio $L$ si dice \textbf{ricorsivamente enumerabile}.
+\end{definition}
+
+\begin{theorem}
+    $$
+        \text{$L$ è ricorsivo } \Rightarrow \text{ $L$ è ricorsivamente enumerabile}
+    $$
+\end{theorem}
+
+\paragraph{Esempio} Trovare un linguaggio $L$ tale che $L$ è ricorsivamente enumerabile ma non ricorsivo.
+
+Nell'halting problem abbiamo 
+$$
+    \mathcal{U}(\mathcal{M};x)=\mathcal{M}(x)
+$$
+L'halting language
+$$
+    H = \{ (\bin(\mathcal{M});x) ~|~ \mathcal{M}(x)\downarrow \}
+$$
+è ricorsivamente enumerabile ma non ricorsivo. Infatti, se $\mathcal{M}$ termina su $x$, allora $\mathcal{U}(\mathcal{M};x)=\mathcal{M}(x)=\text{yes}$, altrimenti $\mathcal{U}(\mathcal{M};x)\uparrow$. Questo è un risultato qualitativo.
+
+\paragraph{Esempio} Sia
+$$
+    L = \{ \bin(\mathcal{M}) ~|~ \forall x~\mathcal{M}(x)\downarrow \text{ in al massimo 100 passi} \}
+$$
+$L$ è ricorsivo. Infatti, la macchina $\mathcal{M}$ può eseguire al massimo 100 spostamenti a destra sul nastro. Quindi, tutte le macchine che terminano in al massimo 100 passi accettano input $\forall x\in|\Sigma|^n$ con $n\leq 100$.
+
+\begin{definition}[Computazione di Funzioni]
+    Sia $f$ una funzione $f:(\Sigma\backslash\sqcup)^*\to\Sigma^*$. Una macchina di Turing $\mathcal{M}$ computa $f$ se
+    $$
+        \forall x\in(\Sigma\backslash\sqcup)^*\qquad \mathcal{M}(x)\downarrow \text{ e alla fine $f(x)$ è sul nastro}
+    $$
+    La funzione $f$ è detta \textbf{ricorsiva}, o \textbf{computabile}.
+\end{definition}
+
+
+\section{Macchine di Turing a $k$-nastri}
+\begin{definition}[Macchina di Turing a $k$-nastri]
+    Una macchina di Turing a $k$-nastri è u\-na tupla $\mathcal{M}=(K,\Sigma,\delta,s)$ con $K,\Sigma,s$ definite come per una macchina di Turing, e
+    $$
+        \delta : K\times\Sigma \to (K\cup\{\text{yes},\text{no},\text{halt}\}) \times
+                                    (\Sigma \times \{\gets,\to,-\})^k
+    $$    
+\end{definition}
+Una macchina di Turing a $k$-nastri è una macchina di Turing con un numero limitato di nastri, che possono essere utilizzati in parallelo. La funzione $\delta$ cambia perché si ha un puntatore per nastro.
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,2) -- (4,2);
+        \draw (0,2.5) -- (4,2.5);
+        \foreach \x in {0.5,1,1.5,2} {
+          \draw (\x,2) -- (\x,2.5);
+        };
+        \node[above] at (0.75,2) {$\rhd$};
+        \node[above] at (2.5,2) {\dots};
+        \node[below] at (1.25,2) {$\uparrow$};
+
+        \draw (0,.75) -- (4,.75);
+        \draw (0,1.25) -- (4,1.25);
+        \foreach \x in {0.5,1,1.5,2} {
+          \draw (\x,.75) -- (\x,1.25);
+        };
+        \node[above] at (0.75,.75) {$\rhd$};
+        \node[above] at (2.5,.75) {\dots};
+        \node[below] at (3.25,.75) {$\uparrow$};
+
+        \node at (2,.2) {$\vdots$};
+
+        \draw (0,-.5) -- (4,-.5);
+        \draw (0,-1) -- (4,-1);
+        \foreach \x in {0.5,1,1.5,2} {
+          \draw (\x,-.5) -- (\x,-1);
+        };
+        \node[above] at (0.75,-1) {$\rhd$};
+        \node[above] at (2.5,-1) {\dots};
+        \node[below] at (0.75,-1) {$\uparrow$};
+
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (-.3,-1.5) -- (-.3,2.5);
+        \node at (-.7,.5) {$k$};
+    \end{tikzpicture}
+\end{center}
+
+\begin{definition}[Macchina di Turing a $k$-nastri con Input/Output]
+    Una macchina di\\Turing a $k$-nastri con I/O è una macchina di Turing a $k$-nastri con un nastro di input e un nastro di output. Il nastro di input è di sola lettura, il nastro di output è di sola scrittura.
+\end{definition}
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,2) -- (4,2);
+        \draw (0,2.5) -- (4,2.5);
+        \foreach \x in {0.5,1,1.5,2} {
+          \draw (\x,2) -- (\x,2.5);
+        };
+        \node[above] at (0.75,2) {$\rhd$};
+        \node[above] at (2.5,2) {\dots};
+        \node[below] at (1.25,2) {$\uparrow$};
+
+        \draw (0,.75) -- (4,.75);
+        \draw (0,1.25) -- (4,1.25);
+        \foreach \x in {0.5,1,1.5,2} {
+          \draw (\x,.75) -- (\x,1.25);
+        };
+        \node[above] at (0.75,.75) {$\rhd$};
+        \node[above] at (2.5,.75) {\dots};
+        \node[below] at (3.25,.75) {$\uparrow$};
+
+        \node at (2,.2) {$\vdots$};
+
+        \draw (0,-.5) -- (4,-.5);
+        \draw (0,-1) -- (4,-1);
+        \foreach \x in {0.5,1,1.5,2} {
+          \draw (\x,-.5) -- (\x,-1);
+        };
+        \node[above] at (0.75,-1) {$\rhd$};
+        \node[above] at (2.5,-1) {\dots};
+        \node[below] at (0.75,-1) {$\uparrow$};
+
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (-.3,-1.5) -- (-.3,2.5);
+        \node at (-.7,.5) {$k$};
+
+        \node[right] at (4.25,2.25) {input};
+        \node[right] at (4.25,-.75) {output};
+    \end{tikzpicture}
+\end{center}
+
+\begin{definition}[Configurazione e Configurazione Iniziale]
+    Siano $w_i,u_i\in\Sigma^*$ stringhe. Una configurazione è una tupla
+    $$
+        (q,w_1,u_1,w_2,u_2,\dots,w_k,u_k)
+        \to 
+        (q',w_1',u_1',w_2',u_2',\dots,w_k',u_k')
+    $$
+    Una configurazione iniziale su input $x$ è una tupla
+    $$
+        (s,\rhd,x,\rhd,\varepsilon,\dots,\rhd,\varepsilon)
+    $$
+\end{definition}
+
 
 
 % LEZIONE 11
+
+\chapter{Complessità Spaziale}
 % parte 1
-Possiamo definire la classe $P$:
+Definiamo la classe $P$ come
 $$
     P = \bigcup_{h\in\mathbb{N}} \text{TIME}(n^h)
 $$
 ovvero l'unione di tutti i problemi che possono essere risolti in tempo polinomiale. La classe $P$ ci piace così tanto perché abbiamo la tesi di Church-Turing estesa. Questa classe è \textbf{invariante} rispetto alla scelta del modello di computazione.
-
-Possiamo definire la classe EXP:
+Possiamo definire la classe EXP
 $$
     \text{EXP} = \bigcup_{h\in\mathbb{N}} \text{TIME}(2^{n^h})
 $$
