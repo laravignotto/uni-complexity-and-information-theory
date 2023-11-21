@@ -6,7 +6,7 @@
 
 Libro di Papadimitriou main reference.
 
-In questa parte utilizzeremo come modello di computazione le \textbf{macchine di Turing} (TM). Esistono diversi modelli di TM: macchine di Turing multinastro, macchine di Turing input/output, macchine di Turing con oracolo, macchine di Turing nondeterministiche. Le TM verranno utilizzate per confrontare i diversi risultati di complessità che possiamo ottenere.
+In questa parte utilizzeremo come modello di computazione le \textbf{macchine di Turing} (MdT). Esistono diversi modelli di MdT: macchine di Turing multinastro, macchine di Turing input/output, macchine di Turing con oracolo, macchine di Turing nondeterministiche. Le MdT verranno utilizzate per confrontare i diversi risultati di complessità che possiamo ottenere.
 
 Ci concentreremo sia su \textbf{complessità temporale} (time complexity) che \textbf{spaziale} (space complexity). Il focus non sarà sulla complessità di un dato algoritmo, ma sulla complessità di un problema. I \textbf{problemi} possono essere classificati come di decisione (decision problems), di funzione (function problems), o di ottimizzazione (optimization problems).
 \begin{itemize}
@@ -107,7 +107,7 @@ Si parte dallo stato $s$ e si vuole finire nello stato $p$ solo quando $x$ è pa
     \delta(q,0) &= (q_0,\rhd,\to)\\
 \end{align*}
 \textcolor{Red}{TODO: finire di scrivere le transizioni}
-Questa macchina eseguirà un numero quadratico di passi per controllare se la stringa $x$ è palinfroma: $O(|x|^2)$.\medskip
+Questa macchina eseguirà un numero quadratico di passi per controllare se la stringa $x$ è palindroma: $O(|x|^2)$.\medskip
 
 Se si vuole controllare in C (o in un altro linguaggio) se una stringa è palindroma, si può scrivere un programma che confronta il primo e l'ultimo carattere, poi il secondo e il penultimo, e così via, eseguendo un numero lineare di passi. La complessità è $O(|x|)$. Questo è un esempio di come la complessità di un problema dipenda dal modello di computazione utilizzato.
 
@@ -118,7 +118,7 @@ La versione estesa afferma che tutti i modelli (ragionevoli) di calcolo sono cor
 
 In altre parole, la tesi di Church-Turing estesa afferma che la complessità computazionale di un problema è indipendente dal modello di calcolo utilizzato per risolverlo.
 $$
-    \underset{\text{problema}}{P} \to \text{TMs }O(f(n)) \to \underset{\text{modello}}{M}~O(p(f(n)))  
+    \underset{\text{problema}}{P} \to \text{MdT }O(f(n)) \to \underset{\text{modello}}{M}~O(p(f(n)))  
 $$
 Ma è vera anche la direzione contraria. \textcolor{Red}{TODO: ???}
 
@@ -126,7 +126,7 @@ Ma è vera anche la direzione contraria. \textcolor{Red}{TODO: ???}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Macchine di Turing e Unlimited Register Machines}
+\chapter{Macchine di Turing}
 
 
 \section{Definizioni}
@@ -503,7 +503,7 @@ $L$ è ricorsivo. Infatti, la macchina $\mathcal{M}$ può eseguire al massimo 10
 \end{definition}
 
 
-\section{Macchine di Turing a $k$-nastri}
+\section{Macchine di Turing a $k$-nastri e Input/Output}
 \begin{definition}[Macchina di Turing a $k$-nastri]
     Una macchina di Turing a $k$-nastri è u\-na tupla $\mathcal{M}=(K,\Sigma,\delta,s)$ con $K,\Sigma,s$ definite come per una macchina di Turing, e
     $$
@@ -609,13 +609,182 @@ Una macchina di Turing a $k$-nastri è una macchina di Turing con un numero limi
 
 % LEZIONE 11
 
-\chapter{Complessità Spaziale}
+% \chapter{Complessità Spaziale}
 % parte 1
-Definiamo la classe $P$ come
-$$
-    P = \bigcup_{h\in\mathbb{N}} \text{TIME}(n^h)
-$$
-ovvero l'unione di tutti i problemi che possono essere risolti in tempo polinomiale. La classe $P$ ci piace così tanto perché abbiamo la tesi di Church-Turing estesa. Questa classe è \textbf{invariante} rispetto alla scelta del modello di computazione.
+\subsection{Complessità Spaziale}
+\begin{definition}[Complessità Spaziale per una MdT a $k$-nastri su input $x$]
+    Si ha che
+    $$
+        (s,\rhd,x) \to^* (H,w_1,u_1,\dots,w_k,u_k)
+    $$
+    con $H=\{\text{halt},\text{yes},\text{no}\}$. Lo spazio utilizzato è
+    $$
+        \sum_{i=1}^k |w_i| + |u_i|
+    $$
+\end{definition}
+
+\begin{definition}[Complessità Spaziale per una MdT a $k$-nastri con I/O]
+    Si ha che
+    $$
+        (s,\rhd,x) \to^* (H,w_1,u_1,\dots,w_k,u_k)
+    $$
+    con $H=\{\text{halt},\text{yes},\text{no}\}$. Lo spazio utilizzato è
+    $$
+        \sum_{i=1}^{k-1} |w_i| + |u_i|
+    $$
+\end{definition}
+dove $\delta(q,\sigma_1,\dots,\sigma_k)=(q',\sigma_1',\dots,\sigma_k',\to)$.
+
+\begin{definition}[Classi di Complessità Spaziale]
+    $L$ è decidibile in spazio $f(n)$ se esiste una macchina di Turing a $k$-nastri con I/O $\mathcal{M}$ che decide $L$ e, $\forall x$, $\mathcal{M}$ utilizza uno spazio al massimo $f(|x|)$.
+\end{definition}
+
+\paragraph{Esempio} $L=\{x|x\text{ è palindroma}\}$. Si vuole trovare la macchina più efficiente in termini di spazio. La seguente macchina è efficiente nel tempo:
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,1) -- (4.5,1);
+        \draw (0,1.5) -- (4.5,1.5);
+        \foreach \x in {0.5,1,1.5,3,3.5,4} {
+          \draw (\x,1) -- (\x,1.5);
+        };
+        \node[above] at (0.75,1) {$\rhd$};
+        \node[above] at (1.25,1) {$x_1$};
+        \node[above] at (2.25,1) {\dots};
+        \node[above] at (3.25,1) {$x_n$};
+        \node[above] at (3.75,1) {$\sqcup$};
+
+        \draw (0,0) -- (4.5,0);
+        \draw (0,.5) -- (4.5,.5);
+        \foreach \x in {0.5,1,1.5,3,3.5,4} {
+          \draw (\x,0) -- (\x,.5);
+        };
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$x_1$};
+        \node[above] at (2.25,0) {\dots};
+        \node[above] at (3.25,0) {$x_n$};
+        \node[above] at (3.75,0) {$\sqcup$};
+
+        \draw[->] (4.6,1.25) to[out=0,in=0,distance=20] (4.6,.25);
+        \node[right] at (5.1,.75) {copia};
+
+        \node[left] at (-.25,1.25) {input};
+        \node[left] at (-.25,.25) {working tape};
+    \end{tikzpicture}
+\end{center}
+perché ha $\text{TIME }\Theta(n)$ e $\text{SPACE }\Theta(n)$. Mentre la seguente macchina è efficiente nello spazio:
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,1) -- (5.5,1);
+        \draw (0,1.5) -- (5.5,1.5);
+        \foreach \x in {0.5,1,1.5,4,4.5,5} {
+          \draw (\x,1) -- (\x,1.5);
+        };
+        \node[above] at (0.75,1) {$\rhd$};
+        \node[above] at (1.25,1) {$\cancel{x_1}$};
+        \node[above] at (1.25,1.5) {$\rhd$};
+        \node[above] at (2.75,1) {\dots};
+        \node[above] at (4.25,1) {$\cancel{x_n}$};
+        \node[above] at (4.25,1.5) {$\sqcup$};
+        \node[above] at (4.75,1) {$\sqcup$};
+
+        \draw (0,0) -- (5.5,0);
+        \draw (0,.5) -- (5.5,.5);
+        \foreach \x in {0.5,1,1.5,2.5,3,4,4.5,5} {
+          \draw (\x,0) -- (\x,.5);
+        };
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$x_1$};
+        \node[above] at (2,0) {\dots};
+        \node[above] at (2.75,0) {$x$};
+        \node[above] at (3.5,0) {\dots};
+        \node[above] at (4.25,0) {$x_n$};
+        \node[above] at (4.75,0) {$\sqcup$};
+
+        \draw (0,-1) -- (5.5,-1);
+        \draw (0,-.5) -- (5.5,-.5);
+        \foreach \x in {0.5,1,1.5,2.5,3,4,4.5,5} {
+          \draw (\x,-1) -- (\x,-.5);
+        };
+        \node[above] at (0.75,-1) {$\rhd$};
+        \node[above] at (1.25,-1) {$x_1$};
+        \node[above] at (2,-1) {\dots};
+        \node[above] at (2.75,-1) {$x$};
+        \node[above] at (3.5,-1) {\dots};
+        \node[above] at (4.25,-1) {$x_n$};
+        \node[above] at (4.75,-1) {$\sqcup$};
+
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (.5,-1.1) -- (3,-1.1);
+        \node[below] at (1.75,-1.25) {$y$};
+    \end{tikzpicture}
+\end{center}
+con $\text{SPACE }\Theta(\log n)$.\bigskip
+
+\begin{definition}
+    \begin{align*}
+        \text{TIME}(f(n)) = \{ L~|~L\text{ può essere deciso in tempo }f(n) \}\\
+        \text{SPACE}(f(n)) = \{ L~|~L\text{ può essere deciso in spazio }f(n) \}
+    \end{align*}
+\end{definition}
+In altre parole, $\text{SPACE}(f(n))$ è l'insieme di tutti i linguaggi che possono essere decisi in tempo $f(n)$ da una macchina di Turing a $k$-nastri con I/O. Per ogni input $x$ tale che $|x|=n$, la macchina utilizza spazio al più $f(n)$. 
+\begin{property}
+    Se esiste una macchina di Turing che decide $L$ in tempo $f(n)$, e $f(n)\geq n$, al\-lo\-ra esiste una macchina di Turing con I/O che decide $L$ in tempo $O(f(n))$.
+\end{property}
+
+\paragraph{Esempio} Calcola $x+y$.
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,1) -- (7,1);
+        \draw (0,1.5) -- (7,1.5);
+        \foreach \x in {0.5,1,1.5,2,3,3.5,4,4.5,5.5,6,6.5} {
+          \draw (\x,1) -- (\x,1.5);
+        };
+        \node[above] at (0.75,1) {$\rhd$};
+        \node[above] at (1.25,1) {$x_1$};
+        \node[above] at (1.75,1) {$x_2$};
+        \node[above] at (2.5,1) {\dots};
+        \node[above] at (3.25,1) {$x_r$};
+        \node[above] at (3.75,1) {;};
+        \node[above] at (4.25,1) {$y_1$};
+        \node[above] at (5,1) {\dots};
+        \node[above] at (5.75,1) {$y_m$};
+        \node[above] at (6.25,1) {$\sqcup$};
+
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1,1.6) -- (6,1.6);
+        \node[above] at (3.5,1.75) {$n$};
+
+        \node at (3.5,0.3) {\vdots};
+
+        \draw (0,-1) -- (7,-1);
+        \draw (0,-.5) -- (7,-.5);
+        \foreach \x in {0.5,1,1.5,5.5,6,6.5} {
+          \draw (\x,-1) -- (\x,-.5);
+        };
+        \node[above] at (0.75,-1) {$\rhd$};
+        \node[above] at (1.25,-1) {$z_1$};
+        \node[above] at (3.5,-1) {\dots};
+        \node[above] at (5.75,-1) {$z_n$};
+        \node[above] at (6.25,-1) {$\sqcup$};
+
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (-.2,-.3) -- (-.2,.8);
+        \node[left] at (-.35,.25) {working tapes};
+
+        \node[right] at (7.2,1.25) {input};
+        \node[right] at (7.2,-.75) {output};
+    \end{tikzpicture}
+\end{center}
+Questo ha spazio lineare $\Theta(n)$ (molto male).\bigskip
+
+\begin{definition}[Classe P]
+    Definiamo la classe $P$ come
+    $$
+        P = \bigcup_{h\in\mathbb{N}} \text{TIME}(n^h)
+    $$
+    ovvero l'unione di tutti i problemi che possono essere risolti in tempo polinomiale.
+\end{definition}
+La classe $P$ ci piace così tanto perché abbiamo la tesi di Church-Turing estesa. Questa classe è \textbf{invariante} rispetto alla scelta del modello di computazione.
 Possiamo definire la classe EXP
 $$
     \text{EXP} = \bigcup_{h\in\mathbb{N}} \text{TIME}(2^{n^h})
@@ -635,8 +804,48 @@ La classe $\mathbb{L}$, PSPACE, e EXPSPACE
 \end{property}
 
 % book, section 2.6
-RAM, random access machine. (1)
+\section{Random Access Machines}
+Capitolo 2.6 del libro. Le random access machine (RAM), sono un modello di computazione sequenziale, composte da registri di input e registri di lavoro. Ogni registro contiene un intero.
+\begin{table}[H]
+    \centering
+    \def\arraystretch{1.5}
+    \begin{tabular}{lc|c|clc|c|}
+        \cline{3-3} \cline{7-7}
+        registri di input & $I_1$    & $\qquad$ & $\qquad$ & working registers & $R_0$    & $\qquad$ \\ \cline{3-3} \cline{7-7} 
+                          & $\vdots$ &          &          &                   & $\vdots$ &          \\ \cline{3-3} \cline{7-7} 
+                          & $R_i$    &          &          &                   & $I_j$    &          \\ \cline{3-3} \cline{7-7} 
+                          & $\vdots$ &          &          &                   & $\vdots$ &         
+    \end{tabular}
+\end{table}
 
-
-% pausa
-% parte 2
+\noindent Le operazioni possibili sono:
+\begin{itemize}
+    \item \texttt{READ} $j$: $r_0:=i_j$
+    \item \texttt{READ} $\uparrow j$: $r_0:=i_{r_j}$ (vai al registro $R_j$, leggine il contenuto $h$, vai al registro $I_h$, copiane il contenuto in $R_0$)
+    \item \texttt{STORE} $j$: $r_j:=r_0$
+    \item \texttt{STORE} $\uparrow j$
+    \item \texttt{LOAD} $j$: $r_0:=r_j$
+    \item \texttt{LOAD} $\uparrow j$
+    \item \texttt{LOAD} $=j$: $r_0:=j$
+    \item \texttt{ADD} $j$: $r_0:=r_0+r_j$
+    \item \texttt{ADD} $\uparrow j$: $r_0:=r_0+r_{r_j}$ 
+    \item \texttt{ADD} $=j$
+    \item \texttt{SUB} $j$
+    \item \dots
+    \item \texttt{HALF}: $r_0:=\left\lfloor \dfrac{r_0}{2} \right\rfloor$ (tolgo da $r_0$ l'ultimo bit)
+    \item \texttt{JUMP} $j$: $k:=j$ (contatore)
+    \item \texttt{JPOS} $j$: if $r_0>0$ then $k:=j$
+    \item \texttt{JNEG} $j$
+    \item \texttt{JZERO} $j$
+    \item \texttt{HALT}
+\end{itemize}
+Il libro dimostra che
+\begin{theorem}
+    RAM con complessità temporale uniforme e macchine di Turing con $k$-nastri sono correlate polinomialmente.
+\end{theorem}
+In particolare 
+\begin{align*}
+    \underbrace{\text{MdT}}_{f(n)} &\to^{\text{simula}} \underbrace{\text{RAM}}_{O(f(n))}\\
+    \underbrace{\text{RAM}}_{f(n)} &\to^{\text{simula}} \underbrace{\text{MdT a 7-nastri}}_{O((f(n))^3)}\\
+\end{align*}
+Ad esempio, quando si sommano due numeri, si ottiene al massimo 1 bit in più dell'input maggiore.
