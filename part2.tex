@@ -639,7 +639,7 @@ dove $\delta(q,\sigma_1,\dots,\sigma_k)=(q',\sigma_1',\dots,\sigma_k',\to)$.
     $L$ è decidibile in spazio $f(n)$ se esiste una macchina di Turing a $k$-nastri con I/O $\mathcal{M}$ che decide $L$ e, $\forall x$, $\mathcal{M}$ utilizza uno spazio al massimo $f(|x|)$.
 \end{definition}
 
-\paragraph{Esempio} $L=\{x|x\text{ è palindroma}\}$. Si vuole trovare la macchina più efficiente in termini di spazio. La seguente macchina è efficiente nel tempo:
+\paragraph{Esempio: palindromo} $L=\{x|x\text{ è palindroma}\}$. Si vuole trovare la macchina più efficiente in termini di spazio. La seguente macchina è efficiente nel tempo:
 \begin{center}
     \begin{tikzpicture}
         \draw (0,1) -- (4.5,1);
@@ -849,3 +849,34 @@ In particolare
     \underbrace{\text{RAM}}_{f(n)} &\to^{\text{simula}} \underbrace{\text{MdT a 7-nastri}}_{O((f(n))^3)}\\
 \end{align*}
 Ad esempio, quando si sommano due numeri, si ottiene al massimo 1 bit in più dell'input maggiore.
+
+% LEZIONE 12
+\section{Macchine Nondeterministiche}
+Si hanno
+\begin{itemize}
+    \item Macchine deterministiche $\mathcal{M}=(K,\Sigma,\delta,s)$, con $\delta$ \textbf{funzione}
+    $$
+        \delta:K\times\Sigma^k\to (K\cup\{\text{yes},\text{no},\text{halt}\}) \times \Sigma^k \times \{\gets,\to,-\}^k
+    $$
+    la cui configurazione è del tipo
+    $$
+        c \to c'
+    $$
+    \item Macchine nondeterministiche $\mathcal{M}=(K,\Sigma,\Delta,s)$, con $\Delta$ \textbf{relazione}
+    $$
+        \Delta\subseteq K\times\Sigma^k\times (K\cup\{\text{yes},\text{no},\text{halt}\}) \times \Sigma^k \times \{\gets,\to,-\}^k
+    $$
+    quindi con una o più possibili transizioni. La configurazione $(q,u_1,w_1,\dots,q_k,w_k)$ è del tipo 
+    \begin{center}
+        \begin{tikzpicture}[grow=right, ->, level distance=1cm,
+            level 1/.style={sibling distance=1cm}]
+            \node {$c$}
+              child {node {$c'''$}}
+              child {node {$c''$}}
+              child {node {$c'$}};
+        \end{tikzpicture}
+    \end{center}    
+\end{itemize}
+
+\paragraph{Esempio: Reachability Problem} Dato un grafo diretto $G=(V,E)$, e due nodi $u,v\in V$, decidere se $u$ raggiunge $v$ (se esiste un cammino da $u$ a $v$). Studiamo la complessità in tempo e spazio di questo problema utilizzando sia un modello deterministico che nondeterministico.
+\subparagraph{Modello deterministico} Un possibile algoritmo per risolvere questo problema è BFS$(G,u)$. Si costruisce un albero con radice $u$, e ad ogni livello si aggiungono i nodi raggiungibili da $u$ in un passo. Se $v$ è raggiungibile da $u$, allora $v$ sarà raggiunto da $u$ in un numero di passi $\leq |V|$. Quindi, la complessità in tempo è $O(|V|+|E|)$, e in spazio $O(|V|)$.
