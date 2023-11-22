@@ -10,7 +10,7 @@ In questa parte utilizzeremo come modello di computazione le \textbf{macchine di
 
 Ci concentreremo sia su \textbf{complessità temporale} (time complexity) che \textbf{spaziale} (space complexity). Il focus non sarà sulla complessità di un dato algoritmo, ma sulla complessità di un problema. I \textbf{problemi} possono essere classificati come di decisione (decision problems), di funzione (function problems), o di ottimizzazione (optimization problems).
 \begin{itemize}
-    \item \textbf{Decision problem} $P:\text{inputs}\to\{yes,no\}$
+    \item \textbf{Decision problem} $P:\text{inputs}\to\{\text{yes},\text{no}\}$
     \item \textbf{Function problem} computare una data funzione, ad esempio l'ordinamento di una lista
     \item \textbf{Optimization problem} tra tutti i possibili output, si vuole trovare quello che minimizza o massimizza una funzione di costo. 
 \end{itemize}
@@ -25,7 +25,7 @@ Ci concentreremo sia su \textbf{complessità temporale} (time complexity) che \t
 In questo corso ci concentreremo sui problemi di decisione. Se si ha una soluzione per un problema di funzione o di ottimizzazione, si possiede automaticamente una soluzione per il problema di decisione.\medskip
 
 % (disegno nelle note)
-Immaginiamo tutti gli input possibili al problema dell'esempio precedente come ad un insieme infinito di tuple $(G,u,v)$. Questo insieme si può dividere in due: il sottoinsieme dei \emph{yes} di tutte le codifiche binarie di triple $(G,u,v)$ tali che esiste un cammino in $G$ da $u$ a $v$, e, inversamente, il sottoinsieme \emph{no}.
+Immaginiamo tutti gli input possibili al problema dell'esempio precedente come ad un insieme infinito di tuple $(G,u,v)$. Questo insieme si può dividere in due: il sottoinsieme dei yes di tutte le codifiche binarie di triple $(G,u,v)$ tali che esiste un cammino in $G$ da $u$ a $v$, e, inversamente, il sottoinsieme no.
 \begin{center}
     \begin{tikzpicture}
         \node[ellipse,
@@ -34,8 +34,8 @@ Immaginiamo tutti gli input possibili al problema dell'esempio precedente come a
             minimum height=3cm] (A) at (0,0) { };
         \draw (0,-1.5) -- (0,1.5);
         \node[above left] at (A.north west) {$L$};
-        \node[below] at (A.220) {\emph{yes}};
-        \node[below] at (A.-40) {\emph{no}};
+        \node[below] at (A.220) {yes};
+        \node[below] at (A.-40) {no};
 
         \node at (-2,0.4) {$\bullet$};
         \node at (-0.8,0.2) {$\bullet$};
@@ -266,7 +266,7 @@ Ogni registro contiene un numero naturale. Quindi, il contenuto del registro $R_
         \node[above] at (1.25,0) {$x_1$};
         \node[above] at (2,0) {\dots};
         \node[above] at (2.75,0) {$x_n$};
-        \node[above] at (3.25,0) {$\sqcup$};
+        \node[above] at (3.25,0) {;};
         \node[above] at (3.75,0) {$y_1$};
         \node[above] at (4.5,0) {\dots};
         \node[above] at (5.25,0) {$y_m$};
@@ -280,7 +280,7 @@ Ogni registro contiene un numero naturale. Quindi, il contenuto del registro $R_
         \node[above] at (4.5,0.7) {$y$};
     \end{tikzpicture}
 \end{center}
-Questa macchina richiede, nel caso peggiore, un numero quadratico di passi per terminare. La complessità è $\Theta(|x|^2)$.
+Questa macchina richiede, nel caso peggiore, un numero quadratico di passi per terminare. La com\-ples\-si\-tà è $\Theta(|x|^2)$.
 
 \subparagraph{URM} Possiamo utilizzare una URM con $x$ e $y$ rispettivamente nei registri $R_0$ e $R_1$.
 \begin{table}[H]
@@ -305,7 +305,7 @@ In questo caso, la complessità si può calcolare in due modi.
 \begin{definition}[Time Complexity su URM]~
     \begin{itemize}
         \item \emph{Uniform cost criterium} (criterio del costo uniforme): numero di istruzioni eseguite.
-        \item \emph{Logarithmic cost criterium} (criterio del costo logaritmico): ogni istruzione ha un costro proporzionale al numero di cifre coinvolte.
+        \item \emph{Logarithmic cost criterium} (criterio del costo logaritmico): ogni istruzione ha un costo proporzionale al numero di cifre coinvolte.
     \end{itemize}
 \end{definition}
 Quindi, per questa macchina, la complessità è 
@@ -352,22 +352,22 @@ Nel caso peggiore $x=111\dots1$, quindi la complessità è lineare $\Theta(n)$.
 \subsection{URM + Prodotto}
 Cambiamo il modello di computazione URM, considerando URM + prodotto. Oltre alle istruzioni $S(i)$, $Z(i)$, $T(i,j)$, e $J(i,j,k)$, aggiungiamo l'istruzione $P(i)$, che esegue l'operazione $r_i:=r_i* r_i$.
 
-\paragraph{Esempio di programma per URM + prodotto} Dati $x,y\in\mathbb{N}$, decidere se $x=y$.
+\paragraph{Esempio di programma per URM + prodotto} Abbiamo in input un numero $x$, che copiamo anche in $R_1$. Applichiamo il prodotto sul contenuto del registro $R_0$ per $x$ volte. In altre parole, vogliamo calcolare $x^{2^x}$.
 \begin{enumerate}
     \item $J(1,2,5)$
     \item $P(0)$
     \item $S(2)$
     \item $J(3,3,1)$
 \end{enumerate}
-Pertendo da un input di $x$ in $R_0$, $x$ in $R_1$, e $0$ in tutti gli altri registri. Si avrà:
+Pertendo da un input di $x$ in $R_0$, $x$ in $R_1$, e $0$ in tutti gli altri registri. In un generico passo di iterazione $i$ si avrà:
 \begin{table}[H]
     \centering
     \def\arraystretch{1.3}
-    \begin{tabular}{c|c|cc|c|cc|c|cc|c|cccc|c|}
+    \begin{tabular}{c|c|cc|c|cc|c|cc|c|cccc|c|c}
     \cline{2-2} \cline{5-5} \cline{8-8} \cline{11-11} \cline{16-16}
     $R_0$ & $x$      &       & $R_0$ & $x^2$    &       & $R_0$ & $(x^2)^2$ &       & $R_0$ & $(x^4)^2$ &       &         &       & $R_0$ & $x^{2^i}$  \\ \cline{2-2} \cline{5-5} \cline{8-8} \cline{11-11} \cline{16-16} 
     $R_1$ & $x$      &       & $R_1$ & $x$      &       & $R_1$ & $x$       &       & $R_1$ & $x$       &       &         &       & $R_1$ & $x$      \\ \cline{2-2} \cline{5-5} \cline{8-8} \cline{11-11} \cline{16-16} 
-    $R_2$ & 0        & ~ $\to$ ~ & $R_2$ & 1        & ~ $\to$ ~ & $R_2$ & 2         & ~ $\to$ ~ & $R_2$ & 3         & ~ $\to$ & $\dots$ & $\to$ ~ & $R_2$ & $2^i$    \\ \cline{2-2} \cline{5-5} \cline{8-8} \cline{11-11} \cline{16-16} 
+    $R_2$ & 0        & ~ $\to$ ~ & $R_2$ & 1        & ~ $\to$ ~ & $R_2$ & 2         & ~ $\to$ ~ & $R_2$ & 3         & ~ $\to$ & $\dots$ & $\to$ ~ & $R_2$ & $i$    \\ \cline{2-2} \cline{5-5} \cline{8-8} \cline{11-11} \cline{16-16} 
     $R_3$ & 0        &       & $R_3$ & 0        &       & $R_3$ & 0         &       & $R_3$ & 0         &       &         &       & $R_3$ & 0        \\ \cline{2-2} \cline{5-5} \cline{8-8} \cline{11-11} \cline{16-16} 
     $R_4$ & $\vdots$ &       & $R_4$ & $\vdots$ &       & $R_4$ & $\vdots$  &       & $R_4$ & $\vdots$  &       &         &       & $R_4$ & $\vdots$
     \end{tabular}
@@ -414,7 +414,7 @@ Il numero di istruzioni è lineare $\Theta(n)$.
 \end{center}
 Quindi $\Omega(\log(x^{2^x}))=\Omega(2^x \log(x))$.\bigskip
 
-Questo risultato sembra contraddire la tesi di Church-Turing estesa, che afferma che tuttti i modelli \textbf{ragionevoli} di computazione sono correlati polinomialmente. Ma cosa significa \emph{ragionevole}? Non si può avere una operazione che fa crescere ``troppo'' l'input (nell'esempio, il prodotto), si deve utilizzare il creiterio logaritmico.
+Questo risultato sembra contraddire la tesi di Church-Turing estesa, che afferma che tutti i modelli \textbf{ragionevoli} di computazione sono correlati polinomialmente. Ma cosa significa \emph{ragionevole}? Non si può avere una operazione che fa crescere ``troppo'' l'input (nell'esempio, il prodotto), si deve utilizzare il criterio logaritmico.
 
 In altre parole, se l'algoritmo utilizza operazioni che in un numero polinomiale di passi fanno crescere l'input esponenzialmente, e queste sono utilizzate un numero di volte che dipende dalla dimensione dell'input, allora si deve utilizzare un criterio logaritmico. Quando non si è sicuri della potenza delle operazioni della macchina, il costo di ogni singola operazione dev'essere proporzionale al numero di bit manipolati.
 \begin{table}[H]
@@ -446,7 +446,7 @@ $$
     P:\Sigma^*\to\{\text{yes},\text{no}\}
 $$
 
-\begin{definition}[Decidibilità di un Linguaggio da una MdT]
+\begin{definition}[Linguaggio Ricorsivo]
     \begin{eqnarray*}
         &\text{Una macchina di Turing $\mathcal{M}$ decide un linguaggio $L$}&\\
         &\Updownarrow&\\
@@ -458,7 +458,7 @@ $$
     Il linguaggio $L$ si dice \textbf{ricorsivo}.
 \end{definition}
 
-\begin{definition}[Accettazione di un Linguaggio da una MdT]
+\begin{definition}[Linguaggio Ricorsivamente Enumerabile]
     \begin{eqnarray*}
         &\text{Una macchina di Turing $\mathcal{M}$ accetta un linguaggio $L$}&\\
         &\Updownarrow&\\
