@@ -780,13 +780,13 @@ In altre parole, $\text{SPACE}(f(n))$ è l'insieme di tutti i linguaggi che poss
 Questo ha spazio lineare $\Theta(n)$ (molto male).\bigskip
 
 \begin{definition}[Classe P]
-    Definiamo la classe $P$ come
+    Definiamo la classe P come
     $$
-        P = \bigcup_{h\in\mathbb{N}} \text{TIME}(n^h)
+        \text{P} = \bigcup_{h\in\mathbb{N}} \text{TIME}(n^h)
     $$
     ovvero l'unione di tutti i problemi che possono essere risolti in tempo polinomiale.
 \end{definition}
-La classe $P$ ci piace così tanto perché abbiamo la tesi di Church-Turing estesa. Questa classe è \textbf{invariante} rispetto alla scelta del modello di computazione.
+La classe P ci piace così tanto perché abbiamo la tesi di Church-Turing estesa. Questa classe è \textbf{invariante} rispetto alla scelta del modello di computazione.
 Possiamo definire la classe EXP
 $$
     \text{EXP} = \bigcup_{h\in\mathbb{N}} \text{TIME}(2^{n^h})
@@ -864,7 +864,7 @@ Si hanno
     $$
         c \to c'
     $$
-    \item Macchine nondeterministiche $\mathcal{M}=(K,\Sigma,\Delta,s)$, con $\Delta$ \textbf{relazione}
+    \item Macchine nondeterministiche $\mathcal{N}=(K,\Sigma,\Delta,s)$, con $\Delta$ \textbf{relazione}
     $$
         \Delta\subseteq K\times\Sigma^k\times (K\cup\{\text{yes},\text{no},\text{halt}\}) \times \Sigma^k \times \{\gets,\to,-\}^k
     $$
@@ -881,7 +881,403 @@ Si hanno
 \end{itemize}
 
 \paragraph{Esempio: Reachability Problem} Dato un grafo diretto $G=(V,E)$, e due nodi $u,v\in V$, decidere se $u$ raggiunge $v$ (se esiste un cammino da $u$ a $v$). Studiamo la complessità in tempo e spazio di questo problema utilizzando sia un modello deterministico che nondeterministico.
-\subparagraph{Modello deterministico} Un possibile algoritmo per risolvere questo problema è BFS$(G,u)$. Si costruisce un albero con radice $u$, e ad ogni livello si aggiungono i nodi raggiungibili da $u$ in un passo. Se $v$ è raggiungibile da $u$, allora $v$ sarà raggiunto da $u$ in un numero di passi $\leq |V|$. Quindi, la complessità in tempo è $O(|V|+|E|)$, e in spazio $O(|V|)$.
+\subparagraph{Modello deterministico} Un possibile algoritmo per risolvere questo problema è BFS$(G,u)$. Si costruisce un albero con radice $u$, e ad ogni livello si aggiungono i nodi raggiungibili in un passo. Utilizzando dei colori, alla fine della visita tutti i nodi visitati saranno neri, e quelli non raggiungibili grigi: è sufficiente controllare se $v$ è nero. Se $v$ è raggiungibile da $u$, allora $v$ sarà raggiunto da $u$ in un numero di passi $\leq |V|$. Quindi, la \textbf{complessità in tempo} è $O(|V|+|E|)$, ovvero lineare rispetto alla dimensione del grafo. Con una macchina di Turing:
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,1) -- (7,1);
+        \draw (0,1.5) -- (7,1.5);
+        \foreach \x in {0.5,1} {
+          \draw (\x,1) -- (\x,1.5);
+        };
+        \node[above] at (0.75,1) {$\rhd$};
+        \node[above] at (3.75,1) {$\dots$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1,1.6) -- (3.95,1.6);
+        \node[above] at (2.5,1.75) {$G$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (4.05,1.6) -- (4.95,1.6);
+        \node[above] at (4.5,1.75) {$u$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (5.05,1.6) -- (6,1.6);
+        \node[above] at (5.5,1.75) {$v$};
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (1,.9) -- (6,.9);
+        \node[below] at (3.5,.75) {$n$};
+
+        \draw (0,-1) -- (7,-1);
+        \draw (0,-.5) -- (7,-.5);
+        \foreach \x in {0.5,1} {
+          \draw (\x,-1) -- (\x,-.5);
+        };
+        \node[above] at (0.75,-1) {$\rhd$};
+        \node[above] at (3.75,-1) {$\dots$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1,-.4) -- (3.5,-.4);
+        \node[above] at (2.25,-.25) {colori};
+
+        \draw (0,-2.5) -- (7,-2.5);
+        \draw (0,-2) -- (7,-2);
+        \foreach \x in {0.5,1} {
+          \draw (\x,-2.5) -- (\x,-2);
+        };
+        \node[above] at (0.75,-2.5) {$\rhd$};
+        \node[above] at (3.75,-2.5) {$\dots$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1,-1.9) -- (3,-1.9);
+        \node[above] at (2,-1.75) {$Q$};
+    \end{tikzpicture}
+\end{center}
+con $Q$ queue. Quindi, per la tesi di Church-Turing estesa, la complessità è $O(n^\alpha)$ per qualche $\alpha\in\mathbb{N}$. Si ha che
+$$
+    \text{Reachability} \in \text{P}
+$$
+Per quanto riguarda la \textbf{complessità in spazio}, si ha che i colori e $Q$ sono molto gradi, quindi
+$$
+    \text{Reachability} \in \text{PSPACE}
+$$
+\textbf{Esercizio}: migliorare questo risultato. In particolare, $\text{Reachability} \in \mathbb{L} = \text{SPACE}(\log n)$? $\text{Reachability} \in \text{SPACE}((\log n)^2)$?
+\subparagraph{Modello nondeterministico} Si hanno diversi possibili stati futuri. Immaginiamo un grafo con un cammino da $u$ a $v$. Una macchina deterministica segue tutti i cammini uno ad uno, e per ognuno controlla se è quello corretto. Una macchina nondeterministica è in grado di ``indovinare'' il cammino corretto e di seguirlo.
+
+Analizziamo la \textbf{complessità spaziale}. In questo caso non si ha bisogno dei colori. La macchina nondeterministica genera ad ogni passo un nuovo nodo nel working tape:
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,1) -- (10.5,1);
+        \draw (0,1.5) -- (10.5,1.5);
+        \foreach \x in {0.5,1,2,2.5,3.5,4,5,5.5,6,7,7.5,8.5,9,10} {
+          \draw (\x,1) -- (\x,1.5);
+        };
+        \node[above] at (0.75,1) {$\rhd$};
+        \node[above] at (2.25,.9) {(};
+        \node[above] at (3.75,1) {;};
+        \node[above] at (5.25,.9) {)};
+        \node[above] at (5.75,1) {;};
+        \node[above] at (6.5,1) {$\dots$};
+        \node[above] at (7.25,1) {;};
+        \node[above] at (8.75,1) {;};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1,1.6) -- (2,1.6);
+        \node[above] at (1.5,1.75) {$|V|$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (2.5,1.6) -- (3.5,1.6);
+        \node[above] at (3,1.75) {$a$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (4,1.6) -- (5,1.6);
+        \node[above] at (4.5,1.75) {$b$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (7.5,1.6) -- (8.5,1.6);
+        \node[above] at (8,1.75) {$u$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (9,1.6) -- (10,1.6);
+        \node[above] at (9.5,1.75) {$v$};
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (2,.9) -- (7,.9);
+        \node[below] at (4.5,.75) {$\substack{\text{\normalsize archi}\\\text{\footnotesize worst case }O(|V|\cdot\log |V|)=n}$};
+        \node[left] at (-.5,1.25) {input};
+
+        \draw (0,-1) -- (10.5,-1);
+        \draw (0,-.5) -- (10.5,-.5);
+        \foreach \x in {0.5,1} {
+          \draw (\x,-1) -- (\x,-.5);
+        };
+        \node[above] at (0.75,-1) {$\rhd$};
+        \node[above] at (5,-1) {$\dots$};
+        \node[ellipse,
+            draw,
+            minimum width=1.6cm,
+            minimum height=.75cm] (A) at (1.75,-.75) { };
+        \node[ellipse,
+            draw,
+            minimum width=1.6cm,
+            minimum height=.75cm] (A) at (3.4,-.75) { };
+        \node[below] at (1.75,-1.1) {$1.$};
+        \node[below] at (3.4,-1.1) {$3.$};
+        \node[left] at (-.3,-.75) {working t.};
+    \end{tikzpicture}
+\end{center}
+\begin{enumerate}
+    \item Genera il codice di un nodo (ad esempio, del nodo $a$)
+    \item Controlla se esiste un arcp da $u$ ad $a$
+    \begin{itemize}
+        \item Se non esiste, ritorna ``no''
+        \item Se esiste, vai avanti
+    \end{itemize}
+    \item Aggiungi un altro nodo (ad esempio, il nodo $b$)
+    \item Controlla se esiste un arco da $a$ ad $b$
+    \begin{itemize}
+        \item Se non esiste, ritorna ``no''
+        \item Se esiste, vai avanti
+    \end{itemize}
+    \item Sostituisci $a$ con $b$, e aggiungi un altro nodo (ad esempio, il nodo $c$)
+    \item \dots
+\end{enumerate}
+\subparagraph{Esempio} Consideriamo il grafo
+\begin{center}
+    \begin{tikzpicture}[node distance={20mm}, main/.style = {}] 
+        \node[main] (u) {$u$}; 
+        \node[main] (a) [above right of=u] {$a$}; 
+        \node[main] (b) [below right of=u] {$b$}; 
+        \node[main] (c) [below left of=b] {$c$}; 
+        \node[main] (d) [below right of=b] {$d$}; 
+        \node[main] (e) [above right of=a] {$e$};
+        \node[main] (f) [below right of=a] {$f$};
+        \node[main] (v) [right of=f] {$v$}; 
+        \draw[->] (u) -- (a);
+        \draw[->] (a) -- (b);
+        \draw[->] (b) -- (u);
+        \draw[->] (d) -- (b);
+        \draw[->] (b) -- (c);
+        \draw[->] (c) -- (d);
+        \draw[->] (a) -- (e);
+        \draw[->] (a) -- (f);
+        \draw[->] (f) -- (v);  
+    \end{tikzpicture} 
+\end{center}
+Proviamo a trovare un cammino da $u$ a $v$:
+\begin{itemize}
+    \item Esiste un arco da $u$ ad $a$? Sì, quindi $ua$
+    \item Esiste un arco da $a$ a $e$? Sì, quindi $uae$
+    \item Esiste un arco da $e$ a $c$? No, quindi non esiste un cammino $uaec$
+\end{itemize}
+Esiste invece una computazione che genera il cammino $uafv$? Sì.
+Si può notare come ci sia però un problema, ovvero i cicli (ad esempio $uabuabcdbcdb\dots$). In realtà, questo non è un problema: ragionando sulla complessità, e non sulla computabilità, consideriamo solo macchine di Turing che terminano.
+
+Un modo per evitare i cicli è quello di immagazzinare in un working tape un contatore di passi eseguiti. Quando tale contatore raggiunge $|V|+1$, si può fermare la computazione e ritornare ``no''. 
+$$
+    \text{Reachability} \in \text{N}\mathbb{L} = \text{NSPACE}(\log n)
+$$
+
+\begin{definition}[Macchina Nondeterministica]
+    Una macchina nondeterministica è una tupla $\mathcal{N}(K,\Sigma,\Delta,s)$, dove
+    \begin{itemize}
+        \item $K$ è un insieme finito di stati, di cui $s\in K$ è quello iniziale
+        \item $\Sigma$ è un alfabeto finito, e $\rhd,\sqcup\in\Sigma$.
+        \item $\Delta$ è la relazione di transizione, definita come 
+        $$
+        \Delta\subseteq K\times\Sigma^k\times (K\cup\{\text{yes},\text{no},\text{halt}\}) \times \Sigma^k \times \{\gets,\to,-\}^k
+        $$
+    \end{itemize}
+    La relazione di transizione tra due configurazioni è definita come per le macchine deterministiche:
+    $$
+        (q,u_1,w_1,\dots,q_k,w_k) \to (q',u_1',w_1',\dots,q_k',w_k')
+    $$
+    con $(q',u_1',w_1',\dots,q_k',w_k')$ uno dei possibili risultati dell'applicazione di $\Delta$.
+\end{definition}
+
+\begin{definition}[Linguaggio deciso da una Macchina Nondeterministica]
+    Un lin\-guag\-gio $L\subseteq(\Sigma\backslash\{\sqcup\})^*$ è deciso da una macchina nondeterministica $\mathcal{N}$ (con $\mathcal{N}(x)$ che termina sempre)
+    \begin{itemize}
+        \item[] se $\forall x\in L(\Sigma\backslash\{\sqcup\})^*$
+        \begin{itemize}
+            \item $x\in L$ $\Rightarrow$ esiste una computazione di $\mathcal{N}$ che inizia da $(s,\rhd,x,\rhd,\varepsilon,\dots,\rhd,\varepsilon)$ e termina in $(\text{yes},\dots)$
+            \item $x\notin L$ $\Rightarrow$ tutte le computazioni di $\mathcal{N}$ che iniziano da $(s,\rhd,x,\rhd,\varepsilon,\dots,\rhd,\varepsilon)$ terminano in $(\text{no},\dots)$
+        \end{itemize}
+    \end{itemize}
+\end{definition}
+Se si ha una macchina che decide un linguaggio, bisogna definire la complessità spaziale e temporale su quella macchina. Per le macchine deterministiche, si ha che la complessità temporale è la lunghezza della computazione ne laso peggiore, per ogni possibile stringa di lunghezza $n$:
+\begin{center}
+    \begin{tikzpicture}[]
+        \node (a1) at (0,0) {$\bullet$};
+        \node (a2) at (0,-1) {$\bullet$};
+        \node (a3) at (0,-2) {$\bullet$};
+        \node (a4) at (0,-3) {$\bullet$};
+        \node (b1) at (2,0) {$\bullet$};
+        \node (b2) at (2,-1) {$\bullet$};
+        \node (b3) at (2,-2) {$\bullet$};
+        \node (b4) at (2,-3) {$\bullet$};
+        \node (b5) at (2,-4) {$\bullet$};
+        \node (b6) at (2,-5) {$\bullet$};
+        \draw (a1) -- (a2) -- (a3) -- (a4);
+        \draw (b1) -- (b2) -- (b3) -- (b4) --(b5) -- (b6);
+        \node [above] at (a1) {$x\in L$};
+        \node [left] at (a4) {yes};
+        \node [above] at (b1) {$x\not\in L$};
+        \node [right] at (b6) {no};
+    \end{tikzpicture}
+\end{center}
+Ma nel caso nondeterministico si hanno degli alberi:
+\begin{center}
+    \begin{tikzpicture}[]
+    \tikzstyle{level 1}=[sibling distance=4cm, level distance=1.2cm]
+    \tikzstyle{level 2}=[sibling distance=1.6cm]
+    \tikzstyle{level 3}=[sibling distance=1.6cm]
+        \node (root) {$\bullet$}
+        child {
+            node (firstnode) {$\bullet$}
+            child {
+                node {no}        
+                edge from parent 
+            }
+            child {
+                node {$\bullet$}
+                child {
+                    node {$\bullet$}
+                    child {
+                        node {no}
+                        edge from parent
+                    }
+                    child {
+                        node {yes}
+                        edge from parent
+                    }
+                    edge from parent
+                }
+                edge from parent 
+            }        
+            child {
+                node {yes}
+                edge from parent
+            }
+            edge from parent 
+        }
+        child {
+            node {$\bullet$} 
+            child {
+                node {no}
+                edge from parent
+            }
+            child {
+                node {$\bullet$}
+                child {
+                    node {no}
+                    edge from parent
+                }
+                child {
+                    node {$\bullet$}
+                    child {
+                        node {no}
+                        edge from parent
+                    }
+                    edge from parent
+                }
+                edge from parent         
+            }
+            edge from parent         
+        }
+        child {
+            node {no}
+            edge from parent
+        };
+
+    \node [above] at (root) {$x\in L$};
+    \node [right] at (root.east) {$(s,\rhd,x,\dots)$};
+    \node [left] at (firstnode) {$(q_1,w_1,\dots)$};
+    \end{tikzpicture}
+\end{center}
+
+\begin{center}
+    \begin{tikzpicture}[]
+    \tikzstyle{level 1}=[sibling distance=4cm, level distance=1.2cm]
+    \tikzstyle{level 2}=[sibling distance=1.6cm]
+    \tikzstyle{level 3}=[sibling distance=1.6cm]
+        \node (root) {$\bullet$}
+        child {
+            node (firstnode) {$\bullet$}
+            child {
+                node {no}        
+                edge from parent 
+            }
+            child {
+                node {$\bullet$}
+                child {
+                    node {$\bullet$}
+                    child {
+                        node {no}
+                        edge from parent
+                    }
+                    child {
+                        node {no}
+                        edge from parent
+                    }
+                    edge from parent
+                }
+                edge from parent 
+            }        
+            child {
+                node {no}
+                edge from parent
+            }
+            edge from parent 
+        }
+        child {
+            node {$\bullet$} 
+            child {
+                node {no}
+                edge from parent
+            }
+            child {
+                node {$\bullet$}
+                child {
+                    node {no}
+                    edge from parent
+                }
+                child {
+                    node {$\bullet$}
+                    child {
+                        node {no}
+                        edge from parent
+                    }
+                    edge from parent
+                }
+                edge from parent         
+            }
+            edge from parent         
+        }
+        child {
+            node {no}
+            edge from parent
+        };
+
+    \node [above] at (root) {$x\not\in L$};
+    \node [right] at (root.east) {$(s,\rhd,x,\dots)$};
+    \node [left] at (firstnode) {$(q_1,w_1,\dots)$};
+    \end{tikzpicture}
+\end{center}
+In questo caso, la complessità si può definire come l'altezza dell'albero.
+
+\begin{definition}[Complessità Temporale di una Macchina Nondeterministica]
+    U\-na\\macchina di Turing nondeterministica $\mathcal{N}$ con input $x$ richiede tempo $t$ se ogni possibile computazione di $\mathcal{N}$ su $x$ ha lunghezza al massimo $t$. 
+    $\mathcal{N}$ richiede tempo $f(n)$ se, per ogni $x$, $\mathcal{N}$ termina su $x$ in tempo $f(|x|)$.
+\end{definition}
+
+\paragraph{Esempio} Immaginiamo che il grado del nondeterminismo di una macchina $\mathcal{N}$ sia 3, ovvero i nodi del suo albero hanno grado 3 ($d=3$). L'altezza è $f(|x|)$, e il numero di foglie è $d^{f(|x|)}$ (molto grande).
+
+
+\begin{definition}[$\text{NTIME}(f(n))$]
+    $L\in\text{NTIME}(f(n))$ se esiste una macchina di Turing nondeterministica $\mathcal{N}$ che decide $L$ in tempo $f(n)$.
+\end{definition}
+Notare che, ad esempio, $\text{TIME}(n^5)\neq\text{NTIME}(n^5)$. Quest'ultimo è l'insieme di tutti i linguaggi che possono essere decisi in tempo $n^5$ da una macchina di Turing nondeterministica.
+
+\begin{proposition}
+    $$
+        \text{TIME}(f(n)) \subseteq \text{NTIME}(f(n))
+    $$
+\end{proposition}
+Abbiamo che
+$$
+    \text{P} = \bigcup_{h\in\mathbb{N}} \text{TIME}(n^h)
+    \qquad \qquad 
+    \text{NP} = \bigcup_{h\in\mathbb{N}} \text{NTIME}(n^h)
+$$
+Quindi
+$$
+    \text{P} \subseteq \text{NP}
+$$
+Abbiamo definito la complessità temporale di una macchina nondeterministica. Possiamo definire anche la complessità spaziale come la configurazione (nodo dell'albero) massima.
+\begin{definition}[Complessità Spaziale di una Macchina Nondeterministica]
+    Una\\macchina di Turing nondeterministica con I/O $\mathcal{N}$ sull'input $x$ utilizza spazio $s$ se 
+    $$
+        s \geq \sum_{h=2}^{k-1} |w_h| + |u_h|
+    $$
+    Ovvero $s$ è il massimo su tutte le possibili computazioni di $\mathcal{N}$ su $x$
+    $$
+        s = \max\left( \sum |w_h| + |u_h| \right)
+    $$
+\end{definition}
+$\mathcal{N}$ lavora in NSPACE$f(n)$, $\mathcal{N}$ decide $L$ in NSPACE$f(n)$.
+\begin{align*}
+    \text{PSPACE}=\mathbb{L} & ~\text{ spazio polinomiale su modello deterministico}\\
+    \text{NPSPACE}=\text{N}\mathbb{L} & ~\text{ spazio polinomiale su modello nondeterministico} 
+\end{align*}
 
 
 \textcolor{Red}{TODO: finire lezione 13}
