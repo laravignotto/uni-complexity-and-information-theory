@@ -1235,7 +1235,7 @@ Ma nel caso nondeterministico si hanno degli alberi:
 In questo caso, la complessità si può definire come l'altezza dell'albero.
 
 \begin{definition}[Complessità Temporale di una Macchina Nondeterministica]
-    U\-na\\macchina di Turing nondeterministica $\mathcal{N}$ con input $x$ richiede tempo $t$ se ogni possibile computazione di $\mathcal{N}$ su $x$ ha lunghezza al massimo $t$. 
+    U\-na macchina di Turing nondeterministica $\mathcal{N}$ con input $x$ richiede tempo $t$ se ogni possibile computazione di $\mathcal{N}$ su $x$ ha lunghezza al massimo $t$. 
     $\mathcal{N}$ richiede tempo $f(n)$ se, per ogni $x$, $\mathcal{N}$ termina su $x$ in tempo $f(|x|)$.
 \end{definition}
 
@@ -1264,7 +1264,7 @@ $$
 $$
 Abbiamo definito la complessità temporale di una macchina nondeterministica. Possiamo definire anche la complessità spaziale come la configurazione (nodo dell'albero) massima.
 \begin{definition}[Complessità Spaziale di una Macchina Nondeterministica]
-    Una\\macchina di Turing nondeterministica con I/O $\mathcal{N}$ sull'input $x$ utilizza spazio $s$ se 
+    Una macchina di Turing nondeterministica con I/O $\mathcal{N}$ sull'input $x$ utilizza spazio $s$ se 
     $$
         s \geq \sum_{h=2}^{k-1} |w_h| + |u_h|
     $$
@@ -1280,11 +1280,420 @@ $\mathcal{N}$ lavora in NSPACE$f(n)$, $\mathcal{N}$ decide $L$ in NSPACE$f(n)$.
 \end{align*}
 
 
-\textcolor{Red}{TODO: finire lezione 13}
-
-
 % LEZIONE 14
-\textcolor{Red}{TODO: lezione 14}
+\subsection{Simulazione di una Macchina Nondeterministica}
+In una macchina di Turing nondeterministica si possono avere tre possibili casi durante la computazione:
+\begin{enumerate}
+    \item Si arriva ad una foglia con yes o no. In questo caso una macchina di Turing deterministica si comporta come
+    \begin{center}
+        \begin{tikzpicture}
+            \node (a) at (0,0) {$\bullet$};
+            \node[below] at (a) {conf.~1};
+            \node (b) at (2,0) {$\bullet$};
+            \node[below] at (b) {conf.~2};
+            \node (c) at (4,0) {$\bullet$};
+            \node (d) at (6,0) {$\bullet$};
+            \node (e) at (8,0) {$\bullet$};
+            \node[below] at (e) {yes/no};
+            \draw[->] (a) -- (b);
+            \draw[->] (b) -- (c);
+            \draw[dashed] (c) -- (d);
+            \draw[->] (d) -- (e);
+        \end{tikzpicture}
+    \end{center}
+    \item C'è un loop dal quale non si può uscire una volta entrati. In una macchina deterministica si ha
+    \begin{center}
+        \begin{tikzpicture}
+            \node (a) at (0,0) {$\bullet$};
+            \node (b) at (2,0) {$\bullet$};
+            \node (c) at (4,0) {$\bullet$};
+            \node (d) at (6,0) {$\bullet$};
+            \node (e) at (8,0) {$\bullet$};
+            \node (f) at (10,0) {$\bullet$};
+            \node (g) at (12,0) {$\bullet$};
+            \draw[->] (a) -- (b);
+            \draw[->] (b) -- (c);
+            \draw[dashed] (c) -- (d);
+            \draw[->] (d) -- (e);
+            \draw[->] (e) -- (f);
+            \draw[->] (f) -- (g);
+            \draw[->] (g) to [out=270,in=270,looseness=.5] (e);
+        \end{tikzpicture}
+    \end{center}
+    \item Si ha un loop dal quale si può uscire. In una macchina deterministica si ha un cammino infinito che continua a cambiare configurazione
+    \begin{center}
+        \begin{tikzpicture}
+            \node (a) at (0,0) {$\bullet$};
+            \node (b) at (2,0) {$\bullet$};
+            \node (c) at (4,0) {$\bullet$};
+            \node (d) at (6,0) {$\bullet$};
+            \node (e) at (8,0) {$\bullet$};
+            \node (f) at (10,0) {\dots};
+            \draw[->] (a) -- (b);
+            \draw[->] (b) -- (c);
+            \draw[dashed] (c) -- (d);
+            \draw[->] (d) -- (e);
+            \draw[dashed] (e) -- (f);
+        \end{tikzpicture}
+    \end{center}
+\end{enumerate}
+Come già detto in precedenza, dato che questo è un corso sulla complessità, si considerano solo macchine di Turing che terminano sempre. Possiamo quindi procedere con la simulazione di una macchina non\-de\-ter\-ministica da parte di una macchina deterministica. Ricordiamo che, in una macchina di Turing nondeterministica $\mathcal{N}=(K,\Sigma,\Delta,s)$, $\Delta$ è la relazione di transizione
+$$
+    \Delta \subseteq \underbrace{K\times\Sigma^k}_{\substack{\text{input della}\\\text{relazione di}\\\text{transizione}}}\times (K\cup\{\text{yes},\text{no},\text{halt}\}) \times \Sigma^k \times \{\gets,\to,-\}^k
+$$
+\begin{definition}[Grado di nondeterminismo]
+    Il grado di nondeterminismo di una macchina nondeterministica $\mathcal{N}$ è la ramificazione (il grado) massimo dell'albero di computazione di $\mathcal{N}$ per ogni $x\in\Sigma^*$.
+    $$
+        d(\mathcal{N}) = 
+        \max_{\substack{q\in K\\\sigma_1,\dots,\sigma_k\in\Sigma}} 
+        |\{ (q, \sigma_1, \dots, \sigma_k, q',\dots)\in\Delta \}|
+    $$
+\end{definition}
+In particolare si ha
+$$
+    d(\mathcal{N})=1 ~\Leftrightarrow~ \mathcal{N} \text{ è deterministica}
+$$
+Consideriamo solo macchine con grado di nondeterminismo $d(\mathcal{N})\geq 2$. Sia $\mathcal{N}$ macchina con $d(\mathcal{N})=d$. $\mathcal{N}$ decide $L$ in tempo $f(n)$ (altezza dell'albero). Studiamo come la compessità temporale cambia restringendo il potere della macchina, ad esempio utilizzando $\mathcal{N}'$ con $d(\mathcal{N}')=2$.
+\begin{itemize}
+    \item In $\mathcal{N}$ l'altezza dell'albero è $f(n)$, e nel caso perggiore si hanno $d^{f(n)}$ foglie.
+    \begin{center}
+        \begin{tikzpicture}
+            \node (a) {$\bullet$}
+                child {node (b) {$\bullet$}}
+                child {node (c) {$\bullet$}}
+                child {node (d) {$\bullet$}}
+                child {node (e) {$\bullet$}};
+            \node[above] at (a) {a};
+            \node[below] at (b) {b};
+            \node[below] at (c) {c};
+            \node[below] at (d) {d};
+            \node[below] at (e) {e};
+            \node at (0,-2.2) {$\vdots$};
+        \end{tikzpicture}
+    \end{center}
+    \item In $\mathcal{N}'$ l'albero è del tipo 
+    \begin{center}
+        \begin{tikzpicture}
+        \tikzstyle{level 1}=[sibling distance=2.5cm, level distance=1cm]
+            \node (a) {$\bullet$}
+                child {node (b) {$\bullet$}}
+                child {node {$\bullet$}
+                    child {node (c) {$\bullet$}}
+                    child {node {$\bullet$}
+                        child {node (d) {$\bullet$}}
+                        child {node (e) {$\bullet$}}
+                    }
+                };
+            \node[above] at (a) {a};
+            \node[below] at (b) {b};
+            \node[below] at (c) {c};
+            \node[below] at (d) {d};
+            \node[below] at (e) {e};
+            \node at (0,-3.6) {$\vdots$};
+        \end{tikzpicture}
+    \end{center}
+    In questo caso l'altezza dell'albero è $\log_2 (d^{f(n)}) = f(n)\log_2 (d)$, 
+\end{itemize}
+L'altezza cambia quindi solo di una costante, da $f(n)$ a $f(n)\log_2 (d)$.\medskip
+
+Se proviamo a fare la stessa trasformazione utilizzando una macchina deterministica $\mathcal{M}$, la lunghezza è $(d')^{f(n)}$.
+\begin{center}
+    \begin{tikzpicture}
+        \node (a) at (0,0) {$\bullet$};
+        \node[above] at (a) {a};
+        \node (b) at (2,0) {$\bullet$};
+        \node (c) at (4,0) {$\bullet$};
+        \node[above] at (c) {b$'$};
+        \node[below] at (c) {$\LARGE\substack{\uparrow\\\text{no}\\\text{\footnotesize bisogna, ad es, fare backtracking}}$};
+        \node (d) at (6,0) {$\bullet$};
+        \node[above] at (d) {b$''$};
+        \node (e) at (8,0) {$\bullet$};
+        \node[above] at (e) {b$'''$};
+        \node (f) at (10,0) {\dots};
+        \draw[->] (a) -- (b);
+        \draw[dashed] (b) -- (c);
+        \draw[->] (c) -- (d);
+        \draw[->] (d) -- (e);
+        \draw[dashed] (e) -- (f);
+    \end{tikzpicture}
+\end{center}
+\begin{theorem}
+    Se $L$ è deciso da una macchina di Turing nondeterministica $\mathcal{N}$ in tempo $f(n)$, allora $L$ può essere deciso da una macchina di Turing deterministica $\mathcal{M}$ in tempo $O(c^{f(n)})$, con $c$ costante che dipende da $\mathcal{N}$.
+\end{theorem}
+\paragraph{Dimostrazione (intuizione)} La macchina $\mathcal{N}$ ha un input tape, una serie di working tape, e un output tape. La macchina $\mathcal{M}$ è costruita allo stesso modo, ma contiene un working tape in più. In ogni momento su questo nastro vengono registrate le scelte fatte dalla macchina $\mathcal{N}$. Ad esempio:
+\begin{center}
+    \begin{tikzpicture}
+        % Draw the horizontal strip
+        \draw (0,0) -- (4,0);
+        \draw (0,.5) -- (4,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,1.5} {
+          \draw (\x,0) -- (\x,.5);
+        };
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$1$};
+        \node[below] at (1.25,0) {$c_1$};
+        \node[above] at (2.5,0) {\dots};
+    \end{tikzpicture}
+\end{center}
+L'1 significa che viene preso il primo ramo dell'albero: viene simulata $\mathcal{N}$ con, come prima scelta, $c_1$.
+\begin{itemize}
+    \item Se $\mathcal{N}$ termina con yes, $\mathcal{M}$ termina con yes
+    \item Se $\mathcal{N}$ termina con no, $c_1$ viene incrementato (di 1) e si procede nella simulazione 
+    \item Se $\mathcal{N}$ non termina, si genara $c_2=1$
+    \begin{center}
+        \begin{tikzpicture}
+            % Draw the horizontal strip
+            \draw (0,0) -- (4,0);
+            \draw (0,.5) -- (4,.5);
+            %  Draw the squares
+            \foreach \x in {0.5,1,1.5,2} {
+              \draw (\x,0) -- (\x,.5);
+            };
+            \node[above] at (0.75,0) {$\rhd$};
+            % \node[above] at (1.25,0) {$1$};
+            \node[below] at (1.25,0) {$c_1$};
+            \node[above] at (1.75,0) {$1$};
+            \node[below] at (1.75,0) {$c_2$};
+            \node[above] at (3,0) {\dots};
+        \end{tikzpicture}
+    \end{center}
+\end{itemize}
+Il cammino più a sinistra di $\mathcal{N}$ sarà
+\begin{center}
+    \begin{tikzpicture}
+        % Draw the horizontal strip
+        \draw (0,0) -- (5,0);
+        \draw (0,.5) -- (5,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,1.5,,2,4,4.5} {
+          \draw (\x,0) -- (\x,.5);
+        };
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$1$};
+        \node[above] at (1.75,0) {$1$};
+        \node[above] at (3,0) {\dots};
+        \node[above] at (4.25,0) {$1$};
+        \draw[decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (1,-0.1) -- (4.5,-0.1);
+        \node[below] at (2.75,-.2) {$O(f(n))$};
+    \end{tikzpicture}
+\end{center}
+Se ci si trova in un caso in cui vengono percorsi tutti i rami uscenti da un nodo senza arrivare ad una soluzione yes, ad esempio
+\begin{center}
+    \begin{tikzpicture}
+        % Draw the horizontal strip
+        \draw (0,0) -- (5,0);
+        \draw (0,.5) -- (5,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,1.5,,2,3,3.5,4} {
+          \draw (\x,0) -- (\x,.5);
+        };
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$1$};
+        \node[above] at (1.75,0) {$1$};
+        \node[above] at (2.5,0) {\dots};
+        \node[above] at (3.25,0) {$1$};
+        \node[above] at (3.75,0) {$d$};
+        \node[above] at (4.5,0) {\dots};
+    \end{tikzpicture}
+\end{center}
+si farà backtracking:
+\begin{center}
+    \begin{tikzpicture}
+        % Draw the horizontal strip
+        \draw (0,0) -- (5,0);
+        \draw (0,.5) -- (5,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,1.5,,2,3,3.5,4} {
+          \draw (\x,0) -- (\x,.5);
+        };
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$1$};
+        \node[above] at (1.75,0) {$1$};
+        \node[above] at (2.5,0) {\dots};
+        \node[above] (b) at (3.25,0) {$2$};
+        \node[above] (a) at (3.75,0) {$d$};
+        \node[above] at (4.5,0) {\dots};
+
+        \draw[->] (a) to [out=270,in=270,looseness=2.5] (b);
+
+        \draw (0,-1) -- (5,-1);
+        \draw (0,-1.5) -- (5,-1.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,1.5,,2,3,3.5,4} {
+          \draw (\x,-1.5) -- (\x,-1);
+        };
+        \node[above] at (0.75,-1.5) {$\rhd$};
+        \node[above] at (1.25,-1.5) {$1$};
+        \node[above] at (1.75,-1.5) {$1$};
+        \node[above] at (2.5,-1.5) {\dots};
+        \node[above] (c) at (3.25,-1.5) {$2$};
+        \node[above] (d) at (3.75,-1.5) {$1$};
+        \node[above] at (4.5,-1.5) {\dots};
+
+        \draw[->] (c) to [out=270,in=270,looseness=2.5] (d);
+    \end{tikzpicture}
+\end{center}
+Se ogni cammino finisce con no, si avrà
+\begin{center}
+    \begin{tikzpicture}
+        % Draw the horizontal strip
+        \draw (0,0) -- (5,0);
+        \draw (0,.5) -- (5,.5);
+        %  Draw the squares
+        \foreach \x in {0.5,1,1.5,,2,4,4.5} {
+          \draw (\x,0) -- (\x,.5);
+        };
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (1.25,0) {$d$};
+        \node[above] at (1.75,0) {$d$};
+        \node[above] at (3,0) {\dots};
+        \node[above] at (4.25,0) {$d$};
+        \draw[decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (1,-0.1) -- (4.5,-0.1);
+        \node[below] at (2.75,-.2) {$O(f(n))$};
+    \end{tikzpicture}
+\end{center}
+che corrisponde all'ultimo cammino nell'albero.
+
+Per generare uno dei bit della sequenza (che vogliamo simulare) di scelte, $\mathcal{M}$ utilizza un numero di passi pari a $O\left(f(n)\cdot\log_2(d)\right)$. Quindi, per generarli tutti, si ha
+$$
+    O\left(d^{f(n)}\cdot f(n)\cdot\log_2(d)\right)
+$$
+I passi di simulazione di $\mathcal{N}$ sono 
+$$
+    O\left(d^{f(n)}\right)
+$$
+Unendo tutto, abbiamo che
+$$
+    O\left(d^{f(n)} + d^{f(n)}\cdot f(n)\cdot\log_2(d)\right)= 
+    O\left(d^{f(n)}\cdot 2^{f(n)}\right)=
+    O\left(c^{f(n)}\right)
+$$
+Notiamo come questa simulazione può essere fatta senza conoscere $f(n)$. \hfill $\square$
+
+\begin{corollary}
+    $$
+        \text{NP} \subseteq \text{EXP}
+    $$
+\end{corollary}
+\paragraph{Dimostrazione} $\mathcal{N}$ decide $L$ in tempo $n^h$. $\mathcal{N}$ può essere simulata da una macchina deterministica $\mathcal{M}$ in tempo 
+$$
+    O\left(c^{n^h}\right) =
+    O\left(2^{\log_2c\cdot n^h}\right) =
+    O\left(2^{n^{h+1}}\right)
+$$
+che è incluso nella classe EXP. \hfill $\square$
+
+\subparagraph{Nota} $O(c^{n^h})$ non è dello stesso ordine di $\Theta(2^{n^h})$.
+
+
+
+\chapter{Relazioni tra Classi di Complessità}
+
+Capitolo 7 del libro di Papadimitriou. Finora abbiamo visto:
+\begin{enumerate}
+    \item \textbf{Modelli di computazione}: macchine di Turing
+    \item \textbf{Modi di computazione}: deterministico, nondeterministico
+    \item \textbf{Risorse}: tempo, spazio
+    \item \textbf{Funzioni utilizzate come limiti}, ad esempio TIME$f(n)$, SPACE$f(n)$
+\end{enumerate}
+In questo capitolo vedremo meglio il punto 4, e inoltre
+\begin{itemize}
+    \item \textbf{Funzioni di complessità proprie} 
+    \item Due risultati fondamentali:
+    \begin{itemize}
+        \item \textbf{Hierarchy Theorem}, ovvero se $f$ è propria, allora $\text{TIME}(f(n))\subsetneq \text{TIME}(f(n)^3)$. Esiste una gerarchia propria tra classi che sono tutte non uguali tra loro;
+        \item \textbf{Gap Theorem}, ovvero che esiste $f$ non propria tale che $\text{TIME}(f(n))=\text{TIME}(2^{f(n)})$.
+    \end{itemize}
+\end{itemize}
+
+
+\section{Classi di Complessità}
+
+\begin{definition}[Funzione di Complessità Propria]
+    Una funzione $f:\mathbb{N}\to\mathbb{N}$ è una funzione di complessità propria se
+    \begin{enumerate}
+        \item $f$ è non decrescente
+        \item Esiste $\mathcal{M}_f$ macchina di Turing deterministica con I/O tale che, per ogni $x$ con $|x|=n$ 
+        $$
+            (s, \rhd, x, \rhd, \varepsilon, \dots, \rhd, \varepsilon) 
+            \to^{(\mathcal{M}_f)t} 
+            (h, 
+            \underbrace{u,w}_{\rhd x\sqcup}, 
+            \underbrace{\rhd,\sqcup^{j_2},\dots,\rhd,\sqcup^{j_{k-1}}}_{\text{working tapes}}, 
+            \underbrace{\rhd,\sqcap^{f(x)}}_{\text{output tape}})
+        $$
+        con $\sqcap^{f(x)}$ rappresentazione unaria di $f(x)$. Inoltre,
+        \begin{itemize}
+            \item $t\in O(n+f(n))$
+            \item $j_2,\dots,j_{k-1}\in O(f(n))$
+            \item $t,j_2,\dots,j_{k-1}$ non dipendono da $x$
+        \end{itemize}
+    \end{enumerate}
+\end{definition}
+\paragraph{Nota} In $t\in O(n+f(n))$, bisogna aggiungere $n$ perché altrimenti non si potrebbe avere $\log(n)$ come funzione propria (bisogna leggere $n$).
+
+\paragraph{Esempio} Si ha $\mathcal{M}_f$
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,2) -- (5,2);
+        \draw (0,2.5) -- (5,2.5);
+        \foreach \x in {0.5,1,1.5,3.5,4,4.5} {
+          \draw (\x,2) -- (\x,2.5);
+        };
+        \node[above] at (0.75,2) {$\rhd$};
+        \node[above] at (1.25,2) {$x_1$};
+        \node[above] at (2.5,2) {\dots};
+        \node[above] at (3.75,2) {$x_n$};
+        \node[above] at (4.25,2) {$\sqcup$};
+        \draw[decorate,
+            decoration = {brace,amplitude=5pt}] (1,2.6) -- (4,2.6);
+        \node[above] at (2.5,2.7) {$n$};
+
+        \draw (0,.75) -- (5,.75);
+        \draw (0,1.25) -- (5,1.25);
+        \foreach \x in {0.5,1,1.5,2,3.5,4,4.5} {
+          \draw (\x,.75) -- (\x,1.25);
+        };
+        \node[above] at (0.75,.75) {$\rhd$};
+        \node[below] at (0.65,.85) {$\uparrow$};
+        \node[above] at (1.25,.75) {$\cancel{~~}$};
+        \node[above] at (1.25,1.25) {$\sqcup$};
+        \node[above] at (1.75,.75) {$\cancel{~~}$};
+        \node[above] at (1.75,1.25) {$\sqcup$};
+        \node[above] at (2.75,.75) {\dots};
+        \node[above] at (3.75,.75) {$\cancel{~~}$};
+        \node[above] at (3.75,1.25) {$\sqcup$};
+        % \node[above] at (4.25,.75) {$\sqcup$};
+        \draw[->] (3.7,.75) to [out=270,in=270,looseness=2] (3.3,.75);
+        \draw[->] (2.2,.75) to [out=270,in=270,looseness=2] (1.8,.75);
+        \draw[->] (1.7,.75) to [out=270,in=270,looseness=2] (1.3,.75);
+        \draw[->] (1.2,.75) to [out=270,in=270,looseness=2] (0.8,.75);
+
+        \node at (2,.15) {$\vdots$};
+        \draw[decorate,
+            decoration = {brace,amplitude=5pt}] (-.5,-.2) -- (-.5,1.6);
+        \node[left] at (-.6,.7) {w.t.};
+
+        \draw (0,-.5) -- (5,-.5);
+        \draw (0,-1) -- (5,-1);
+        \foreach \x in {0.5,1,1.5,3.5,4,4.5} {
+          \draw (\x,-.5) -- (\x,-1);
+        };
+        \node[above] at (0.75,-1) {$\rhd$};
+        \node[above] at (1.25,-1) {$\sqcap$};
+        \node[above] at (2.5,-1) {\dots};
+        \node[above] at (3.75,-1) {$\sqcap$};
+        \node[above] at (4.25,-1) {$\sqcup$};
+        \draw[decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (1,-1.1) -- (4,-1.1);
+        \node[below] at (2.5,-1.2) {$f(n)$};
+    \end{tikzpicture}
+\end{center}
+Su ogni working tape, viene eliminato tutto e si ferma a $\rhd$. Lo spazio utilizzato in tutti i working tape è $O(f(n))$.
+
 
 % LEZIONE 15
 \textcolor{Red}{TODO: lezione 15}
