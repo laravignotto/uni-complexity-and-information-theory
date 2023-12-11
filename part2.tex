@@ -1696,7 +1696,359 @@ Su ogni working tape, viene eliminato tutto e si ferma a $\rhd$. Lo spazio utili
 
 
 % LEZIONE 15
-\textcolor{Red}{TODO: lezione 15}
+\paragraph{Esempi di funzioni proprie}
+\begin{align*}
+    p(n) & \text{ polinomio} \\
+    \log(n) & \text{ logaritmo} \\
+    c & \text{ costante} \\
+    2^{p(n)} & \text{ esponenziale} \\
+    2^{2^{\rdots^{2^{p(n)}}}} & \text{ torre di esponenziali}
+\end{align*}
+La composizione di funzioni proprie è propria.
+
+\begin{definition}[Macchine di Turing Precise]
+    Una macchina di Turing con I/O $\mathcal{M}$ è precisa se $\exists f,g$ tali che $\forall x \in \Sigma^*$, $\mathcal{M}$ su $x$ termina in tempo $f(|x|)$ e utilizza spazio $g(|x|)$.
+\end{definition}
+Ad esempio, merge sort è preciso, mentre heap sort non lo è.
+
+\begin{theorem}
+    \begin{eqnarray*}
+        & L \text{ è decidibile in TIME$(f(n))$ e $f$ è propria} &\\
+        &\Downarrow& \\
+        & \exists \text{ una macchina di Turing precisa $\mathcal{M}$ che decide $L$ in tempo }O(f(n)) &
+    \end{eqnarray*}
+\end{theorem}
+\paragraph{Dimostrazione (idea)} (errore nel libro, proposizione 7.1.: macchina precisa in TIME e non in SPA\-CE) Sappiamo che se $L\in$TIME$(f(n))$, allora $\mathcal{M}$ decide $L$ in $f(n)$ passi. Se $f$ è propria, $\mathcal{M}_f$ computa $f(n)$.
+\begin{center}
+    \begin{tikzpicture}
+        \node at (-.9,2.7) {$\mathcal{M}'$};
+        \draw (0,2) -- (5,2);
+        \draw (0,2.5) -- (5,2.5);
+        \foreach \x in {0.5,1,1.5,3.5,4,4.5} {
+          \draw (\x,2) -- (\x,2.5);
+        };
+        \node[above] at (0.75,2) {$\rhd$};
+        \node[above] at (1.25,2) {$x_1$};
+        \node[above] at (2.5,2) {\dots};
+        \node[above] at (3.75,2) {$x_n$};
+        \node[above] at (4.25,2) {$\sqcup$};
+
+        \node at (2.5,1.3) {$\vdots$};
+
+        \draw (0,.1) -- (5,.1);
+        \draw (0,.6) -- (5,.6);
+        \foreach \x in {0.5,1,1.5,3.5,4} {
+          \draw (\x,.1) -- (\x,.6);
+        };
+        \node[above] at (0.75,.1) {$\rhd$};
+        \node[above] at (1.25,.1) {$\sqcap$};
+        \node[above] at (2.5,.1) {\dots};
+        \node[above] at (3.75,.1) {$\sqcap$};
+        \node[left] at (-.1,.35) {$\substack{\text{rappresentazione}\\\text{unaria di }f(n)}$};
+
+        \draw (0,-.5) -- (5,-.5);
+        \draw (0,-1) -- (5,-1);
+        \foreach \x in {0.5,1} {
+          \draw (\x,-.5) -- (\x,-1);
+        };
+        \node[above] at (0.75,-1) {$\rhd$};
+        \node[above] at (2.5,-1) {\dots};
+
+        \draw[decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (5.5,.9) -- (5.5,2.6);
+        \node[right] at (5.6,1.8) {\Large$\substack{\text{tutti i nastri}\\\text{di }\mathcal{M}}$};
+        \draw[decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (5.5,-1.1) -- (5.5,.7);
+        \node[right] at (5.6,-.2) {$\mathcal{M}_f$};
+    \end{tikzpicture}
+\end{center}
+~\hfill $\square$
+
+
+\subsection{Classi di Complessità Complemento}
+Una classe di complessità è un insieme di linguaggi (problemi) che possono essere decisi in un certo tempo, o spazio. Un linguaggio $L\subseteq \Sigma^*$ è un insieme di stringhe. Il complemento di $L$ è definito come
+$$
+    \overline{L} = \{ x ~|~ x\notin L \}
+$$
+\begin{definition}[Complemento di una Classe di Complessità, co-$\mathcal{C}$]
+    Data una classe di complessità $C$, il complemento di $C$ è
+    $$
+        \text{co-}\mathcal{C} = \{ \overline{L} ~|~ L\in C \}
+    $$
+\end{definition}
+\paragraph{Nota} $\text{co-}\mathcal{C} \neq \overline{\mathcal{C}}$ (= complemento di tutte le classi $\mathcal{C}$). \medskip
+
+Se $\mathcal{C}$ è deterministica (si utilizza una macchina deterministica), e $\Sigma=\{0,1\}$, quando si prende un linguaggio appartenente a quella classe, ad esempio $L\in\text{TIME}(n\log n)$, allora esiste $\mathcal{M}$ macchina deterministica che decide $L$ in tempo $n\log n$.
+
+Per ottenere $\overline{L}$ si possono scambiare yes e no, e la macchina ``complemento $\mathcal{M}$'' decide $\overline{L}\in\text{TIME}(n\log n)$. Questo vale per tutte le classi deterministiche.
+\begin{property}
+    $$
+    \mathcal{C} \text{ è una classe di complessità deterministica }
+    \Rightarrow
+    ~\mathcal{C} = \text{co-}\mathcal{C}
+    $$
+\end{property}
+\begin{property}
+    Quando $\mathcal{C}$ è una classe di complessità deterministica
+    $$
+        L\in\mathcal{C} 
+        ~\Rightarrow~
+        \overline{L}\in\mathcal{C}
+        ~\Rightarrow~
+        \text{co-}\mathcal{C}\subseteq\mathcal{C}
+    $$
+\end{property}
+Cosa succede se $\mathcal{C}$ è una classe di complessità nondeterministica?
+\paragraph{Esempio} Consideriamo $\text{NP}=\bigcup_{h\in\mathbb{N}}\text{NTIME}(n^h)$. Se $L\in\text{NP}$, allora esiste $\mathcal{N}$ macchina nondeterministica che decide $L$.
+\begin{itemize}
+    \item Se $x\in L$, allora esiste un cammino nell'albero di computazione di $\mathcal{N}$ che arriva a yes.
+    \item Se $x\notin L$, allora tutti i cammini nell'albero di computazione di $\mathcal{N}$ arrivano a no.
+\end{itemize}
+Consideriamo $\mathcal{N}'$ in cui le risposte di $\mathcal{N}$ sono invertite, che decide il linguaggio $L'$. Nel caso in cui $x\in L$, non è vero che $x\in L'$. Nell'albero di $\mathcal{N}'$ otteniamo alcuni yes non voluti, e quindi decide un linguaggio più ampio di $\overline{L}$. Quindi $\mathcal{N}'$ decide $L'$ con $L'\subseteq\overline{L}$.
+
+\paragraph{Satisfiability Problem} Iniziamo con un esempio. Consideriamo la formula booleana 
+$$
+    \varphi = (p\lor\lnot q)\land(r\lor\lnot p)
+$$
+Quando si fissa una valutazione $v\{p,q,r\}\to\{0,1\}$, si può calcolare il valore di $\varphi$ con $v$. Ad esempio, se $v(p)=1$, $v(q)=0$, $v(r)=0$, allora $\varphi[v]=0$.
+
+\begin{proposition}[Problema di Soddisfacibilità]
+    Data una formula booleana $\varphi$, decidere se esiste $v:Var(\varphi)\to\{0,1\}$ tale che $\varphi[v]=1$.
+\end{proposition}
+In altre parole si vuole trovare il linguaggio
+$$
+    L = \{\varphi ~|~ \varphi \text{ è soddisfacibile}\}
+$$
+Studiamone la complessità. Una macchina nondeterministica efficiente per $L$ è:
+\begin{itemize}
+    \item In input si ha la formula 
+    \begin{center}
+        \begin{tikzpicture}
+            \node[left] at (-.3,2.25) {input};
+            \draw (0,2) -- (6.5,2);
+            \draw (0,2.5) -- (6.5,2.5);
+            \foreach \x in {0.5,1,...,6} {
+              \draw (\x,2) -- (\x,2.5);
+            };
+            \node[above] at (0.75,2) {$\rhd$};
+            \node[above] at (1.25,2) {$p$};
+            \node[above] at (1.75,2) {$\lor$};
+            \node[above] at (2.25,2) {$\lnot$};
+            \node[above] at (2.75,2) {$q$};
+            \node[above] at (3.25,2) {$\land$};
+            \node[above] at (3.75,2) {$r$};
+            \node[above] at (4.25,2) {$\lor$};
+            \node[above] at (4.75,2) {$\lnot$};
+            \node[above] at (5.25,2) {$p$};
+            \node[above] at (5.75,2) {$\sqcup$};
+        \end{tikzpicture}
+    \end{center}
+    \item Scansionare l'input per contare le variabili
+    \begin{center}
+        \begin{tikzpicture}
+            \node[left] at (-.3,2.25) {w.t.~1};
+            \draw (0,2) -- (3,2);
+            \draw (0,2.5) -- (3,2.5);
+            \foreach \x in {0.5,1,1.5,2,2.5} {
+              \draw (\x,2) -- (\x,2.5);
+            };
+            \node[above] at (0.75,2) {$\rhd$};
+            \node[above] at (1.25,2) {$p$};
+            \node[above] at (1.75,2) {$q$};
+            \node[above] at (2.25,2) {$r$};
+        \end{tikzpicture}
+    \end{center}
+    \item Generare nondeterministicamente un assegnamento
+    \begin{center}
+        \begin{tikzpicture}
+            \node[left] at (-.3,2.25) {w.t.~2};
+            \draw (0,2) -- (3,2);
+            \draw (0,2.5) -- (3,2.5);
+            \foreach \x in {0.5,1,1.5,2,2.5} {
+              \draw (\x,2) -- (\x,2.5);
+            };
+            \node[above] at (0.75,2) {$\rhd$};
+            \node[above] at (1.25,2) {0};
+            \node[above] at (1.75,2) {0};
+            \node[above] at (2.25,2) {0};
+        \end{tikzpicture}
+    \end{center}
+    \item Controllare il valore di verità di tale assegnamento
+    \begin{center}
+        \begin{tikzpicture}[level distance=1.5cm,
+            level 1/.style={sibling distance=6cm},
+            level 2/.style={sibling distance=3cm},
+            level 3/.style={sibling distance=1.5cm},
+            level 4/.style={sibling distance=0.75cm}]
+            \node at (-6.5,-.75) {$p$};
+            \node at (-6.5,-2.25) {$q$};
+            \node at (-6.5,-3.75) {$r$};
+            \node (root) {$\bullet$}
+              child {node {$\bullet$}
+                child {node {$\bullet$}
+                  child {node (yes) {$\bullet$}
+                    edge from parent node[left] {0}
+                  }
+                  child {node {$\bullet$}
+                    edge from parent node[right] {1}
+                  }
+                  edge from parent node[left] {0}
+                }
+                child {node {$\bullet$}
+                  child {node {$\bullet$}
+                    edge from parent node[left] {0}
+                  }
+                  child {node {$\bullet$}
+                    edge from parent node[right] {1}
+                  }
+                  edge from parent node[right] {1}
+                }
+                edge from parent node[left] {0}
+              }
+              child {node {$\bullet$}
+                child {node {$\bullet$}
+                  child {node (no) {$\bullet$}
+                    edge from parent node[left] {0}
+                  }
+                  child {node {$\bullet$}
+                    edge from parent node[right] {1}
+                  }
+                  edge from parent node[left] {0}
+                }
+                child {node {$\bullet$}
+                  child {node {$\bullet$}
+                    edge from parent node[left] {0}
+                  }
+                  child {node {$\bullet$}
+                    edge from parent node[right] {1}
+                  }
+                  edge from parent node[right] {1}
+                }
+                edge from parent node[right] {1}
+              };
+            \node[above] at (root) {$\mathcal{N}(\varphi)$};
+            \node[below] at (yes) {yes};
+            \node[below] at (no) {no};
+        \end{tikzpicture}
+    \end{center}
+\end{itemize} 
+Quindi SAT $\in$ NP.
+
+\paragraph{Unsatisfiability Problem} Cosa succede per $\overline{L}$?
+\begin{proposition}[Problema di Insoddisfacibilità]
+    Data una formula booleana $\varphi$, decidere se per ogni $v:Var(\varphi)\to\{0,1\}$ si ha $\varphi[v]=0$.
+\end{proposition}
+In altre parole si vuole trovare il linguaggio
+$$
+    \overline{L} = \{\varphi ~|~ \varphi \text{ non è una formula, o \underline{è insoddisfacibile}}\}
+$$
+Controllare che $\varphi$ sia o meno una formula è banale, quindi ci concentriamo sulla sua insoddisfacibilità. Se scambiamo yes e no nelle foglie dell'albero di computazione, otteniamo questo:
+\begin{center}
+    \begin{tikzpicture}[level distance=1.5cm,
+        level 1/.style={sibling distance=6cm},
+        level 2/.style={sibling distance=3cm},
+        level 3/.style={sibling distance=1.5cm},
+        level 4/.style={sibling distance=0.75cm}]
+        \node at (-6.5,-.75) {$p$};
+        \node at (-6.5,-2.25) {$q$};
+        \node at (-6.5,-3.75) {$r$};
+        \node (root) {$\bullet$}
+          child {node {$\bullet$}
+            child {node {$\bullet$}
+              child {node (yes) {$\bullet$}
+                edge from parent node[left] {0}
+              }
+              child {node {$\bullet$}
+                edge from parent node[right] {1}
+              }
+              edge from parent node[left] {0}
+            }
+            child {node {$\bullet$}
+              child {node {$\bullet$}
+                edge from parent node[left] {0}
+              }
+              child {node {$\bullet$}
+                edge from parent node[right] {1}
+              }
+              edge from parent node[right] {1}
+            }
+            edge from parent node[left] {0}
+          }
+          child {node {$\bullet$}
+            child {node {$\bullet$}
+              child {node (no) {$\bullet$}
+                edge from parent node[left] {0}
+              }
+              child {node {$\bullet$}
+                edge from parent node[right] {1}
+              }
+              edge from parent node[left] {0}
+            }
+            child {node {$\bullet$}
+              child {node {$\bullet$}
+                edge from parent node[left] {0}
+              }
+              child {node {$\bullet$}
+                edge from parent node[right] {1}
+              }
+              edge from parent node[right] {1}
+            }
+            edge from parent node[right] {1}
+          };
+        \node[above] at (root) {$\mathcal{N}'(\varphi)$};
+        \node[below] at (yes) {no};
+        \node[below] at (no) {yes};
+    \end{tikzpicture}
+\end{center}
+$\mathcal{N}'$ accetta $\varphi$, ma $\varphi$ non è insoddisfacibile. $\mathcal{N}'$ non decide $\overline{L}$. Quindi UnSAT $\in$ co-NP.\medskip
+
+Per il momento non conosciamo la relazione tra NP e co-NP.
+$$
+    \text{NP } ? \text{ co-NP}
+$$
+Decidere unSAT ha la stessa complessità di decidere Validity, quindi Validity $\in$ co-NP.
+
+
+
+\section{Hierarchy Theorem}
+Utilizzeremo il teorema per dire che esiste un numero infinito di classi di compessità diverse tra loro, ognuna propriamente contenuta dentro l'altra.
+
+\begin{theorem}[Hierarchy Theorem]
+    $$
+        f \text{ è propria}
+        ~\Rightarrow~
+        \text{TIME}(f(n)) \subsetneq \text{TIME}(f(n)^3)
+    $$
+\end{theorem}
+\paragraph{Dimostrazione} Versione quantitativa della dimostrazione dell'Halting Theorem (Capitolo 3 del libro).
+
+\begin{theorem}[Halting Theorem]
+    Il linguaggio
+    $$
+        H = \{ \mathcal{M};x ~|~ \mathcal{M}(x)\neq\uparrow \}
+    $$
+    è ricorsivamente enumerabile, ma non ricorsivo.
+\end{theorem}
+\paragraph{Dimostrazione (intuizione)} Si costruisce una macchina universale $\mathcal{U}$ che riceve in input la rappresentazione binaria della macchina $\mathcal{M}$ e della stringa $x$, e simula $\mathcal{M}$ su $x$. Ci sarà un working tape che contiene la configurazione di $\mathcal{M}$. Si può dimostrare che non si può modificare $\mathcal{U}$ in modo da dimostrare se $\mathcal{M}$ termina o meno su $x$ (Se $\mathcal{M}$ termina su $x$, $\mathcal{U}$ accetta; se $\mathcal{M}$ non termina su $x$, $\mathcal{U}$ non termina). 
+
+Aggiungeremo un limite al numero di passi che si possono fare, dando quindi un risultato quantitativo.
+
+
 
 % LEZIONE 16
-\textcolor{Red}{TODO: lezione 16}
+\subsection{Dimostrazione dello Hierarchy Theorem}
+Consideriamo il linguaggio 
+$$
+    H_f = \{ \mathcal{M};x ~|~ \mathcal{M} \text{ accetta $x$ in al massimo } f(|x|)+5|x|+4 \text{ passi}  \}
+$$
+
+
+
+
+\textcolor{Red}{TODO: finire lezione 16}
+
+% LEZIONE 17
+\textcolor{Red}{TODO: lezione 17}
+
+% LEZIONE 18
+\textcolor{Red}{TODO: lezione 18}

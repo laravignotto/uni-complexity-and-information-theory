@@ -16,9 +16,10 @@
 \usepackage{wasysym}
 \usepackage{amssymb}
 \usepackage{pifont}
-\DeclareFontFamily{U}{dice3d}{}
-\DeclareFontShape{U}{dice3d}{m}{n}{<-> s*[4] dice3d}{}
-\usepackage{epsdice}
+% \usepackage{mathdots}
+% \DeclareFontFamily{U}{dice3d}{}
+% \DeclareFontShape{U}{dice3d}{m}{n}{<-> s*[4] dice3d}{}
+% \usepackage{epsdice}
 \usepackage[top=2.2cm,bottom=1.6cm,left=2.4cm,right=1.6cm]{geometry}
 % \usepackage[margin=2cm]{geometry}
 \usepackage[font=small,labelfont=bf]{caption}
@@ -59,6 +60,8 @@
 % \pgfmathdeclarefunction{poiss}{1}{%
 %   \pgfmathparse{(#1^x)*exp(-#1)/(x!)}%
 % }
+
+\def\rdots{\rotatebox[origin=l]{29}{$\scriptscriptstyle\ldots\mathstrut$}}
 
 \allowdisplaybreaks
 
