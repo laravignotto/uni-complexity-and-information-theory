@@ -2041,14 +2041,250 @@ Consideriamo il linguaggio
 $$
     H_f = \{ \mathcal{M};x ~|~ \mathcal{M} \text{ accetta $x$ in al massimo } f(|x|)+5|x|+4 \text{ passi}  \}
 $$
+Inoltre $\mathcal{M}(x)\downarrow$, e $\mathcal{M}(x)=$ yes. Per lo Hierarchy Theorem, $f$ è propria, e 
+$$
+    H_f\in\text{TIME}\left(f(2n+1)^3\right)
+    \qquad \qquad
+    H_f\notin\text{TIME}(f(n))
+$$
+Queste due classi di complessità sono diverse e sono una contenuta nell'altra. 
+\begin{center}
+    \begin{tikzpicture}
+        % Outer ellipse representing TIME(f(2n+1)^3)
+        \draw (0,0) ellipse (3cm and 2cm);
+        \node at (3.8,1.5) {TIME$(f(2n+1)^3)$};
+        
+        % Inner ellipse representing TIME(f(n))
+        \draw (-.5,-.5) ellipse (1.5cm and 1cm);
+        \node at (-.8,.8) {TIME$(f(n))$};
+      
+        % Point representing H_f
+        \node (h) at (1.5,0.7) {$\bullet$};
+        \node[below right] at (h) {$H_f$};
+    \end{tikzpicture}
+\end{center}
+Quindi
+$$
+    \text{TIME}(f(n)) \subsetneq \text{TIME}\left(f(2n+1)^3\right)
+$$
 
+\begin{lemma}
+    $$
+        H_f \in \text{TIME}(f(n)^3)
+    $$
+\end{lemma}
+\paragraph{Dimostrazione} Si costruisce una macchina universale $\mathcal{U}_f$. Se $f$ è una funzione propria, allora anche la funzione $g(n)=f(n)+5n+4$ è propria.
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,3.5) -- (7,3.5);
+        \draw (0,4) -- (7,4);
+        \foreach \x in {0.5,1,4,4.5,6.5} {
+          \draw (\x,3.5) -- (\x,4);
+        };
+        \node[above] at (0.75,3.5) {$\rhd$};
+        \node[above] at (4.25,3.5) {;};
+        % \node[above] at (2.5,2) {\dots};
+        % \node[above] at (3.75,2) {$x_n$};
+        % \node[above] at (4.25,2) {$\sqcup$};
+        \draw[decorate,
+            decoration = {brace,amplitude=5pt}] (1,4.2) -- (4,4.2);
+        \node[above] at (2.5,4.3) {$\mathcal{M}$};
+        \draw[decorate,
+            decoration = {brace,amplitude=5pt}] (4.5,4.2) -- (6.5,4.2);
+        \node[above] at (5.5,4.3) {$x$};
+        \draw[decorate,
+            decoration = {brace,amplitude=5pt}] (1,4.9) -- (6.5,4.9);
+        \node[above] at (3.75,5) {$n$};
 
+        \draw (0,2) -- (7,2);
+        \draw (0,2.5) -- (7,2.5);
+        \foreach \x in {0.5,1,1.5,2.5,3,3.5} {
+          \draw (\x,2) -- (\x,2.5);
+        };
+        \node[above] at (0.75,2) {$\rhd$};
+        \node[above] at (1.25,2) {$x_1$};
+        \node[above] at (2,2) {\dots};
+        \node[above] at (2.75,2) {$x_n$};
+        \node[above] at (3.25,2) {$\sqcup$};
+        \draw[decorate,
+            decoration = {brace,amplitude=5pt}] (1,2.7) -- (3,2.7);
+        \node[above] at (2,2.8) {$x$};
 
+        \node at (2.5,1.3) {$\vdots$};
 
-\textcolor{Red}{TODO: finire lezione 16}
+        \draw (0,.1) -- (7,.1);
+        \draw (0,.6) -- (7,.6);
+        \foreach \x in {0.5,1,1.5,3.5,4} {
+          \draw (\x,.1) -- (\x,.6);
+        };
+        \node[above] at (0.75,.1) {$\rhd$};
+        \node[above] at (1.25,.1) {$\sqcap$};
+        \node[above] at (2.5,.1) {\dots};
+        \node[above] at (3.75,.1) {$\sqcap$};
+        \draw[decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (1,-.1) -- (4,-.1);
+        \node[below] at (2.5,-.2) {$\substack{\text{rappresentazione unaria di}\\g(|x|)=f(|x|)+5|x|+4}$};
+
+        \draw (0,-1.5) -- (7,-1.5);
+        \draw (0,-2) -- (7,-2);
+        \foreach \x in {0.5,1} {
+          \draw (\x,-1.5) -- (\x,-2);
+        };
+        \node[above] at (0.75,-2) {$\rhd$};
+        \node[above] at (3,-2) {\dots};
+        \draw[decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (1,-2.1) -- (5,-2.1);
+        \node[below] at (3,-2.2) {\footnotesize$(s,\rhd,x,\rhd,\varepsilon,\dots,\rhd,\varepsilon)$};
+        \node[right] at (7.1,-1.75) {w.t.};
+
+        \draw[decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (7.4,-.2) -- (7.4,2.8);
+        \node[right] at (7.5,1.3) {$\mathcal{M}_g$};
+
+        \draw[decorate,
+            decoration = {brace,amplitude=5pt}] (-.7,-2.5) -- (-.7,4.5);
+        \node[left] at (-.8,1) {$\mathcal{U}_f$};
+
+        \node[above] at (6.75,.1) {\textcolor{Orchid}{$\blacksquare$}};
+        \node[above] at (6.75,-2) {\textcolor{LimeGreen}{$\blacksquare$}};
+    \end{tikzpicture}
+\end{center}
+In un dato tempo, si avrà la configurazione generica del tipo $(q,u_1,w_1,\dots,u_k,w_k)$. Quindi, $\mathcal{U}_f$:
+\begin{itemize}
+    \item Computa $f(|x|)+5|x|+4$ in unario
+    \item Simula $\mathcal{M}$ su $x$, e per ogni passo simulato, elimina un $\sqcap$ dal nastro \textcolor{Orchid}{$\blacksquare$} (partendo dall'ultimo e sostituendolo con $\sqcup$)
+    \item Se durante la simulazione, prima di aver eliminato tutti i $\sqcap$
+    \begin{itemize}
+        \item $\mathcal{M}$ raggiunge $(\text{yes},--)$, allora $\mathcal{U}_f$ termina con yes 
+        \item $\mathcal{M}$ raggiunge $(\text{no},--)$, allora $\mathcal{U}_f$ termina con no
+    \end{itemize}
+    Se tutti i $\sqcap$ sono stati eliminati, $\mathcal{U}_f$ termina con no.
+\end{itemize}
+Quindi $\mathcal{U}_f$ decide $H_f$. Ma in quanto tempo? Ricordiamo che $f(n)\geq n$ ($f(n)$ è almeno lineare). $\mathcal{U}_f$ deve simulare al massimo $f(|x|)+5|x|+4$ passi di $\mathcal{M}$, con $f(|x|)+5|x|+4=O(f(n))$, $n\geq|x|$.
+
+Quanti passi di $\mathcal{U}_f$ sono necessari per simulare un singolo passo di $\mathcal{M}$? Un numero costante di scansioni dell'input e del nastro \textcolor{LimeGreen}{$\blacksquare$}.
+Quanto è lungo al massimo il nastro \textcolor{LimeGreen}{$\blacksquare$}? $O(f(n))$, perché è una configurazione ottenuta in al massimo $f(|x|)+5|x|+4=O(f(n))$ passi.
+
+Ciò che si ottiene è della forma 
+$$
+    O\left(k'\cdot f(n)\cdot f(n)\right) = O\left(f(n)^3\right)
+$$
+con $k'$ costante che dipende da $\mathcal{M}$ (ad esempio, numero di nastri), e $k'\leq f(n)$. \hfill $\square$\medskip
+
+In questa dimostrazione non si ha bisogno di $f(|x|)+5|x|+4$: servirà nella dimostrazione successiva.
+
+\paragraph{Esercizio (nel libro)} Possiamo farlo in tempo $O(\log(f(n))^2\cdot f(n))$, con $\log(f(n))^2>f(n)$. Poiché $f$ è propria, $\mathcal{M}_g$ raggiunge questo risultato in tempo $O(f(n))$.
+$$
+    O\left(k'\cdot f(n)\cdot f(n)+f(n)\right)
+$$
+
+\begin{lemma}
+    $$
+        H_f \notin \text{TIME}\left( f\left(\left\lfloor \frac{n}{2} \right\rfloor\right)\right)
+    $$
+\end{lemma}
+\paragraph{Dimostrazione} Diagonalizzazione. Si supponga per contraddizione che esista $\mathcal{M}_{H_f}$ che decide $H_f$ in tempo $f\left(\left\lfloor \frac{n}{2} \right\rfloor\right)$. Si consideri la macchina $\mathcal{D}(\mathcal{M})$ tale che
+\begin{eqnarray*}
+    &\mathcal{D}(\mathcal{M}) \text{ termina con yes}&\\
+    &\Updownarrow&\\
+    &\mathcal{M}_{H_f}(\mathcal{M};\mathcal{M}) \text{ termina con no}&\\
+    &\Updownarrow&\\
+    & \mathcal{M}(\mathcal{M})=\text{no} \quad\lor\quad
+    \mathcal{M}(\mathcal{M})\downarrow \text{ dopo più di } f(n)+5n+4 \text{ passi} \quad\lor\quad 
+    \mathcal{M}(\mathcal{M})\uparrow
+\end{eqnarray*}
+Quanti passi richiede $\mathcal{D}$?
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,1.5) -- (5,1.5);
+        \draw (0,2) -- (5,2);
+        \foreach \x in {0.5,1} {
+          \draw (\x,1.5) -- (\x,2);
+        }
+        \node[above] at (0.75,1.5) {$\rhd$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1,2.1) -- (2.5,2.1);
+        \node[above] at (1.75,2.2) {$\mathcal{M}$};
+        \node[left] at (0,1.75) {\scriptsize input$_\mathcal{D}$};
+
+        \draw (0,0) -- (5,0);
+        \draw (0,.5) -- (5,.5);
+        \foreach \x in {0.5,1,2.5,3} {
+          \draw (\x,0) -- (\x,.5);
+        }
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (2.75,0) {;};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1,0.6) -- (2.5,0.6);
+        \node[above] at (1.75,0.7) {$\mathcal{M}$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (3,0.6) -- (4.5,0.6);
+        \node[above] at (3.75,0.7) {$\mathcal{M}$};
+        \node[left] at (0,.25) {\scriptsize w.t.$_\mathcal{D}$};
+
+        \draw[->] (5.2,1.75) to [out=0,in=0,looseness=1.5] (5.2,.25);
+        \node[right] at (5.9,1) {$5|\mathcal{M}|+4$};
+
+        \node at (2.5,-.8) {$f\left(\left\lfloor \frac{|\mathcal{M}|+|\mathcal{M}|+1}{2} \right\rfloor\right)=f(|\mathcal{M}|)$}; 
+
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (-.95,1) -- (-.95,-1.4);
+        \node[left] at (-1.05,-.2) {$\mathcal{M}_{H_f}$};
+
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (-2.4,2.3) -- (-2.4,-1.5) node [midway,left=0.1] {$\mathcal{D}$};
+
+        \draw[->,dotted] (7,.7) to [out=270,in=0,looseness=1] (4.8,-3);
+        \node[right] at (6.8,-1) {$\substack{\text{perchè per copiare}\\\mathcal{M}\text{ si deve\dots}}$};
+
+        \draw[->] (1,-2.2) -- (2.5,-2.2) node [midway,below] {\footnotesize$1$};
+        \draw[->] (2.5,-2.8) -- (1,-2.8) node [midway,below] {\footnotesize$2$};
+        \draw[->] (3,-3.2) -- (4.5,-3.2) node [midway,below] {\footnotesize$3$};
+        \draw[->] (4.5,-3.8) -- (1,-3.8) node [midway,below] {\footnotesize$4$};
+    \end{tikzpicture}
+\end{center}
+Quindi $\mathcal{D}$ lavora in tempo al massimo $f(n)+5n+4$.\medskip
+
+\noindent Cosa succede a $\mathcal{D}(\mathcal{D})$?
+\begin{itemize}
+    \item Se $\mathcal{D}(\mathcal{D})=\text{no}$, allora $\mathcal{M}_{H_f}(D(\mathcal{D});\mathcal{D})=\text{yes}$, e $\mathcal{D}(\mathcal{D})=\text{yes}$, che è una contraddizione.
+    \item Se $\mathcal{D}(\mathcal{D})=\text{yes}$, allora $\mathcal{M}_{H_f}(D(\mathcal{D});\mathcal{D})=\text{no}$, quindi una delle seguenti:
+    \begin{itemize}
+        \item $\mathcal{D}(\mathcal{D})=\text{no}$, che è una contraddizione
+        \item $\mathcal{D}(\mathcal{D})\uparrow$, che è una contraddizione
+        \item $\mathcal{D}(\mathcal{D})\downarrow$ dopo più di $f(n)+5n+4$ passi, che è una contraddizione (perché abbiamo visto che $\mathcal{D}$ lavora in tempo al massimo $f(n)+5n+4$)
+    \end{itemize}
+\end{itemize}
+~\hfill $\square$
+
+\begin{corollary}
+    $$
+        \text{P}\subsetneq\text{EXP}
+    $$
+\end{corollary}
+\paragraph{Dimostrazione} Abbiamo che
+\begin{eqnarray*}
+    \text{P} &=& \bigcup_{h\in\mathbb{N}}\text{TIME}\left(n^h\right)\\
+    &\subseteq& \text{TIME}(2^n)\\
+    &\overset{\text{Hie.~Th.}}{\subsetneq}& \text{TIME}\left(\left(2^{2^n+1}\right)^3\right)\\
+    &\subseteq& \text{TIME}\left(2^{n^2}\right)\\
+    &\subseteq& \bigcup_{h\in\mathbb{N}}\text{TIME}\left(2^{n^h}\right) = \text{EXP}
+\end{eqnarray*}
+~\hfill $\square$\medskip
+
+Abbiamo dimostrato che $\text{P}\subsetneq\text{EXP}$ e $\text{NP}\subseteq\text{EXP}$, ma non sappiamo se $\text{P}\subsetneq\text{NP}$
+$$
+    \text{P} \overset{?}{\subsetneq} \text{NP} \overset{?}{\subsetneq} \text{EXP}
+$$
 
 % LEZIONE 17
 \textcolor{Red}{TODO: lezione 17}
 
 % LEZIONE 18
 \textcolor{Red}{TODO: lezione 18}
+
+% LEZIONE 19
+\textcolor{Red}{TODO: lezione 19}
+
+% LEZIONE 20
+\textcolor{Red}{TODO: lezione 20}
