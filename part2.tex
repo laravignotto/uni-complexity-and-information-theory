@@ -2277,8 +2277,74 @@ $$
     \text{P} \overset{?}{\subsetneq} \text{NP} \overset{?}{\subsetneq} \text{EXP}
 $$
 
+
 % LEZIONE 17
-\textcolor{Red}{TODO: lezione 17}
+\subsection{Gap Theorem}
+vediamo ora un teorema che sembra contraddire lo Hierarchy Theorem. In realtà, la funzione $f$ nel Gap Theorem non è propria, a causa dello Hie.~Theo.
+\begin{theorem}[Gap Theorem]
+    $\exists f$ funzione ricorsiva tale che 
+    $$
+        \text{TIME}(f(n)) = \text{TIME}(2^{f(n)})
+    $$
+\end{theorem}
+\paragraph{Dimostrazione} L'idea è quella di definire $f(n)$ in modo che se una computazione termina in al massimo $2^{f(n)}$ passi, allora termina in al massimo $f(n)$ passi.
+
+Si considerino un'enumerazione di macchine di Turing $\mathcal{M}_0,\mathcal{M}_1,\dots,\mathcal{M}_h,\dots$ e il predicato $P(i,k)$ definito come 
+\begin{eqnarray*}
+    P(i,k) &=& \forall\mathcal{M}_h \text{ con } h\leq i \qquad \forall x \quad |x|=i\\
+    & & \mathcal{M}_h(x) \text{ termina in al massimo } k \text{ passi, o}\\
+    & & \mathcal{M}_h(x) \text{ termina in più di } 2^k \text{ passi, o}\\
+    & & \mathcal{M}_h(x) \text{ non termina}
+\end{eqnarray*}
+Questo predicato è ricorsivo (decidibile). Per definire $f(i)$ si considerino i seguenti intervalli:
+$$
+    \underset{k_1=2i}{[} \qquad \underset{k_2=2^{k_1}+1}{)[} \qquad\dots\qquad \underset{k_j=2^{k_{j-1}}+1}{)[} \dots
+$$
+Zoommando in fuori, si può osservare un numero infinito di intervalli sempre più lunghi:
+$$
+    [~)[\quad)[\qquad)[\quad\qquad)[\qquad\qquad)[\qquad\qquad\qquad)\dots
+$$
+Sia
+$$
+    N(i) = \sum_{h=0}^i |\sigma_h|^i
+$$
+con $\sigma_h$ alfabeto di $\mathcal{M}_i$. $N(i)$ è un numero molto grande. Ad esempio, $|x|=i$ input per $\mathcal{M}_3$, $\mathcal{M}_3\downarrow$.
+
+Si considerino $N(i)+1$ intervalli della forma $[k_j,k_{j+1})$. Per il principio della piccionaia, $\exists [k_l,k_{l+1})$ tale che nessuna delle macchine $\mathcal{M}_0,\dots,\mathcal{M}_i$ termina in un numero di passi che cade nell'intervallo $[k_l,k_{l+1})$. In altre parole, $f(i)=k_l$, e $P(i,f(i))$ è vera.
+
+Dobbiamo dimostrare che $\text{TIME}(2^{f(n)})\subseteq\text{TIME}(f(n))$, ovvero che $\forall L$, se $L\in\text{TIME}(2^{f(n)})$ allora $L\in\text{TIME}(f(n))$. Sia $L\in\text{TIME}(2^{f(n)})$. Allora $\exists\mathcal{M}_j$ che decide $L$ in al massimo $2^{f(n)}$ passi \textcolor{Orange}{\textbf{*}}.
+
+$\forall x$ tali che $|x|\geq j$, la macchina $\mathcal{M}_j$ in $\mathcal{M}_0,\dots,\mathcal{M}_j,\dots,\mathcal{M}_{|x|}$ è una di queste. Ma $P(|x|,f(|x|))$ è vera, quindi 
+\begin{itemize}
+    \item $\mathcal{M}_j(k)$ termina in al massimo $f(|x|)$ passi, o 
+    \item $\mathcal{M}_j(k)$ termina in più di $2^{f(|x|)}$ passi \textcolor{Cyan}{\textbf{*}}
+\end{itemize}
+(poichè $\mathcal{M}_j$ decide un linguaggio, non c'è un terzo caso). A causa di \textcolor{Orange}{\textbf{*}}, possiamo eliminare il secondo caso \textcolor{Cyan}{\textbf{*}}. Quindi $\mathcal{M}_j$ decide $L$ in $\text{TIME}(f(n))$.
+
+Ma abbiamo detto che $\forall x$ t.c.~$|x|\geq j$, dobbiamo dimostrarlo per ogni input. Per risolvere questo, possiamo aggiungere una tabella che, per ognuno dei $|x|<j$, ha output lineare. Quindi $\mathcal{M}_j$ modificato sugli input più corti di $j$ decide $L$ in $\text{TIME}(f(n))$.\hfill $\square$\medskip
+
+
+
+\section{Reachability Method}
+I teoremi appena visti ci dicono come classi dello stesso tipo (tempo deterministico, spazio deterministico) si relazionano tra loro quando variamo la funzione che rappresenta il limite di complessità. Risultati simili, sebbene molto più difficili da dimostrare, sono noti per classi di complessità non deterministiche. Tuttavia, le domande più interessanti nella teoria della complessità riguardano la relazione tra classi di tipo diverso, come P vs NP.
+\begin{theorem}
+    Sia $f$ una funzione propria. Allora
+    \begin{enumerate}
+        \item $\text{SPACE}(f(n))\subseteq\text{NSPACE}(f(n))$
+        \item $\text{TIME}(f(n))\subseteq\text{NTIME}(f(n))$
+        \item $\text{TIME}(f(n))\subseteq\text{SPACE}(f(n))$
+        \item $\text{SPACE}(f(n))\subseteq\text{TIME}(c^{f(n)+\log(n)})$
+        \item $\text{NTIME}(f(n))\subseteq\text{SPACE}(f(n))$
+        \item $\text{NSPACE}(f(n))\subseteq\text{TIME}(c^{f(n)+\log(n)})$
+    \end{enumerate}
+\end{theorem}
+Abbiamo già dimostrato 1, 2, 3 (segue da 2 e 5), e 4 (segue da 1 e 6). Dimostriamo 5 e 6.
+
+\paragraph{Dimostrazione 5}
+
+
+
+\textcolor{Red}{TODO: finire lezione 17}
 
 % LEZIONE 18
 \textcolor{Red}{TODO: lezione 18}
