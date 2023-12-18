@@ -2340,11 +2340,67 @@ I teoremi appena visti ci dicono come classi dello stesso tipo (tempo determinis
 \end{theorem}
 Abbiamo già dimostrato 1, 2, 3 (segue da 2 e 5), e 4 (segue da 1 e 6). Dimostriamo 5 e 6.
 
-\paragraph{Dimostrazione 5}
+\paragraph{Dimostrazione 5} Vogliamo dimostrare che se $L\in\text{NTIME}(f(n))$, allora $L\in\text{SPACE}(f(n))$. Questo significa che esiste $\mathcal{N}$ macchina di Turing non deterministica che decide $L$ in al massimo $f(n)$ passi. Possiamo simularla con una macchina di Turing deterministica $\mathcal{M}$ che decide $L$ in tempo $c^{f(n)}$, e quindi in spazio $f(n)$.
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,1.5) -- (5,1.5);
+        \draw (0,2) -- (5,2);
+        \foreach \x in {0.5,1} {
+          \draw (\x,1.5) -- (\x,2);
+        }
+        \node[above] at (0.75,1.5) {$\rhd$};
+        \node[above] at (2,1.5) {\dots};
 
+        \node at (2.5,1) {\vdots};
 
+        \draw (0,0) -- (5,0);
+        \draw (0,.5) -- (5,.5);
+        \foreach \x in {0.5,1} {
+          \draw (\x,0) -- (\x,.5);
+        }
+        \node[above] at (0.75,0) {$\rhd$};
+        \node[above] at (2,0) {\dots};
 
-\textcolor{Red}{TODO: finire lezione 17}
+        \draw (0,-.5) -- (5,-.5);
+        \draw (0,-1) -- (5,-1);
+        \foreach \x in {0.5,1,1.5,2} {
+          \draw (\x,-.5) -- (\x,-1);
+        }
+        \node[above] at (0.75,-1) {$\rhd$};
+        \node[above] at (1.25,-1) {$c_1$};
+        \node[above] at (1.75,-1) {$c_2$};
+        \node[above] at (2.5,-1) {\dots};
+
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (-.4,2.1) -- (-.4,-.1) node [midway,left=0.1] {$\mathcal{N}$};
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (-1.3,2.2) -- (-1.3,-1.1) node [midway,left=0.1] {$\mathcal{M}$};
+
+        \node[right] at (5.1,1) {$\substack{\text{spazio usato}\\\text{da }\mathcal{N}:~f(n)}$};
+        \node[right] at (5.1,-.75) {$\substack{\text{sequenza di scelte della}\\\text{macchina }\mathcal{N}:~\log(d)\cdot f(n)}$};
+    \end{tikzpicture}
+\end{center}
+SPACE$f(n)$.\hfill $\square$
+
+\paragraph{Dimostrazione 6} Vogliamo dimostrare che se $L\in\text{NSPACE}(f(n))$, allora $L\in\text{TIME}(c^{f(n)+\log(n)})$. Questo significa che esiste $\mathcal{N}$ macchina di Turing non deterministica I/O che decide $L$ in spazio $f(n)$. Sia $G_\mathcal{N}(x)$ il grafo di configurazioni di $\mathcal{N}$ su $x$ definito come
+$$
+    G_\mathcal{N}(x) = (V_\mathcal{N}(x),E_\mathcal{N}(x))
+$$
+con $V_\mathcal{N}(x)$ configurazione di $\mathcal{N}$ durante la computazione su $x$. Uniamo tutte le configurazioni che finiscono in yes (o no) in un unico nodo etichettato con yes (o no). Vogliamo trovare il numero di nodi di questo grafo, ovvero $|V_\mathcal{N}(x)|$. Una configurazione è del tipo 
+$$
+    (q,\underbrace{u_1,w_1}_{\text{input}},\dots,\underbrace{u_k,w_k}_{\text{output}})
+$$
+L'output può essere cancellato (possiamo dimenticarci del nastro di output), e l'input non può essere modificato (è sempre $\rhd x\sqcup$). Può essere rappresentato con $(q,j)$, dove $q$ è sempre 0, e l'indice $0\leq j\leq|x|+1$. Quindi 
+$$
+    (q,j,u_1,w_1,\dots,u_{k-1},w_{k-1})
+$$
+con $|u_i|,|w_i|\leq f(n)$, $\forall i=2,\dots,k-1$. Il numero di configurazioni in questa forma è
+\begin{eqnarray*}
+    |V_\mathcal{N}(x)| &=& (|k|+2)\cdot(|x|+2)\cdot\prod_{i=2}^{k-1} |\Sigma|^{2\cdot f(|x|)}\\
+    &=& (|k|+2)\cdot(|x|+2)\cdot|\Sigma|^{2\cdot f(|x|)\cdot(k-2)}
+\end{eqnarray*}
+con $+2$ per yes e no. Vogliamo ora controllare se la configurazione iniziale raggiunge yes o no.
+
 
 % LEZIONE 18
 \textcolor{Red}{TODO: lezione 18}
