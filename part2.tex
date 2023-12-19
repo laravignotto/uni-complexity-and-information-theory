@@ -608,11 +608,108 @@ Una macchina di Turing a $k$-nastri è una macchina di Turing con un numero limi
 
 
 % LEZIONE 11
-\textcolor{Red}{TODO: lezione 11}
+\subsection{Complessità Temporale}
+Ricordiamo che $L$ è deciso dalla macchina a $k$-nastri $\mathcal{M}$ se, $\forall x$,
+\begin{eqnarray*}
+    x\in L &\to& \mathcal{M}(x)=\text{yes}\\
+    x\notin L &\to& \mathcal{M}(x)=\text{no}
+\end{eqnarray*}
+Inoltre,
+$$
+    \underbrace{(s,\rhd,x,\rhd,x,\dots)}_{\text{conf.~iniziale}}
+     ~\to^{\mathcal{M}_t}
+    \underbrace{(H,\dots)}_{\text{conf.~finale}}
+    \qquad
+    H\in\{\text{yes},\text{no}\}, \quad 
+    \forall x ~~ t\leq f(|x|)
+$$
+$\mathcal{M}$ indica $L$ in tempo al massimo $f(n)$.
+
+\paragraph{Esempio: palindromo} Consideriamo $\mathcal{M}_1$ macchina di Turing a singolo nastro vs $\mathcal{M}_2$ macchina di Turing a $k$-nastri. Sia $L$ il linguaggio di palindromi su $\{0,1\}$. Le complessità temporali sono 
+\begin{itemize}
+    \item $\mathcal{M}_1$: $\Theta(n^2)$
+    \item $\mathcal{M}_2$: $\Theta(n)$
+\end{itemize}
+Vedremo come il risultato generale indica che questo è il peggior incremento che si può ottenere.
+
+\begin{theorem}
+    \begin{eqnarray*}
+        &L \text{ è deciso da una macchina di Turing a } k \text{-nastri } \mathcal{M} \text{ in tempo } f(n)&\\
+        &\Downarrow&\\
+        &\exists \text{ una macchina di Turing a 1-nastro } \mathcal{M}' \text{ che decide } L \text{ in tempo (al massimo) } O(f(n)^2)&
+    \end{eqnarray*}
+\end{theorem}
+
+\paragraph{Dimostrazione} Sia $\mathcal{M}$ macchina di Turing a $k$-nastri che decide $L$ in tempo $f(n)$. Vogliamo costruire una macchina di Turing a 1-nastro $\mathcal{M}'$ in grado di simularla. Si possono rappresentare le informazioni dei $k$-nastri su un singolo nastro in questo modo:
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,-1) -- (8,-1);
+        \draw (0,-.5) -- (8,-.5);
+        \foreach \x in {0.5,1} {
+          \draw (\x,-1) -- (\x,-.5);
+        };
+        \node[above] at (0.75,-1) {$\rhd$};
+        \node[above] at (5,-1) {$\dots$};
+        \node[ellipse,
+            draw,
+            minimum width=1.6cm,
+            minimum height=.75cm] (A) at (1.75,-.75) { };
+        \node[ellipse,
+            draw,
+            minimum width=1.6cm,
+            minimum height=.75cm] (A) at (3.4,-.75) { };
+        \node[ellipse,
+            draw,
+            minimum width=1.6cm,
+            minimum height=.75cm] (A) at (6.5,-.75) { };
+        \node[below] at (1.75,-1.1) {nastro 1};
+        \node[below] at (3.4,-1.1) {nastro 2};
+        \node[below] at (6.5,-1.1) {nastro $k$};
+        \node[left] at (-.3,-.75) {$\mathcal{M}'$};
+    \end{tikzpicture}
+\end{center}
+Per imitare i vari cursori, si può ingrandire l'alfabeto:
+$$
+    \Sigma \cup \underline{\Sigma} \cup \{\rhd'\}
+    \qquad 
+    \underline{\Sigma} = \{ \underline{\sigma}|\sigma\in\Sigma \}
+$$
+In ogni momento la macchina $\mathcal{M}$ legge $k$ simboli in $\mathcal{M}'$, bisogna leggere tutto il nastro per leggere (e memorizzare) il valore di tutti i $k$ simboli, e poi un ulteriore scansione per cambiarli. In altre parole, per simulare un passo di $\mathcal{M}$ su $\mathcal{M}'$:
+\begin{itemize}
+    \item Scansionare il nastro di $\mathcal{M}'$ per leggere i $\underline{\sigma}$ e memorizzarli nello stato di $\mathcal{M}'$
+    \item Tornare indietro
+    \item Cambiare i $\underline{\sigma}$
+    \begin{itemize}
+        \item Ad esempio, se nel nastro in $\mathcal{M}$ cambio un simbolo e mi muovo a destra ($\to$), in $\mathcal{M}'$ passerò da \begin{tikzpicture}\draw (0,0) -- (2,0);
+            \draw (0,.5) -- (2,.5);
+            \foreach \x in {0.5,1,1.5} {
+              \draw (\x,0) -- (\x,.5);
+            };
+            \node[above] at (0.75,0) {$\underline{\sigma}$};
+            \node[above] at (1.25,0) {$a$};\end{tikzpicture}
+        a \begin{tikzpicture}\draw (0,0) -- (2,0);
+            \draw (0,.5) -- (2,.5);
+            \foreach \x in {0.5,1,1.5} {
+              \draw (\x,0) -- (\x,.5);
+            };
+            \node[above] at (0.75,0) {$\sigma'$};
+            \node[above] at (1.25,0) {$\underline{b}$};\end{tikzpicture}
+    \end{itemize}
+\end{itemize} 
+Nel caso peggiore, ognuno dei $k$ cambiamenti richiede di spostare tutto a destra per creare spazio sul nastro di $\mathcal{M}'$. 
+
+La domanda ora è: quanto è lungo al massimo il nastro di $\mathcal{M}'$ durante la computazione? Per $k-1$ nastri si ha un'occupazione che è al massimo $f(n)$, e per il primo nastro $n+f(n)$, con $n$ lunghezza dell'input. Quindi, con l'ipotesi che $f(n)\geq n$, si ha 
+$$
+(k-1)\cdot O(f(n)) + O(n+f(n)) = kO(f(n)) = O(f(n))
+$$
+Si può concludere che simulare un passo di $\mathcal{M}$ richiede tempo $O(f(n))$. Poiché ci vogliono $O(f(n))$ passi di $\mathcal{M}'$ per simulare un passo di $\mathcal{M}$, si ha che $\mathcal{M}'$ decide $L$ in tempo $O(f(n)^2)$. \hfill $\square$
+
+
+
+\textcolor{Red}{TODO: finire lezione 11}
 
 
 % LEZIONE 12
-% \chapter{Complessità Spaziale}
 \subsection{Complessità Spaziale}
 \begin{definition}[Complessità Spaziale per una MdT a $k$-nastri su input $x$]
     Si ha che
