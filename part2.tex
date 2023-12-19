@@ -2235,7 +2235,7 @@ Quanti passi richiede $\mathcal{D}$?
             decoration = {brace,mirror,amplitude=5pt}] (-2.4,2.3) -- (-2.4,-1.5) node [midway,left=0.1] {$\mathcal{D}$};
 
         \draw[->,dotted] (7,.7) to [out=270,in=0,looseness=1] (4.8,-3);
-        \node[right] at (6.8,-1) {$\substack{\text{perchè per copiare}\\\mathcal{M}\text{ si deve\dots}}$};
+        \node[right] at (6.8,-1) {$\substack{\text{perché per copiare}\\\mathcal{M}\text{ si deve\dots}}$};
 
         \draw[->] (1,-2.2) -- (2.5,-2.2) node [midway,below] {\footnotesize$1$};
         \draw[->] (2.5,-2.8) -- (1,-2.8) node [midway,below] {\footnotesize$2$};
@@ -2308,7 +2308,7 @@ Sia
 $$
     N(i) = \sum_{h=0}^i |\sigma_h|^i
 $$
-con $\sigma_h$ alfabeto di $\mathcal{M}_i$. $N(i)$ è un numero molto grande. Ad esempio, $|x|=i$ input per $\mathcal{M}_3$, $\mathcal{M}_3\downarrow$.
+con $\sigma_h$ alfabeto di $\mathcal{M}_h$ ($|\sigma_h|^i$ è il numero di input di lunghezza $i$ per $\mathcal{M}_i$). $N(i)$ è un numero molto grande. Ad esempio, $|x|=i$ input per $\mathcal{M}_3$, $\mathcal{M}_3\downarrow$.
 
 Si considerino $N(i)+1$ intervalli della forma $[k_j,k_{j+1})$. Per il principio della piccionaia, $\exists [k_l,k_{l+1})$ tale che nessuna delle macchine $\mathcal{M}_0,\dots,\mathcal{M}_i$ termina in un numero di passi che cade nell'intervallo $[k_l,k_{l+1})$. In altre parole, $f(i)=k_l$, e $P(i,f(i))$ è vera.
 
@@ -2382,28 +2382,265 @@ Abbiamo già dimostrato 1, 2, 3 (segue da 2 e 5), e 4 (segue da 1 e 6). Dimostri
 \end{center}
 SPACE$f(n)$.\hfill $\square$
 
-\paragraph{Dimostrazione 6} Vogliamo dimostrare che se $L\in\text{NSPACE}(f(n))$, allora $L\in\text{TIME}(c^{f(n)+\log(n)})$. Questo significa che esiste $\mathcal{N}$ macchina di Turing non deterministica I/O che decide $L$ in spazio $f(n)$. Sia $G_\mathcal{N}(x)$ il grafo di configurazioni di $\mathcal{N}$ su $x$ definito come
+% LEZIONE 18
+\paragraph{Dimostrazione 6: Reachability Method} Vogliamo dimostrare che se $L\in\text{NSPACE}(f(n))$, allora $L\in\text{TIME}(c^{f(n)+\log(n)})$. Questo significa che esiste $\mathcal{N}$ macchina di Turing non deterministica I/O che decide $L$ in spazio $f(n)$. Sia $G_\mathcal{N}(x)$ il grafo di configurazioni di $\mathcal{N}$ su $x$ definito come
 $$
     G_\mathcal{N}(x) = (V_\mathcal{N}(x),E_\mathcal{N}(x))
 $$
-con $V_\mathcal{N}(x)$ configurazione di $\mathcal{N}$ durante la computazione su $x$. Uniamo tutte le configurazioni che finiscono in yes (o no) in un unico nodo etichettato con yes (o no). Vogliamo trovare il numero di nodi di questo grafo, ovvero $|V_\mathcal{N}(x)|$. Una configurazione è del tipo 
+con $V_\mathcal{N}(x)$ configurazione di $\mathcal{N}$ durante la computazione su $x$. Uniamo tutte le configurazioni che finiscono in yes (o no) in un unico nodo etichettato con yes (o no). 
+$$
+    x\in L ~(\mathcal{N} \text{ accetta } x)
+    ~\Leftrightarrow~
+    \text{in } G_\mathcal{N}(x) \text{ la configurazione iniziale raggiunge yes}
+$$
+che è la complessità temporale di Reachability su $G_\mathcal{N}(x)$. Utilizzando una visita, a complessità (in pseudocodice) è $O(|G_\mathcal{N}(x)|)$. Utilizzando una macchina di Turing, Reachability $\in$ P (ad esempio, $O(|G_\mathcal{N}(x)|^\beta)$).
+Vogliamo trovare il numero di nodi di questo grafo, ovvero $|V_\mathcal{N}(x)|$.  Una configurazione è del tipo 
 $$
     (q,\underbrace{u_1,w_1}_{\text{input}},\dots,\underbrace{u_k,w_k}_{\text{output}})
 $$
-L'output può essere cancellato (possiamo dimenticarci del nastro di output), e l'input non può essere modificato (è sempre $\rhd x\sqcup$). Può essere rappresentato con $(q,j)$, dove $q$ è sempre 0, e l'indice $0\leq j\leq|x|+1$. Quindi 
+$\mathcal{N}$ è I/O, quindi possiamo non considerare l'output nella configurazione. Inoltre, poiché l'input non può essere modificato (è sempre $\rhd x\sqcup$), può essere rappresentato con $(q,j)$, dove $q$ è sempre 0, e l'indice $0\leq j\leq|x|+1$. Quindi 
 $$
     (q,j,u_1,w_1,\dots,u_{k-1},w_{k-1})
 $$
-con $|u_i|,|w_i|\leq f(n)$, $\forall i=2,\dots,k-1$. Il numero di configurazioni in questa forma è
+con $|u_i|,|w_i|\leq f(n)$, $\forall i=2,\dots,k-1$. L'idea è quella di considerare una macchina deterministica $\mathcal{M}$ che, sull'input $x$, genera $G_\mathcal{N}(x)$, e testa su $G_\mathcal{N}(x)$ se la configurazione iniziale raggiunge yes o no.
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,1.5) -- (5,1.5);
+        \draw (0,2) -- (5,2);
+        \foreach \x in {0.5,1,1.5,2.5,3} {
+          \draw (\x,1.5) -- (\x,2);
+        }
+        \node[above] at (0.75,1.5) {$\rhd$};
+        \node[above] at (1.25,1.5) {$x_1$};
+        \node[above] at (2,1.5) {\dots};
+        \node[above] at (2.75,1.5) {$x_n$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1,2.1) -- (3,2.1) node [midway,above=0.1] {$x$};
+
+        \draw (0,1) -- (5,1);
+        \draw (0,.5) -- (5,.5);
+        \foreach \x in {0.5,1} {
+          \draw (\x,0.5) -- (\x,1);
+        }
+        \node[above] at (0.75,0.5) {$\rhd$};
+        \node[above] at (2.5,0.5) {\dots};
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (1,.4) -- (4,.4) node [midway,below=0.1] {$G_\mathcal{N}(x)$};
+
+        \draw[->] (5.1,1.75) to [out=0,in=0,looseness=1.5] (5.1,.75);
+        \node[right] at (5.5,1.25) {$\substack{\text{dato $x$, il grafo viene}\\\text{generato in tempo lineare}}$};
+
+        \draw (0,-.5) -- (5,-.5);
+        \draw (0,-1) -- (5,-1);
+        \foreach \x in {0.5,1} {
+          \draw (\x,-.5) -- (\x,-1);
+        }
+        \node[above] at (0.75,-1) {$\rhd$};
+        \node[above] at (1.75,-1) {\dots};
+
+        \node[above] at (2.5,-1.7) {\vdots};
+
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (-.4,2.1) -- (-.4,-1.8) node [midway,left=0.1] {$\mathcal{M}$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (5.3,-.4) -- (5.3,-1.8) node [midway,right=0.2] {$\substack{\text{sugli altri nastri, }\mathcal{M}\\\text{risolve Reachability}}$};
+    \end{tikzpicture}
+\end{center}
+Il numero di configurazioni in questa forma, ovvero il numero di nodi di $G_\mathcal{N}(x)$, è
 \begin{eqnarray*}
     |V_\mathcal{N}(x)| &=& (|k|+2)\cdot(|x|+2)\cdot\prod_{i=2}^{k-1} |\Sigma|^{2\cdot f(|x|)}\\
-    &=& (|k|+2)\cdot(|x|+2)\cdot|\Sigma|^{2\cdot f(|x|)\cdot(k-2)}
+    &=& (|k|+2)\cdot(\textcolor{RoyalBlue}{|x|}+2)\cdot|\Sigma|^{2\cdot \textcolor{RoyalBlue}{f(|x|)}\cdot(k-2)}
 \end{eqnarray*}
-con $+2$ per yes e no. Vogliamo ora controllare se la configurazione iniziale raggiunge yes o no.
+con $+2$ per yes e no, e $k$ numero di nastri della macchina. I \textcolor{RoyalBlue}{termini che non dipendono dalla macchina} sono \textcolor{RoyalBlue}{$|x|+2$} e \textcolor{RoyalBlue}{$f(|x|)$}. Quindi
+\begin{eqnarray*}
+    (|k|+2)\cdot(|x|+2)\cdot|\Sigma|^{2\cdot f(|x|)\cdot(k-2)}~ \leq~ \alpha^{f(|x|)+\log(|x|)}\\
+    |G_\mathcal{N}(x)| ~\leq ~\left(\alpha^{f(|x|)+\log(|x|)}\right)^2 ~\leq ~\gamma^{f(|x|)+\log(|x|)}
+\end{eqnarray*}
+Richiede
+$$
+    \text{TIME}\left(\left( \gamma^{f(|x|)+\log(|x|)} \right)^\beta\right)
+    ~=~
+    \text{TIME}\left( c^{f(n)+\log(n)} \right)
+$$
+\hfill $\square$
+% Vogliamo ora controllare se la configurazione iniziale raggiunge yes o no. 
+
+\begin{corollary}
+    Per lo Hierarchy Theorem,
+    ~
+
+    $$
+        \text{SPACE}(\log(n))=\tikzmark{starta}\mathbb{L}\subseteq\text{N}\mathbb{L}\subseteq\tikzmark{startb}\text{P}\subseteq\text{NP}\subseteq\tikzmark{enda}\text{PSPACE}\subseteq\text{NPSPACE}\subseteq\tikzmark{endb}\text{EXP}\subseteq\text{NEXP}\dots
+    $$
+    \JoinUp{0.2}{1}{2}{1}{a}
+    \JoinDown{0.2}{-.4}{1}{-.4}{b}
+\end{corollary}
+Vedremo che PSPACE = NPSPACE. Un problema aperto è $\mathbb{L}\overset{?}{=}\text{N}\mathbb{L}$.
 
 
-% LEZIONE 18
-\textcolor{Red}{TODO: lezione 18}
+\subsection{Spazio Nondeterministico}
+Dato un grafo $G(V,E)$, e $u,v\in E$, il problema della raggiungibilità (Reachability) chiede se esiste un cammino da $u$ a $v$ in $G(V,E)$. Vedremo come questo problema, Reachability, è in SPACE$((\log n)^2)$.
+
+\begin{theorem}[Savitch]
+    $$
+        \text{Reachability}\in\text{SPACE}((\log n)^2)
+    $$
+\end{theorem}
+\paragraph{Dimostrazione} Sia
+$$
+    \text{Path}(a,b,i) \text{ true}
+    ~\Leftrightarrow~
+    \exists \text{ cammino da } a \text{ a } b \text{ di lunghezza al massimo } 2^i
+$$
+Il caso base è 
+$$
+    \text{Path}(a,b,0) \text{ true}
+    \quad\Leftrightarrow\quad
+    \begin{cases*}
+        a=b\\
+        (a,b)\in E \text{ (esiste un arco da } a \text{ a } b)
+    \end{cases*}
+$$
+Continuando,
+\begin{eqnarray*}
+    &\text{Path}(a,b,i+1) \text{ true}&\\
+    &\Updownarrow&
+\end{eqnarray*}
+\begin{center}
+    \begin{tikzpicture}
+        \node (a) at (0,0) {$a$};
+        \node (b) at (4,0) {$b$};
+        \draw [->] (a) -- (b);
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (0.2,-.3) -- (3.8,-.3) node [midway,below=0.1] {{\footnotesize al massimo} $2^{i+1}$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (0.2,.3) -- (1.95,.3) node [midway,above=0.1] {{\footnotesize al max} $2^i$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (2.05,.3) -- (3.8,.3) node [midway,above=0.1] {{\footnotesize al max} $2^i$};
+    \end{tikzpicture}
+\end{center}
+\begin{eqnarray*}
+    &\Updownarrow&\\
+    &\exists z \quad \text{Path}(a,z,i) ~\land~ \text{Path}(z,b,i)&
+\end{eqnarray*}
+In $G$, ci possono volere al massimo $|V|$ passi per raggiungere $v$ da $u$. Quindi
+$$
+    \text{In } G \text{, } u \text{ raggiunge } v
+    ~\Leftrightarrow~
+    \text{Path}(u,v,\log|V|) \text{ true}
+$$
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,1.5) -- (10,1.5);
+        \draw (0,2) -- (10,2);
+        \foreach \x in {0.5,1,3.5,4,5,5.5,6.5} {
+          \draw (\x,1.5) -- (\x,2);
+        }
+        \node[above] at (0.75,1.5) {$\rhd$};
+        \node[above] at (3.75,1.5) {;};
+        \node[above] at (5.25,1.5) {;};
+        \draw [decorate, decoration = {brace,amplitude=5pt}] (1,2.1) -- (3.5,2.1) node [midway,above=0.1] {$G$};
+        \draw [decorate, decoration = {brace,amplitude=5pt}] (4,2.1) -- (5,2.1) node [midway,above=0.1] {$u$};
+        \draw [decorate, decoration = {brace,amplitude=5pt}] (5.5,2.1) -- (6.5,2.1) node [midway,above=0.1] {$v$};
+        \draw [decorate, decoration = {brace,amplitude=5pt}] (1,2.7) -- (6.5,2.7) node [midway,above=0.1] {$n$};
+
+        \draw (0,1) -- (10,1);
+        \draw (0,.5) -- (10,.5);
+        \foreach \x in {0.5,1} {
+          \draw (\x,0.5) -- (\x,1);
+        }
+        \node[above] at (0.75,0.5) {$\rhd$};
+        \draw [decorate, decoration = {brace,mirror,amplitude=5pt}] (1,.4) -- (4.95,.4) node [midway,below=0.1] {Path$(\underbrace{u}_{\log n},\underbrace{v}_{\log n},\underbrace{\log|V|}_{\log n})$};
+        \draw [decorate, decoration = {brace,mirror,amplitude=5pt}] (5.05,.4) -- (9,.4) node [midway,below=0.1] {Path$(u,1,\log|V|-1)$};
+        \node at (9.75,0) {\dots};
+        \draw [decorate, decoration = {brace,mirror,amplitude=5pt}] (1,-1) -- (10.5,-1) node [midway,below=0.1] {stack delle chiamate ricorsive dell'algoritmo};
+    \end{tikzpicture}
+\end{center}
+Nel caso peggiore si ha la tripla $(\log n,\log n,\log n)$ ripetuta $\log n$ volte, quindi SPACE$((\log n)^2)$.\hfill $\square$\medskip
+
+È inefficiente in termini di tempo, ma efficiente in spazio.
+
+\paragraph{Esempio} Il grafo $G$ ha 8 nodi, quindi $|V|=8$, $V=\{1,2,\dots,8\}$, $u=1$, $v=8$. Se scriviamo Path$(1,8,3)$, si sta cercando un cammino da $u$ a $v$ lungo al massimo $2^3$.
+
+\begin{corollary}
+    $$
+        \text{NSPSACE}(f(n))\subseteq\text{SPACE}(f(n)^2)
+    $$
+\end{corollary}
+\paragraph{Dimostrazione} Sia $\mathcal{N}$ macchina che decide $L$ in spazio $f(n)$. Allora 
+$$
+    |G_\mathcal{N}(x)| = \gamma^{f(|x|)+\log(|x|)}
+$$
+Per Savitch 
+$$
+    \text{SPACE}\left(\log(\gamma^{f(|x|)+\log(|x|)})^2\right) =
+    \Theta(f(|x|)^2)
+$$
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,1.5) -- (5,1.5);
+        \draw (0,2) -- (5,2);
+        \foreach \x in {0.5,1,3} {
+          \draw (\x,1.5) -- (\x,2);
+        }
+        \node[above] at (0.75,1.5) {$\rhd$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (1,2.1) -- (3,2.1) node [midway,above=0.1] {$x$};
+
+        \draw (0,1) -- (5,1);
+        \draw (0,.5) -- (5,.5);
+        \foreach \x in {0.5,1} {
+          \draw (\x,0.5) -- (\x,1);
+        }
+        \node[above] at (0.75,0.5) {$\rhd$};
+        \node[above] at (1.75,0.5) {\dots};
+
+        \node at (2.5,0) {\vdots};
+
+        \draw[->] (5.1,1.75) to [out=0,in=0,looseness=1.5] (5.1,.75);
+        \node[right] at (5.5,1.25) {$G_\mathcal{N}(x)$};
+
+        \draw [decorate,
+            decoration = {brace,mirror,amplitude=5pt}] (-.4,2.1) -- (-.4,-.5) node [midway,left=0.1] {$\mathcal{N}$};
+        \draw [decorate,
+            decoration = {brace,amplitude=5pt}] (5.7,1) -- (5.7,-.5) node [midway,right=0.2] {Reachability};
+    \end{tikzpicture}
+\end{center}
+Questo significa che Reachability può essere risolto senza memorizzare il grafo $G_\mathcal{N}(x)$ in un working tape. \hfill $\square$
+
+\begin{corollary}
+    $$
+        \text{NPSPACE} = \text{PSPACE}
+    $$
+\end{corollary}
+
+\begin{corollary}
+    $$
+        \text{N}\mathbb{L} = \text{SPACE}\left( (\log n)^2 \right)
+    $$
+\end{corollary}
+Sappiamo che $\mathbb{L}\subseteq\text{N}\mathbb{L}$. Se dimostrassimo che Reachability $\in$ SPACE$(\log n)$, allora $\mathbb{L}=\text{N}\mathbb{L}$.\medskip
+
+Sappiamo che 
+$$
+    \text{co-}l = \{ \overline{L} ~|~ L\in l \}
+$$
+Quindi 
+$$
+    \text{NPSPACE}=\text{PSPACE}
+    ~\Rightarrow~
+    \text{co-NPSPACE}= \text{PSPACE}
+$$
+Inoltre
+$$
+    \text{co-NPSPACE}(f(n)) \subseteq \text{SPACE}(f(n)^2)
+$$
+Dato $G_\mathcal{N}(x)$, 
+\begin{eqnarray*}
+    x\in L &\Leftrightarrow& \text{la configurazione iniziale raggiunge yes (Reachability)}\\
+    x\in \overline{L} &\Leftrightarrow& \text{la configurazione iniziale non è in grado di raggiunge yes (Unreachability)}
+\end{eqnarray*}
+Vogliamo studiare la relazione tra co-NPSPACE$(f(n))$ e NPSPACE$(f(n))$. Qual è la complessità spa\-zia\-le nondeterministica di Unreachability? Dato un grafo $G$ e un nodo $u\in V$, contare il numero di nodi raggiungibili da $u$, con un algoritmo non deterministico e in spazio logaritmico.
 
 % LEZIONE 19
 \textcolor{Red}{TODO: lezione 19}

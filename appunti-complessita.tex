@@ -41,6 +41,7 @@
 \usetikzlibrary{trees}
 \usetikzlibrary{shapes.geometric}
 \usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{tikzmark}
 \usepackage{eurosym}
 \usepackage{booktabs}
 % \usepackage{multirow}
@@ -60,6 +61,20 @@
 % \pgfmathdeclarefunction{poiss}{1}{%
 %   \pgfmathparse{(#1^x)*exp(-#1)/(x!)}%
 % }
+
+\newlength{\mytextsize}
+\makeatletter
+      \setlength{\mytextsize}{\f@size pt}
+\makeatother
+
+\newcommand{\JoinUp}[5]{\begin{tikzpicture}[remember picture,overlay,line width=0.05\mytextsize]
+    \draw([shift={(#1\mytextsize,#2\mytextsize)}]pic cs:start#5) -- ++(0pt,0.7\mytextsize) -| ([shift={(#3\mytextsize,#4\mytextsize)}]pic cs:end#5);
+    \node at (6.5,1.8) {$\neq$};
+    \end{tikzpicture}}
+\newcommand{\JoinDown}[5]{\begin{tikzpicture}[remember picture,overlay,line width=0.05\mytextsize]
+    \draw([shift={(#1\mytextsize,#2\mytextsize)}]pic cs:start#5) -- ++(0pt,-0.7\mytextsize) -| ([shift={(#3\mytextsize,#4\mytextsize)}]pic cs:end#5);
+    \node at (9.4,.15) {$\neq$};
+    \end{tikzpicture}}
 
 \def\rdots{\rotatebox[origin=l]{29}{$\scriptscriptstyle\ldots\mathstrut$}}
 
@@ -130,9 +145,6 @@ contents={\includegraphics[keepaspectratio]{pexels-gül-işık-2128249}}
 %%%%%%%%%% 
 \input{part1}
 \input{part2}
-% \input{part3}
-% \input{part4}
-% \input{appendice}
 
 %%%%%%%%%%
 
