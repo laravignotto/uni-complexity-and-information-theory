@@ -702,15 +702,47 @@ La domanda ora è: quanto è lungo al massimo il nastro di $\mathcal{M}'$ durant
 $$
 (k-1)\cdot O(f(n)) + O(n+f(n)) = kO(f(n)) = O(f(n))
 $$
-Si può concludere che simulare un passo di $\mathcal{M}$ richiede tempo $O(f(n))$. Poiché ci vogliono $O(f(n))$ passi di $\mathcal{M}'$ per simulare un passo di $\mathcal{M}$, si ha che $\mathcal{M}'$ decide $L$ in tempo $O(f(n)^2)$. \hfill $\square$
+Si può concludere che simulare un passo di $\mathcal{M}$ richiede tempo $O(f(n))$. Poiché ci vogliono $O(f(n))$ passi di $\mathcal{M}'$ per simulare un passo di $\mathcal{M}$, si ha che $\mathcal{M}'$ decide $L$ in tempo $O(f(n)^2)$. \hfill $\square$\medskip
+
+A seguito di questo risultato, d'ora in poi si farà affidamento solo sulla complessità delle macchine di Turing a $k$-nastri.
+
+\begin{definition}[Appartenenza ad una Classe di Complessità Temporale]
+    $$
+        L\in\text{TIME}(f(n)) ~ \exists \text{ MdT a } k \text{-nastri } \mathcal{M} \text{ che decide } L \text{ in tempo } f(n)
+    $$
+\end{definition}
+Ad esempio, Palindromi $\in$ TIME$(3n+4)$. Questo insieme di linguaggi potrebbe essere diverso da, ad esempio, TIME$(2n+1)$. Non utilizziamo la notazione asintotica.
+
+\begin{theorem}[Speed-Up Theorem per TIME]
+    $$
+        L\in\text{TIME}(f(n))
+        ~\Rightarrow~
+        \forall\varepsilon>0\quad L\in\text{TIME}(f'(n))
+    $$
+    con $f'(n)=\varepsilon\cdot f(n)+n+2$.
+\end{theorem}
+Bisogna sempre pagare il tempo lineare $n+2$ per leggere l'input. Questo risultato ci dice che possiamo utilizzare la notazione asintotica.
+
+\paragraph{Dimostrazione} Sia $\mathcal{M}$ macchina di Turing a $k$-nastri che decide $L$ in tempo $f(n)$. Vogliamo costruire una macchina di Turing a $k$-nastri $\mathcal{M}'$ che simula $m$ passi di $\mathcal{M}$ in ``un singolo passo'' (nel libro sono fissati 6 passi). Ad esempio, se $f(n)=3n^2$ e $\varepsilon=\frac{1}{3}$, allora $f'(n)=n^2$.
+
+Vogliamo codificare blocchi di $m$ passi in un singolo passo: $\Sigma'=\Sigma^m$. Quando $\mathcal{M}'$ legge una cella, sta in realtà leggendo $m$ simboli. 
+\begin{itemize}
+    \item Si copia il nastro di input da $\mathcal{M}$ a $\mathcal{M}'$, e lo si traduce da $\Sigma$ a $\Sigma'$: questo costa $n+1$.
+    \item Per quanto riguarda il puntatore, sappiamo che in $\mathcal{M}$ gli stati sono in $K$, mentre in $\mathcal{M}'$ sono in $K\times\{1,\dots,m\}^k$. In $\mathcal{M}'$ devo sapere dove sta il puntatore, ma se in $\mathcal{M}$ viene letto qualcosa nei successivi $m$ passi (si cambia quindi di cella in $\mathcal{M}'$), gli stati di $\mathcal{M}'$ sono in $K\times\{1,\dots,m\}^k\times (\Sigma^m)^2k$.
+\end{itemize}
+I passi di $\mathcal{M}'$ sono quindi $n+2+f(n)\cdot\varepsilon$. \hfill $\square$\medskip
+
+Abbiamo cambiato architettura, ciò che si può memorizzare in una singola cella. Ad esempio, se costruiamo una macchina in cui $m=18$, 18 passi di $\mathcal{M}$ vengono simulati da 6 passi di $\mathcal{M}'$. Quindi i passi di $\mathcal{M}'$ sono $n+2+f(n)\cdot\frac{6}{m}$, con $\frac{6}{m}=\varepsilon$.
 
 
 
-\textcolor{Red}{TODO: finire lezione 11}
+% \textcolor{Red}{TODO: finire lezione 11}
 
 
 % LEZIONE 12
 \subsection{Complessità Spaziale}
+Una configurazione finale di una macchina di Turing a $k$-nastri è del tipo $(H,w_1,u_1,\dots,w_k,u_k)$. Include anche tutte le parti raggiunte durante la computazione (anche se tutti i cursori alla fine puntano a $\sqcup$). Si può utilizzare come complessità spaziale la lunghezza della configurazione finale.
+
 \begin{definition}[Complessità Spaziale per una MdT a $k$-nastri su input $x$]
     Si ha che
     $$
@@ -721,6 +753,7 @@ Si può concludere che simulare un passo di $\mathcal{M}$ richiede tempo $O(f(n)
         \sum_{i=1}^k |w_i| + |u_i|
     $$
 \end{definition}
+Se non vogliamo contare la dimensione dell'input e dell'output, bisogna utilizzare le macchine di Turing a $k$-nastri con I/O. L'input può essere solo letto, e l'output solo scritto.
 
 \begin{definition}[Complessità Spaziale per una MdT a $k$-nastri con I/O]
     Si ha che
@@ -729,7 +762,7 @@ Si può concludere che simulare un passo di $\mathcal{M}$ richiede tempo $O(f(n)
     $$
     con $H=\{\text{halt},\text{yes},\text{no}\}$. Lo spazio utilizzato è
     $$
-        \sum_{i=1}^{k-1} |w_i| + |u_i|
+        \sum_{i=2}^{k-1} |w_i| + |u_i|
     $$
 \end{definition}
 dove $\delta(q,\sigma_1,\dots,\sigma_k)=(q',\sigma_1',\dots,\sigma_k',\to)$.
