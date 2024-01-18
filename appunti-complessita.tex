@@ -25,6 +25,8 @@
 % \usepackage[margin=2cm]{geometry}
 \usepackage[font=small,labelfont=bf]{caption}
 \usepackage{subcaption}
+\usepackage{amsthm}
+\theoremstyle{definition}
 \usepackage{fancyvrb}
 \usepackage[dvipsnames,table,xcdraw]{xcolor}
 \usepackage{mdframed}
@@ -49,8 +51,8 @@
 % \usepackage{multirow}
 \usepackage[pages=some,placement=top]{background}
 
-\usepackage{amsthm}
-\theoremstyle{definition}
+% \usepackage{amsthm}
+% \theoremstyle{definition}
 
 \newmdtheoremenv[backgroundcolor=Plum!5]{theorem}{\color{Plum}Teorema}[section]
 \newmdtheoremenv[backgroundcolor=Mahogany!5]{corollary}{\color{Mahogany}Corollario}[theorem]
@@ -100,8 +102,8 @@
 
 
 % better circled numbers
-\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
-           \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+% \newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+%            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
 
 % \setcounter{tocdepth}{4}
 \setcounter{tocdepth}{3}
@@ -131,14 +133,14 @@ contents={\includegraphics[keepaspectratio]{pexels-gül-işık-2128249}}
 
 \vfill
 % \begin{multicols}{2}
-{
+% {
 % \tiny
 % \scriptsize
-\footnotesize
-\begin{quote}
-    \tableofcontents
-\end{quote}
-}
+% \footnotesize
+% \begin{quote}
+\tableofcontents
+% \end{quote}
+% }
 % \end{multicols}
 
 \newpage
@@ -147,43 +149,35 @@ contents={\includegraphics[keepaspectratio]{pexels-gül-işık-2128249}}
 %%%%%%%%%% 
 \input{part1}
 \input{part2}
-
+\input{part3}
 %%%%%%%%%%
 
-% \newpage
 
+%%%%%%%%%% 
+\newpage
+\renewcommand{\listtheoremname}{Lista di Teoremi}
 % \begin{multicols}{2}
 % {
-% % \tiny
-% % \scriptsize
 % \footnotesize
-% \listoftheorems
+\listoftheorems[ignoreall,show={theorem,
+% corollary,
+% lemma,
+% property,
+% proposition
+}]
 % }
 % \end{multicols}
 
-
-%%%%%%%%%% 
-% \newpage
-% \input{domande} 
-%%%%%%%%%%
-
-
-%%%%%%%%%% 
-% \newpage
-\printindex
+\newpage
+\renewcommand{\listtheoremname}{Lista di Definizioni}
+% \begin{multicols}{2}
+% {
+% \footnotesize
+\listoftheorems[ignoreall,show=definition]
+% }
+% \end{multicols}
 %%%%%%%%%%
 
 
 \end{document}
 
-
-
-% \chapter{Regressione Logistica}
-% \chapter{Reti Neurali}
-% \chapter{NLP e Word Embedding}
-% \chapter{Ottimizzazione}
-% \chapter{Computer Vision}
-% \chapter{RNN}
-% \chapter{GANs}
-% \chapter{Attention Models}
-% \chapter{Graph Neural Networks}

@@ -60,7 +60,7 @@ Questo significa che $L_1\leq L_2$ e $L_2\leq L_3$ implica $L_1\leq L_3$. Inoltr
 Si può dimostrare che, ad esempio, P, NP, EXP, $\mathbb{L}$, N$\mathbb{L}$, PSPACE sono tutte chiuse per riduzione. \emph{Esercizio: trovare un esempio di una classe di complessità non chiusa per riduzione.}
 
 
-\subsection{Completezza}
+\section{Completezza}
 
 \begin{definition}[Completezza di una Classe di Complessità]
     Un linguaggio $L$ è completo per una classe $\mathcal{C}$ se
@@ -300,10 +300,13 @@ Qual è la complessità di questo problema? Per risolverlo, si può utilizzare i
 
 
 
-\chapter{Problemi NP-Completi}
+\chapter{Problemi Completi}
+
+
+\section{Problemi NP-Completi}
 Dimostrare i risultati di NP-completezza è un ingrediente importante della nostra metodologia per lo studio dei problemi computazionali. Ci concentreremo su problemi NP e NP-completi. 
 
-\section{SAT}
+\subsection{SAT}
 Sappiamo che Circuit SAT (SAT di formule booleane) è NP-completo. Formule booleane in CNF (conjunctive normal form) sono formule scritte come congiunzioni di disgiunzioni. Sono della forma
 $$
     c_1 \land ... \land c_h
@@ -326,7 +329,7 @@ Solitamente con SAT ci si riferisce alla soddisfacibilità di formule in CNF.
 
 \paragraph{3-SAT} Data la formula $\varphi$ in CNF tale che in ogni clausola ci sono al più 3 letterali, decidere se $\varphi$ è soddisfacibile. 
 
-\begin{theorem}
+\begin{theorem}[NP-Completezza di 3-SAT]
     3-SAT è NP-completo.
 \end{theorem}
 \paragraph{Dimostrazione} Dobbiamo dimostrare che 
@@ -344,7 +347,7 @@ Solitamente con SAT ci si riferisce alla soddisfacibilità di formule in CNF.
 \end{enumerate}
 
 
-\section{Caratterizzazione di NP}
+\subsection{Caratterizzazione di NP}
 
 \begin{definition}[Decidibile Polinomialmente]
     Una relazione binaria $R\subseteq\Sigma^*\times\Sigma^*$ è decidibile polinomialmente (deterministicamente) se, dato $(x,y)$, si può decidere in tempo $n^k$ se $(x,y)\in R$.
@@ -394,7 +397,7 @@ In altre parole, $y$ è un testimone, un certificato che $x\in L$. Con il certif
 \end{enumerate}
 
 
-\section{Independent Set}
+\subsection{Independent Set}
 \paragraph{Independent Set (IS)} Dato un grafo $G=(V,E)$ e un intero $k$, decidere se esiste  in $G$ un insieme di nodi $I$ tale che $|I|\geq k$ e $\forall u,v\in I$, $(u,v)\notin E$.\medskip
 
 Dimostriamo che IS è NP-completo.
@@ -492,7 +495,7 @@ Dimostriamo che IS è NP-completo.
 \end{enumerate}
 
 
-\section{Clique}
+\subsection{Clique}
 
 \paragraph{Clique (Cricca)} Dato un grafo $G=(V,E)$ e un intero $k$, decidere se esiste un insieme di nodi $C$ tale che $|C|\geq k$ e $\forall u,v\in C$, $(u,v)\in E$.\medskip
 
@@ -553,56 +556,121 @@ Come esempio per il punto 2, si considerino il grafo $G$ e il suo complemento $G
 \end{center}
 
 
-\section{Isomorfismo tra Sottografi}
+\subsection{Isomorfismo tra Sottografi}
+\paragraph{Subgraph Isomorphism (SGI)} Dati $G_1,G_2$, decidere se esiste un sottografo di $G_1$ che è isomorfo a $G_2$.\medskip 
+
+Ad esempio, $G_2$ è isomorfo a un sottografo in $G_1$, ma $G_2'$ non è presente in $G_1$.
+\begin{center}
+    \begin{tikzpicture}
+        \node at (1,1.6) {$G_1$};
+        \node (A) at (0,0) {$\bullet$};
+        \node (B) at (2,0) {$\bullet$};
+        \node (C) at (1,1) {$\bullet$};
+        \node (D) at (2,-1.5) {$\bullet$};
+        \node (E) at (0,-1.5) {$\bullet$};
+        \draw (A) -- (B);
+        \draw (B) -- (C);
+        \draw (C) -- (A);
+        \draw (A) -- (E);
+        \draw (B) -- (D);
+        \draw (E) -- (D);
+
+        \node at (5,1.6) {$G_2$};
+        \node (F) at (4,0) {$\bullet$};
+        \node (G) at (6,0) {$\bullet$};
+        \node (H) at (5,1) {$\bullet$};
+        \draw (F) -- (G);
+        \draw (G) -- (H);
+        \draw (H) -- (F);
+
+        \node at (9,1.6) {$G_2'$};
+        \node (I) at (8,0) {$\bullet$};
+        \node (J) at (10,0) {$\bullet$};
+        \node (K) at (9,1) {$\bullet$};
+        \node (L) at (9,-1) {$\bullet$};
+        \draw (I) -- (J);
+        \draw (J) -- (K);
+        \draw (K) -- (I);
+        \draw (I) -- (L);
+        \draw (J) -- (L);
+    \end{tikzpicture}
+\end{center}
+Clique $\leq$ SGI: siano $G$, $k$ il grafo e l'intero per Clique. Per SGI si costruiscono i grafi $G_1=G$ e $G_2=G_k$ (grafo completo con $k$ nodi). Esiste una clique di dimensione $k$ in $G$ sse esiste un sottografo isomorfo a $G_k$ in $G$. Ad esempio, cercare una 3-clique in $G$ significa cercare un pattern del tipo 
+\begin{center}
+    \begin{tikzpicture}
+        \node (F) at (4,0) {$\bullet$};
+        \node (G) at (6,0) {$\bullet$};
+        \node (H) at (5,1) {$\bullet$};
+        \draw (F) -- (G);
+        \draw (G) -- (H);
+        \draw (H) -- (F);
+    \end{tikzpicture}
+\end{center}
 
 
 
-\section{Isomorfismo tra Grafi}
+\subsection{Isomorfismo tra Grafi}
+\paragraph{Graph Isomorphism (GI)} Dati $G_1,G_2$, decidere se $G_1$ è isomorfo a $G_2$.\medskip
+
+Sappiamo che GI $\in$ NP, ma non si sa se è NP-completo. Se si dimostrasse che P $\neq$ NP, allora $\exists L$, $L\in$ NP$\backslash$P $\land$ $L\not\in$ NP-completo.
 
 
 
-\section{Programmazione Intera}
+\subsection{Programmazione Intera}
+\paragraph{Integer Programming (IP)} Dato un insiele di disuguaglianze lineari, decidere se esiste un assegnamento di interi alle variabili che soddisfa tutte le disuguaglianze.\medskip
 
-\textcolor{Red}{TODO: finire lezione 21}
+3-SAT $\leq$ IP: sia $\varphi=(\ell_{1,1},\ell_{1,2},\ell_{1,3})\land(\dots)$ e ogni letterale $\ell_{i,k}$ è del tipo $p,q,r$. Per ogni variabile nella formula, consideriamo $x_p,x_{\lnot p}$. Consideriamo i seguenti vincoli per tutte le variabili nella formula
+$$
+\begin{cases*}
+    0\leq x_p\leq 1 \\
+    0\leq x_{\lnot p}\leq 1 \\
+    x_p+x_{\lnot p}\geq 1 \\
+    x_p+x_{\lnot p}\leq 1 \\
+    \vdots \\
+    x_p+x_{\lnot q}+x_r\geq 1 \\
+\end{cases*}
+$$
+IP $\in$ NP-completo. La programmazione lineare (su $\mathbb{R}$) $\in$ P.
+
 
 
 % LEZIONE 22
-\section{Knapsack}
+\subsection{Knapsack}
 
 
 
 
 %%%%%%%%%%
-\chapter{Problemi co-NP-Completi}
+\section{Problemi co-NP-Completi}
 
 
-\section{Validity}
-
-
-
-
-
-%%%%%%%%%%
-\chapter{Problemi $\mathbb{L}$-Completi}
+\subsection{Validity}
 
 
 
 
 
 %%%%%%%%%%
-\chapter{Problemi N$\mathbb{L}$-Completi}
-
-\section{Reachability}
-
-
-\section{2-SAT}
+\section{Problemi $\mathbb{L}$-Completi}
 
 
 
 
 
 %%%%%%%%%%
-\chapter{Gerarchia Polinomiale}
+\section{Problemi N$\mathbb{L}$-Completi}
+
+\subsection{Reachability}
+
+
+\subsection{2-SAT}
+
+
+
+
+
+%%%%%%%%%%
+\section{Gerarchia Polinomiale}
 
 
 \textcolor{Red}{TODO: finire lezione 22}

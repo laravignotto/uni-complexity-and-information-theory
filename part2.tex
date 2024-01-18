@@ -2457,7 +2457,7 @@ Ma abbiamo detto che $\forall x$ t.c.~$|x|\geq j$, dobbiamo dimostrarlo per ogni
 
 \section{Reachability Method}
 I teoremi appena visti ci dicono come classi dello stesso tipo (tempo deterministico, spazio deterministico) si relazionano tra loro quando variamo la funzione che rappresenta il limite di complessità. Risultati simili, sebbene molto più difficili da dimostrare, sono noti per classi di complessità non deterministiche. Tuttavia, le domande più interessanti nella teoria della complessità riguardano la relazione tra classi di tipo diverso, come P vs NP.
-\begin{theorem}
+\begin{theorem}[Reachability]
     Sia $f$ una funzione propria. Allora
     \begin{enumerate}
         \item $\text{SPACE}(f(n))\subseteq\text{NSPACE}(f(n))$
@@ -2773,7 +2773,7 @@ Dato $G_\mathcal{N}(x)$,
 Vogliamo studiare la relazione tra co-NPSPACE$(f(n))$ e NPSPACE$(f(n))$. Qual è la complessità spa\-zia\-le nondeterministica di Unreachability? Dato un grafo $G$ e un nodo $u\in V$, contare il numero di nodi raggiungibili da $u$, con un algoritmo non deterministico e in spazio logaritmico.
 
 % LEZIONE 19
-\begin{theorem}[Immerman Szelepcsényi]
+\begin{theorem}[Immerman-Szelepcsényi]
     Dato $G=(V,E)$ e $x\in V$, il numero di nodi raggiungibili da $x$ è in NSPACE$(\log n)$.
 \end{theorem}
 Per un problema di decisione, questo significa che nell'albero di computazione di $\mathcal{N}(x)$ è sufficente uno yes nelle foglie per dire $x\in L$.
