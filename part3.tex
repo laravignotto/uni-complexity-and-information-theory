@@ -636,15 +636,64 @@ IP $\in$ NP-completo. La programmazione lineare (su $\mathbb{R}$) $\in$ P.
 
 % LEZIONE 22
 \subsection{Knapsack}
+\paragraph{Knapsack} Datio $S$ insieme di oggetti, $i\in S$, con peso $w_i$ e valore $v_i$, e una sacca di peso $W$, massimizzare $V$.\medskip
 
+Knapsack $\in$ NP-completo.
+
+\begin{theorem}
+    Ogni istanza di Knapsack può essere risolta in tempo $O(|S|W)$.
+\end{theorem}
+Questo è un algoritmo pseudo-polinomiale, in quanto dipende da $W$. Se fissiamo o limitiamo $W$, allora l'algoritmo è polinomiale. Tutti i problemi per i quali non esistono algoritmi pseudo-polinomiali sono detti fortemente NP-completi.
 
 
 
 %%%%%%%%%%
 \section{Problemi co-NP-Completi}
 
+\begin{center}
+    \begin{tikzpicture}
+        \draw (0,0) ellipse (2cm and 1cm);
+        \draw (3,0) ellipse (2cm and 1cm);
+        \draw (-1.2,.8) -- (-1.2,-.8);
+        \draw (4.2,.8) -- (4.2,-.8);
+
+        \node[left] (npc) at (-2.5,0) {NP-completo};
+        \node at (-.2,0) {NP};
+        \node at (1.5,0) {P};
+        \node at (3.2,0) {co-NP};
+        \node[right] (cnpc) at (5.5,0) {co-NP-completo};
+        \draw (npc) -- (-1.8,0);
+        \draw (cnpc) -- (4.8,0);
+    \end{tikzpicture}
+\end{center}
+
+\begin{theorem}
+    $$
+        L \text{ è completo per } \mathcal{C}
+        \quad \Leftrightarrow \quad
+        \overline{L} \text{ è completo per co-} \mathcal{C}
+    $$
+\end{theorem}
+\paragraph{Dimostrazione} Se $L$ è completo per $\mathcal{C}$, significa che $L\in\mathcal{C}$ e $\forall L'\in\mathcal{C}$, $L'\leq L$. Quindi $\overline{L}\in$ co-$\mathcal{C}$ (definizione). Sia $L''\in$ co-N$\mathcal{C}$, allora $L''=\overline{L'}$, con $L'\in\mathcal{C}$. Sappiamo che $L'\leq L$. $L'\subseteq(\Sigma')^*$, $L\subseteq(\Sigma)^*$.
+$$
+    \exists R : (\Sigma')^*\to(\Sigma)^* \qquad R(x)\in L \Leftrightarrow x\in L'
+$$
+con $R$ computabile in spazio logaritmico. Vogliamo dimostrare che $L''\leq\overline{L}$. Si consideri $R$
+$$
+    x\in L'' ~\Leftrightarrow~ 
+    x\not\in L' ~\Leftrightarrow~
+    R(x)\not\in L ~\Leftrightarrow~
+    R(x)\in\overline{L}
+$$
+$R$ è computabile in spazio logaritmico, quindi $L''\leq\overline{L}$. \hfill$\square$\medskip 
+
+Ad esempio, SAT ($\forall v\dots$) è NP-completo $\Rightarrow$ UnSAT ($\exists v\dots$) è co-NP-completo.
+
 
 \subsection{Validity}
+\paragraph{Validity} Data una formula $\varphi$, decidere se è valida. $\varphi$ è valida sse $\lnot\varphi$ è insoddisfacibile.\medskip 
+
+La riduzione da Validity a UnSAT si ottiene mettendo $\neg$ davanti a $\varphi$. 
 
 
 
@@ -652,7 +701,19 @@ IP $\in$ NP-completo. La programmazione lineare (su $\mathbb{R}$) $\in$ P.
 
 %%%%%%%%%%
 \section{Problemi $\mathbb{L}$-Completi}
+Poiché le nostre riduzioni sono in spazio logaritmico, è difficile decidere se un linguaggio è o meno in $\mathbb{L}$. 
 
+\begin{theorem}
+    $\forall L\in\mathbb{L}$, $L\neq\emptyset$, e $L\neq\Sigma^*$, allora $L$ è $\mathbb{L}$-completo.
+\end{theorem}
+
+\paragraph{Dimostrazione} Sia $L\in\mathbb{L}$, $L\neq\emptyset$ ($x\in L$), e $L\neq\Sigma^*$ ($y\not\in L$). Sia $L'\in\mathbb{L}$
+$$
+    \forall x'\in L' ~ R(x')=x 
+    \qquad 
+    \forall x'\not\in L' ~ R(x')=y
+$$
+Si può dimostrare che questa riduzione è computabile in spazio logaritmico? Sì, perché $L\in\mathbb{L}$. In spa\-zio logaritmico si può decidere se $x'\in L'$, e si ottiene o $x$ o $y$.\hfill$\square$
 
 
 
@@ -661,9 +722,59 @@ IP $\in$ NP-completo. La programmazione lineare (su $\mathbb{R}$) $\in$ P.
 \section{Problemi N$\mathbb{L}$-Completi}
 
 \subsection{Reachability}
+Vedi il reachability method nella sezione \vref{sec:reachability}. Reachability $\in$ N$\mathbb{L}$-completo. $\forall L\in$ N$\mathbb{L}$, $\mathcal{N}$ decide $L$, $G_\mathcal{N}(x)$. Se $L\in$ N$\mathbb{L}$, allora $G_\mathcal{N}(x)$ può essere computato in spazio logaritmico.
 
 
 \subsection{2-SAT}
+2-SAT $\in$ N$\mathbb{L}$-completo. Abbiamo una congiunzione di clausole $c_1\land c_2\land\dots\land c_k$, dove ogni clausola è del tipo
+$$
+    c_i \equiv (\ell_{i,1}\lor\ell_{i,2}) \equiv (\lnot\ell_{i,1}\to\ell_{i,2}) \equiv (\lnot\ell_{i,2}\to\ell_{i,1})
+$$
+Queste implicazioni logiche possono essere viste come archi di un grafo.
+
+\paragraph{Esempio} $\varphi=(x\lor\neg y)\land(\neg x\lor z)\land(\neg z\lor\neg y)$
+
+\begin{center}
+    \begin{tikzpicture}
+        \node (x) at (0,.5) {$x$};
+        \node (nx) at (0,-2) {$\neg x$};
+        \node (y) at (1.5,0) {$y$};
+        \node (ny) at (1.5,-1.5) {$\neg y$};
+        \node (z) at (-1.5,0) {$z$};
+        \node (nz) at (-1.5,-1.5) {$\neg z$};
+
+        \draw[->] (x) -- (z);
+        \draw[->] (nx) -- (ny);
+        \draw[->] (y) -- (x);
+        \draw[->] (y) -- (nz);
+        \draw[->] (z) -- (ny);
+        \draw[->] (nz) -- (nx);
+    \end{tikzpicture}
+\end{center}
+In questo caso $y$ raggiunge $y'$. Se, invece, prendiamo come esempio la formula 
+$$
+    \varphi'=(x\lor\neg y)\land(\neg x\lor z)\land(\neg z\lor\neg y)\land(y\land\neg z)\land(z\land y)
+$$
+\begin{center}
+    \begin{tikzpicture}
+        \node (x) at (0,.5) {$x$};
+        \node (nx) at (0,-2) {$\neg x$};
+        \node (y) at (1.5,0) {$y$};
+        \node (ny) at (1.5,-1.5) {$\neg y$};
+        \node (z) at (-1.5,0) {$z$};
+        \node (nz) at (-1.5,-1.5) {$\neg z$};
+
+        \draw[->] (x) -- (z);
+        \draw[->] (nx) -- (ny);
+        \draw[->] (y) -- (x);
+        \draw[<->] (ny) -- (z);
+        \draw[<->] (ny) -- (nz);
+        \draw[->] (z) -- (y);
+        \draw[->] (nz) -- (nx);
+        \draw[<->] (nz) -- (y);
+    \end{tikzpicture}
+\end{center}
+Ora sia $y\to\neg y$ che $\neg y\to y$: $\varphi'$ è insoddisfacibile.
 
 
 
