@@ -79,7 +79,36 @@ $$
 Sappiamo che $0\leq x\leq 1$ perché è una probabilità, e quindi abbiamo che $-\nicefrac{1}{x}<0$: la funzione è con\-ca\-va. Prendiamo ora due punti $x_1$ e $x_2$, e un punto $x$ tra i due.
 % $0\leq-\nicefrac{1}{x}\leq 1$ perché è una probabilità, e quindi abbiamo che $x<0$: la funzione è concava. Prendiamo ora due punti $x_1$ e $x_2$, e un punto $x$ tra i due.
 
-\textcolor{Red}{TODO: disegno}
+\begin{center}
+\begin{tikzpicture}
+    \begin{axis}[
+        axis lines=middle,
+        xlabel=$x$,
+        ylabel=$f(x)$,
+        xmin=-.1,
+        xmax=1.1,
+        ymin=-.1,
+        ymax=.8,
+        xtick={0,0.1,0.2,0.3},
+        ytick={0,0.33219280948,0.46438561897,0.52108967825},
+        xticklabels={0,$x_1$,\textcolor{ForestGreen}{$x$},$x_2$},
+        yticklabels={0,$f(x_1)$,\textcolor{ForestGreen}{$f(x)$},$f(x_2)$},
+        width=8cm,
+        height=6cm,
+        ]
+        \addplot[domain=-0.5:4, samples=100, RoyalBlue, thick] {-x*log2(x)};
+        % vertical lines
+        \draw [dashed] (axis cs:0.1,0) -- (axis cs:0.1,0.33219280948);
+        \draw [dashed] (axis cs:0.3,0) -- (axis cs:0.3,0.52108967825);
+        \draw [dashed,ForestGreen] (axis cs:0.2,0) -- (axis cs:0.2,0.46438561897);
+        % horizontal lines
+        \draw [dashed] (axis cs:0,0.33219280948) -- (axis cs:0.1,0.33219280948);
+        \draw [dashed] (axis cs:0,0.52108967825) -- (axis cs:0.3,0.52108967825);
+        \draw [dashed,ForestGreen] (axis cs:0,0.46438561897) -- (axis cs:0.2,0.46438561897);
+    \end{axis}
+\end{tikzpicture}
+\end{center}
+
 
 Abbiamo che la media pesata di $x_1$ e $x_2$ è
 $$
@@ -159,12 +188,38 @@ Capitolo 4 del libro di MacKay. In questo capitolo discuteremo come misurare il 
                             & = & -p\log(p) - (1-p)\log(1-p)\\
                             & = & \mathcal{H}(p)
 \end{eqnarray*}
+Abbiamo visto che 
+\begin{eqnarray*}
+    p=0 &\to& \mathcal{H}(0)=0\\
+    p=1 &\to& \mathcal{H}(1)=0\\
+    p=\nicefrac{1}{2} &\to& \mathcal{H}(\nicefrac{1}{2})=\log_2(2)=1 \text{ massima entropia}
+\end{eqnarray*}
 
-\textcolor{Red}{TODO: finire lezione 2}
+\begin{center}
+    \begin{tikzpicture}
+        \begin{axis}[
+            axis lines=middle,
+            xlabel=$p$,
+            ylabel=$\mathcal{H}(p)$,
+            xmin=-0.05,
+            xmax=1.2,
+            ymin=-0.05,
+            ymax=1.2,
+            xtick={0,0.5,1},
+            ytick={0,1},
+            width=7.5cm,
+            height=6cm,
+            ]
+            \addplot[domain=0.01:0.99, samples=100, BlueViolet, thick] {-x*log2(x)-(1-x)*log2(1-x)};
+            \draw [dashed,OliveGreen] (axis cs:0.5,0) -- (axis cs:0.5,1);
+        \end{axis}
+    \end{tikzpicture}
+\end{center}
+
 
 
 % LEZIONE 3
-\textcolor{Red}{LEZ 3}
+% \textcolor{Red}{LEZ 3}
 
 \textcolor{Red}{TODO: soluzione esercizio 4.1}
 
@@ -265,7 +320,7 @@ Poiché l'alfabeto di input è binario, per rappresentare una codifica si può u
         };
     \end{tikzpicture}
 \end{center}
-Quello per l'\textbf{Esempio 3} è il seguente: \textcolor{Red}{TODO: fixare in modo che gli archi ad $a$ e $c$ siano inclinati}
+Quello per l'\textbf{Esempio 3} è il seguente: %\textcolor{Red}{TODO: fixare in modo che gli archi ad $a$ e $c$ siano inclinati}
 \begin{center}
     \begin{tikzpicture}[grow=right]
         \node {$\bullet$}
@@ -340,6 +395,7 @@ Si vuole trovare la codifica con la minor EL sotto l'assunzione che la sorgente 
 Possiamo raggiungere il minimo di EL considerando i codici prefisso. EL è codificata da $\mathcal{H}(P)$. I codici possono essere asintotticamente ottimali, o ottimali.
 
 
+% LEZIONE 4
 \subsection{Limite imposto dalla Decodificabilità Univoca}
 
 È possibile definire un codice $\varphi:\mathcal{A}\to\mathcal{B}^*$ che sia UD, date le lunghezze delle codifiche $l_1,\dots,l_k$? Definiamo della terminologia:
@@ -810,7 +866,7 @@ Continuiamo la dimostrazione:
 
 
 % LEZIONE 5
-\subsection{Shannon Code}
+\subsection{Quanto Possiamo Comprimere?}
 Dal Teorema $1^\circ$ Shannon abbiamo:
 $$
 EL(\varphi) = \sum_{i=1}^k p_il_i ~ \geq ~ \mathcal{H}_D(P) = \sum_{i=1}^k p_i\log_D\frac{1}{p_i}
@@ -924,12 +980,227 @@ $$
         };
     \end{tikzpicture}
 \end{center}
+Dovremmo provare a migliorarlo. \textbf{Osservazione}: con la scelta di usare $l_i=\lceil-\log_Dp_i\rceil$, quando siamo lontani dall'entropia nel caso peggiore?
 
 
+\subsection{Shannon Code $\varphi_S$}
+Il Source coding theorem per codici simbolo ci dice che
+\begin{align*}
+    EL(\varphi_S) &= \sum_{i=1}^k p_i(-\log_Dp_i+\beta_i)\\
+    &= \sum_{i=1}^k p_i(-\log_Dp_i) + \sum_{i=1}^k p_i\beta_i\\
+    &= \mathcal{H}_D(P) + \sum_{i=1}^k p_i\beta_i
+\end{align*}
+Più piccolo è il termine $\sum_{i=1}^k p_i\beta_i$, più vicini si è allo zero. In particolare, il caso migliore si ha quando $\beta_i=0$, mentre il caso peggiore si ha quando il termine è pari a 1. Quindi 
+$$
+    EL(\varphi_S) \leq \mathcal{H}_D(P) + 1
+$$
+Forse lo Shannon code non è male per codificare tuple, perché quando $\mathcal{H}_D(P)$ è piccolo, aggiungere 1 non è un grosso problema. Quando un codice è $\mathcal{H}_D(P) + 1$ viene detto \textbf{sub-optimal}.\medskip
 
-\textcolor{Red}{TODO: finire lezione 5}
+Consideriamo $\varphi_S$ su $\mathcal{A}^n$ (tuple di lunghezza $n$).
+$$
+    \varphi_S^n : \mathcal{A}^n \to \mathcal{B}^*
+$$
+\paragraph{Esempio} $n=3$, $\mathcal{A}=\{a,b\}$, $P=\{1-\frac{1}{32},\frac{1}{32}\}$. Abbiamo 8 possibili lettere:
+$$
+    \mathcal{A}^3 = \{\underbrace{aaa}_{\substack{\text{singola}\\\text{lettera}}},aab,aba,abb,baa,bab,bba,bbb\}
+$$
+Le probabilità delle lettere in $\mathcal{A}^3$ vengono calcolate tenendo in considerazione $P$ applicata ai singoli elemeti come eventi indipendenti:
+$$
+    P^3 = \left\{ \left(1-\frac{1}{32}\right)^3, \left(1-\frac{1}{32}\right)^2\cdot\frac{1}{32}, \dots, \frac{1}{32^3} \right\}
+$$
+Quindi, in generale, per $n$ elementi:
+$$
+    EL(\varphi_S^n) \leq \mathcal{H}_D(P^n) + 1 = n\cdot\mathcal{H}_D(P) + 1
+$$
 
-\textcolor{Red}{TODO: osservazione su $\varphi_{SF}$ in appunti lez 6}
+\begin{definition}[Lunghezza media per i caratteri di un codice, ELFC]
+    La expected length for characters è 
+    $$
+        ELFC(\varphi_S^n) = \frac{EL(\varphi_S^n)}{n} < \frac{n\cdot\mathcal{H}_D(P)}{n} + \frac{1}{n} = \mathcal{H}_D(P) + \frac{1}{n}
+    $$
+    che, per $n$ grande, tende a $\mathcal{H}_D(P)$, ovvero è asintoticamente ottima (optimum).
+\end{definition}
+\textbf{Osservazione}: il teorema di Shannon ci dice che $EL(\varphi)\geq\mathcal{H}_D(P)$, ma il valore $\mathcal{H}_D(P)$ è sempre raggiungibile?
+
+\begin{definition}[Codice Ottimale]
+    Un codice è ottimale se non esiste un altro codice UD con EL più piccola.
+\end{definition}
+Mostreremo come, con il codeice di Huffman, non esistono altri codici con EL più piccola. Inoltre, mostreremo che il codice di Huffman è ottimale anche per tuple di lunghezza $n$.
+
+
+\subsection{Shannon-Fano Code $\varphi_{SF}$}
+Siano $\mathcal{A}=\{a_1,\dots,a_k\}$, $\mathcal{B}=\{0,1\}$, $P=\{p_1,\dots,p_k\}$, con $p_i\geq p_j$ se $i<j$ (le probabilità sono in ordine decrescente). Per costruire un albero con la codifica Shannon-Fano, si divide l'alfabeto in due parti, in modo che la somma delle probabilità di un sottoinsieme sia il più vicino possibile a $\frac{1}{2}$.
+$$
+    \{ \underbrace{a_1, \dots}_{\sum p_i\simeq \frac{1}{2}} | \underbrace{\dots a_k}_{\sum p_i\simeq \frac{1}{2}} \}
+$$
+Ciò significa che un sottoinsieme avrà come inizio della codifica 0, mentre l'altro avrà come inizio 1. Si continua così ricorsivamente, dividendo ogni sottoinsieme in due parti, fino a quando non si arriva a singoli elementi. 
+
+\paragraph{Esempio} $\mathcal{A}=\{a,b,c,d,e,f\}$, $P=\{\frac{40}{100},\frac{18}{100},\frac{15}{100},\frac{13}{100},\frac{10}{100},\frac{4}{100}\}$. Come prima divisione si avrà
+$$
+    \left\{
+    \overset{a}{\frac{40}{100}},
+    \overset{b}{\frac{18}{100}}, \overset{1}{\textbf{\Big|}}
+    \overset{c}{\frac{15}{100}},
+    \overset{d}{\frac{13}{100}},
+    \overset{e}{\frac{10}{100}},
+    \overset{f}{\frac{4}{100}} 
+    \right\}
+$$
+e quindi
+\begin{center}
+    \begin{tikzpicture}[grow=right]
+        \node {$\bullet$}
+        child {
+            node {$c,d,e,f$}
+            edge from parent 
+            node[below] {$1$}
+        }
+        child {
+            node {$a,b$}
+            edge from parent         
+            node[above] {$0$}
+        };
+    \end{tikzpicture}
+\end{center}
+Andando avanti si avrà infine
+$$
+    \left\{
+    \overset{a}{\frac{40}{100}}, \overset{2}{\textbf{\textcolor{ForestGreen}{\Big|}}}
+    \overset{b}{\frac{18}{100}}, \overset{1}{\textbf{\Big|}}
+    \overset{c}{\frac{15}{100}}, \overset{3}{\textbf{\textcolor{Magenta}{\Big|}}}
+    \overset{d}{\frac{13}{100}}, \overset{4}{\textbf{\textcolor{RoyalBlue}{\Big|}}}
+    \overset{e}{\frac{10}{100}}, \overset{5}{\textbf{\textcolor{Plum}{\Big|}}}
+    \overset{f}{\frac{4}{100}} 
+    \right\}
+$$
+\begin{center}
+    \begin{tikzpicture}[grow=right,
+        level 1/.style={sibling distance=2.5cm},
+        level 2/.style={sibling distance=1.5cm}]
+        \node {$\bullet$}
+        child {
+            node {$\bullet$}
+            child {
+                node {$\bullet$}
+                child {
+                    node {$\bullet$}
+                    child {
+                        node {$f$}
+                        edge from parent[draw=Plum]
+                        node[below] {$1$}
+                    }
+                    child {
+                        node {$e$}
+                        edge from parent[draw=Plum]
+                        node[above] {$0$}
+                    }
+                    edge from parent[draw=RoyalBlue]
+                    node[below] {$1$}
+                }
+                child {
+                    node {$d$}
+                    edge from parent[draw=RoyalBlue]
+                    node[above] {$0$}
+                }
+                edge from parent[draw=Magenta]
+                node[below] {$1$}
+            }
+            child {
+                node {$c$}
+                edge from parent[draw=Magenta]
+                node[above] {$0$}
+            }
+            edge from parent
+            node[below] {$1$}
+        }
+        child {
+            node {$\bullet$}
+            child {
+                node {$b$}
+                edge from parent[draw=ForestGreen]
+                node[below] {$1$}
+            }
+            child {
+                node {$a$}
+                edge from parent[draw=ForestGreen]
+                node[above] {$0$}
+            }
+            edge from parent         
+            node[above] {$0$}
+        };
+    \end{tikzpicture}
+\end{center}
+Si ottiene un albero bilanciato in termini di probabilità. In questo caso la EL è $2.41$.\medskip 
+
+\textbf{Osservazione}: la procedura per decidere dove dividere è lineare. Bisogna inviare il vettore delle probabilità per costruire l'albero (ci vuole al più tempo lineare per costruire l'albero). Quindi è polinomiale. Potremmo decidere di dividere in modo NP-completo (migliore divisione): subset sum problem. Ma la soluzione non sarebbe sempre unica.
+
+
+\subsection{Huffman Code $\varphi_H$}
+Si costruisce l'albero partendo dalle foglie. Si prendono le due foglie con probabilità più piccola, si uniscono in un nodo interno, e si sommano le probabilità. Si continua così fino ad arrivare alla radice. 
+
+\paragraph{Esempio} $\mathcal{A}=\{a,b,c,d,e,f\}$, $P=\{\frac{40}{100},\frac{18}{100},\frac{15}{100},\frac{13}{100},\frac{10}{100},\frac{4}{100}\}$. Si parte dalle foglie $e$ e $f$, con probabilità $\frac{10}{100}$ e $\frac{4}{100}$, rispettivamente. Si uniscono in un nodo interno, con probabilità $\frac{14}{100}$. Si continua così fino ad arrivare alla radice.
+\begin{center}
+    \begin{tikzpicture}[grow=right,
+    level 1/.style={sibling distance=2.5cm},
+    level 2/.style={sibling distance=2.5cm},
+    level 3/.style={sibling distance=1.5cm}]
+        \node {$\bullet$}
+        child {
+            node {$\frac{60}{100}$}
+            child {
+                node {$\frac{27}{100}$}
+                child {
+                    node {$\frac{14}{100}$}
+                    child {
+                        node {$f$}
+                        edge from parent
+                        node[below] {$1$}
+                    }
+                    child {
+                        node {$e$}
+                        edge from parent
+                        node[above] {$0$}
+                    }
+                    edge from parent
+                    node[below] {$1$}
+                }
+                child {
+                    node {$d$}
+                    edge from parent
+                    node[above] {$0$}
+                }
+                edge from parent
+                node[below] {$1$}
+            }
+            child {
+                node {$\frac{33}{100}$}
+                child {
+                    node {$c$}
+                    edge from parent
+                    node[below] {$1$}
+                }
+                child {
+                    node {$b$}
+                    edge from parent
+                    node[above] {$0$}
+                }
+                edge from parent
+                node[above] {$0$}
+            }
+            edge from parent
+            node[below] {$1$}
+        }
+        child {
+            node {$a$}
+            edge from parent
+            node[above] {$0$}
+        };
+    \end{tikzpicture}
+\end{center}
+La EL in questo caso è $2.36$.\medskip
+
+Il codice di Huffman è sempre ottimale. L'idea della dimostrazione (dimostrazione completa nel libro alla sezione 5.5) è che se si dimostra che i due caratteri con la codifica più lunga hanno la stessa lunghezza, si può dimostrare che il codice di Huffman è ottimale.
+
 
 
 % LEZIONE 6
@@ -939,6 +1210,8 @@ $$
     $$
 \end{definition}
 \emph{Eff} è sempre $\leq 1$, e ci dice quanto siamo vicini all'entropia, che non è sempre raggiungibile.\medskip
+
+Tutti gli algoritmi visti finora sono basati sulle probabilità, ovvero per decodificare bisogna inviare al ricevitore un vettore di probabilità.
 
 Ci chiediamo perché Huffmann (merge delle foglie) è ottimale, mentre Shannon-Fano (splitting dalla radice) non lo è?
 
