@@ -4,7 +4,7 @@
 
 \chapter{Introduzione}
 
-Libro di Papadimitriou main reference.
+Utilizzeremo il libro di Papadimitriou come main reference.
 
 In questa parte utilizzeremo come modello di computazione le \textbf{macchine di Turing} (MdT). Esistono diversi modelli di MdT: macchine di Turing multinastro, macchine di Turing input/output, macchine di Turing con oracolo, macchine di Turing nondeterministiche. Le MdT verranno utilizzate per confrontare i diversi risultati di complessità che possiamo ottenere.
 
@@ -105,8 +105,9 @@ Si parte dallo stato $s$ e si vuole finire nello stato $p$ solo quando $x$ è pa
     \delta(s,\rhd) &= (q,\rhd,\to)\\
     \delta(q,1) &= (q_1,\rhd,\to)\\
     \delta(q,0) &= (q_0,\rhd,\to)\\
+    \dots & \\
 \end{align*}
-\textcolor{Red}{TODO: finire di scrivere le transizioni}
+% \textcolor{Red}{TODO: finire di scrivere le transizioni}
 Questa macchina eseguirà un numero quadratico di passi per controllare se la stringa $x$ è palindroma: $O(|x|^2)$.\medskip
 
 Se si vuole controllare in C (o in un altro linguaggio) se una stringa è palindroma, si può scrivere un programma che confronta il primo e l'ultimo carattere, poi il secondo e il penultimo, e così via, eseguendo un numero lineare di passi. La complessità è $O(|x|)$. Questo è un esempio di come la complessità di un problema dipenda dal modello di computazione utilizzato.
@@ -120,7 +121,7 @@ In altre parole, la tesi di Church-Turing estesa afferma che la complessità com
 $$
     \underset{\text{problema}}{P} \to \text{MdT }O(f(n)) \to \underset{\text{modello}}{M}~O(p(f(n)))  
 $$
-Ma è vera anche la direzione contraria. \textcolor{Red}{TODO: ???}
+% Ma è vera anche la direzione contraria. \textcolor{Red}{TODO: ???}
 
 
 
@@ -728,7 +729,7 @@ Bisogna sempre pagare il tempo lineare $n+2$ per leggere l'input. Questo risulta
 Vogliamo codificare blocchi di $m$ passi in un singolo passo: $\Sigma'=\Sigma^m$. Quando $\mathcal{M}'$ legge una cella, sta in realtà leggendo $m$ simboli. 
 \begin{itemize}
     \item Si copia il nastro di input da $\mathcal{M}$ a $\mathcal{M}'$, e lo si traduce da $\Sigma$ a $\Sigma'$: questo costa $n+1$.
-    \item Per quanto riguarda il puntatore, sappiamo che in $\mathcal{M}$ gli stati sono in $K$, mentre in $\mathcal{M}'$ sono in $K\times\{1,\dots,m\}^k$. In $\mathcal{M}'$ devo sapere dove sta il puntatore, ma se in $\mathcal{M}$ viene letto qualcosa nei successivi $m$ passi (si cambia quindi di cella in $\mathcal{M}'$), gli stati di $\mathcal{M}'$ sono in $K\times\{1,\dots,m\}^k\times (\Sigma^m)^2k$.
+    \item Per quanto riguarda il puntatore, sappiamo che in $\mathcal{M}$ gli stati sono in $K$, mentre in $\mathcal{M}'$ sono in $K\times\{1,\dots,m\}^k$. In $\mathcal{M}'$ devo sapere dove sta il puntatore, ma se in $\mathcal{M}$ viene letto qualcosa nei successivi $m$ passi (si cambia quindi di cella in $\mathcal{M}'$), gli stati di $\mathcal{M}'$ sono in $K\times\{1,\dots,m\}^k\times (\Sigma^m)^{2k}$.
 \end{itemize}
 I passi di $\mathcal{M}'$ sono quindi $n+2+f(n)\cdot\varepsilon$. \hfill $\square$\medskip
 
@@ -743,16 +744,16 @@ Abbiamo cambiato architettura, ciò che si può memorizzare in una singola cella
 \subsection{Complessità Spaziale}
 Una configurazione finale di una macchina di Turing a $k$-nastri è del tipo $(H,w_1,u_1,\dots,w_k,u_k)$. Include anche tutte le parti raggiunte durante la computazione (anche se tutti i cursori alla fine puntano a $\sqcup$). Si può utilizzare come complessità spaziale la lunghezza della configurazione finale.
 
-\begin{definition}[Complessità Spaziale per una MdT a $k$-nastri su input $x$]
-    Si ha che
-    $$
-        (s,\rhd,x) \to^* (H,w_1,u_1,\dots,w_k,u_k)
-    $$
-    con $H=\{\text{halt},\text{yes},\text{no}\}$. Lo spazio utilizzato è
-    $$
-        \sum_{i=1}^k |w_i| + |u_i|
-    $$
-\end{definition}
+% \begin{definition}[Complessità Spaziale per una MdT a $k$-nastri su input $x$]
+%     Si ha che
+%     $$
+%         (s,\rhd,x) \to^* (H,w_1,u_1,\dots,w_k,u_k)
+%     $$
+%     con $H=\{\text{halt},\text{yes},\text{no}\}$. Lo spazio utilizzato è
+%     $$
+%         \sum_{i=1}^k |w_i| + |u_i|
+%     $$
+% \end{definition}
 Se non vogliamo contare la dimensione dell'input e dell'output, bisogna utilizzare le macchine di Turing a $k$-nastri con I/O. L'input può essere solo letto, e l'output solo scritto.
 
 \begin{definition}[Complessità Spaziale per una MdT a $k$-nastri con I/O]
@@ -1405,8 +1406,8 @@ Abbiamo definito la complessità temporale di una macchina nondeterministica. Po
 \end{definition}
 $\mathcal{N}$ lavora in NSPACE$f(n)$, $\mathcal{N}$ decide $L$ in NSPACE$f(n)$.
 \begin{align*}
-    \text{PSPACE}=\mathbb{L} & ~\text{ spazio polinomiale su modello deterministico}\\
-    \text{NPSPACE}=\text{N}\mathbb{L} & ~\text{ spazio polinomiale su modello nondeterministico} 
+    \text{PSPACE} & ~\text{ spazio polinomiale su modello deterministico}\\
+    \text{NPSPACE} & ~\text{ spazio polinomiale su modello nondeterministico} 
 \end{align*}
 
 
@@ -2410,7 +2411,7 @@ $$
 
 % LEZIONE 17
 \section{Gap Theorem}
-vediamo ora un teorema che sembra contraddire lo Hierarchy Theorem. In realtà, la funzione $f$ nel Gap Theorem non è propria, a causa dello Hie.~Theo.
+Vediamo ora un teorema che sembra contraddire lo Hierarchy Theorem. In realtà, la funzione $f$ nel Gap Theorem non è propria.
 \begin{theorem}[Gap Theorem]
     $\exists f$ funzione ricorsiva tale che 
     $$
@@ -2640,13 +2641,15 @@ Continuando,
     \begin{tikzpicture}
         \node (a) at (0,0) {$a$};
         \node (b) at (4,0) {$b$};
+        \node (zp) at (2,0) {$\bullet$};
+        \node[below] (z) at (zp) {$z$};
         \draw [->] (a) -- (b);
         \draw [decorate,
-            decoration = {brace,mirror,amplitude=5pt}] (0.2,-.3) -- (3.8,-.3) node [midway,below=0.1] {{\footnotesize al massimo} $2^{i+1}$};
+            decoration = {brace,mirror,amplitude=5pt}] (0.2,-.4) -- (3.8,-.4) node [midway,below=0.1] {$\leq 2^{i+1}$};
         \draw [decorate,
-            decoration = {brace,amplitude=5pt}] (0.2,.3) -- (1.95,.3) node [midway,above=0.1] {{\footnotesize al max} $2^i$};
+            decoration = {brace,amplitude=5pt}] (0.2,.3) -- (1.95,.3) node [midway,above=0.1] {$2^i$};
         \draw [decorate,
-            decoration = {brace,amplitude=5pt}] (2.05,.3) -- (3.8,.3) node [midway,above=0.1] {{\footnotesize al max} $2^i$};
+            decoration = {brace,amplitude=5pt}] (2.05,.3) -- (3.8,.3) node [midway,above=0.1] {$2^i$};
     \end{tikzpicture}
 \end{center}
 \begin{eqnarray*}
@@ -2692,9 +2695,9 @@ Nel caso peggiore si ha la tripla $(\log n,\log n,\log n)$ ripetuta $\log n$ vol
 
 \paragraph{Esempio} Il grafo $G$ ha 8 nodi, quindi $|V|=8$, $V=\{1,2,\dots,8\}$, $u=1$, $v=8$. Se scriviamo Path$(1,8,3)$, si sta cercando un cammino da $u$ a $v$ lungo al massimo $2^3$.
 
-\begin{corollary}
+\begin{corollary} Se $f(n)\geq \log n$, allora
     $$
-        \text{NSPSACE}(f(n))\subseteq\text{SPACE}(f(n)^2)
+        \text{NSPACE}(f(n))\subseteq\text{SPACE}(f(n)^2)
     $$
 \end{corollary}
 \paragraph{Dimostrazione} Sia $\mathcal{N}$ macchina che decide $L$ in spazio $f(n)$. Allora 
@@ -2763,7 +2766,7 @@ $$
 $$
 Inoltre
 $$
-    \text{co-NPSPACE}(f(n)) \subseteq \text{SPACE}(f(n)^2)
+    \text{co-NSPACE}(f(n)) \subseteq \text{SPACE}(f(n)^2)
 $$
 Dato $G_\mathcal{N}(x)$, 
 \begin{eqnarray*}
@@ -2774,7 +2777,7 @@ Vogliamo studiare la relazione tra co-NPSPACE$(f(n))$ e NPSPACE$(f(n))$. Qual è
 
 % LEZIONE 19
 \begin{theorem}[Immerman-Szelepcsényi]
-    Dato $G=(V,E)$ e $x\in V$, il numero di nodi raggiungibili da $x$ è in NSPACE$(\log n)$.
+    Dato $G=(V,E)$ e $x\in V$, il numero di nodi raggiungibili da $x$ in $G$ è in NSPACE$(\log n)$.
 \end{theorem}
 Per un problema di decisione, questo significa che nell'albero di computazione di $\mathcal{N}(x)$ è sufficente uno yes nelle foglie per dire $x\in L$.
 
@@ -2797,9 +2800,9 @@ Come si può calcolare $|S(k)|$?
 \end{lstlisting}
 Come si può controllare $u\in S(k)$? L'idea è che 
 $$
-u\in S
+u\in S(k)
 \quad\Leftrightarrow\quad
-\exists b\in S(k-1) ~\land~ (\underbrace{u=v ~\lor~ (v,u)\in E}_{G(v,u)})
+\exists v\in S(k-1) ~\land~ (\underbrace{u=v ~\lor~ (v,u)\in E}_{G(v,u)})
 $$
 Quindi
 \begin{center}

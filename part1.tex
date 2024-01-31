@@ -52,9 +52,9 @@ con $p(b_j)$ fattore di normalizzazione.
 
 
 \subsection{Proprietà dell'Entropia}
-Libro, pag.~33. Le proprietà della funzione di entropia sono:
+Libro di MacKay, pag.~33. Le proprietà della funzione di entropia sono:
 \begin{itemize}
-    \item $H(P)\geq 0$ con uguaglianza iff $p_i=1$ per un qualche $i$. In particolare, $H(P)=0$ iff $\exists i ~p_i=1$, ovvero quando c'è un evento certo l'entropia è nulla.
+    \item $\mathcal{H}(P)\geq 0$ con uguaglianza sse $p_i=1$ per un qualche $i$. In altre parole, $\mathcal{H}(P)=0$ sse $\exists i ~p_i=1$, ovvero quando c'è un evento certo l'entropia è nulla.
     \item L'entropia è massimizzata se la distribuzione $p$ è uniforme.
 \end{itemize}
 Analizziamo meglio e dimostriamo la seconda proprietà.
@@ -72,7 +72,7 @@ Analizziamo meglio e dimostriamo la seconda proprietà.
 
 \subparagraph{Dimostrazione} La dimostrazione è basata su proprietà di funzioni complesse, in particolare sulla diseguaglianza di Jensen, la quale è una disuguaglianza che lega il valore di una funzione convessa al valore della medesima funzione calcolata nel valor medio del suo argomento.
 
-Sia $\bm{f(x)=-x\log_2x}$ (cfr.~definizione di entropia). Vogliamo controllare se è concava o convessa, calcoliamo quindi la sua derivata seconda:
+Sia $f(x)=-x\log_2x$ (cfr.~definizione di entropia). Vogliamo controllare se è concava o convessa, calcoliamo quindi la sua derivata seconda:
 $$
     f''(x) = -\frac{1}{x}
 $$
@@ -167,15 +167,17 @@ La quantità di informazione ricevuta da $P$ è uguale a quella ricevuta dal pro
                     & = & \underbrace{\mathcal{H}(p_1,1-p_1)+(1-p_1)\cdot\mathcal{H}\underbrace{\left(\frac{p_2}{1-p_1},\frac{p_3}{1-p_1},\dots,\frac{p_n}{1-p_1}\right)}_{\substack{\text{$p_i$ normalizzati la cui somma è 1}\\1-p_1=p_2+p_3+\dots+p_n}}}_{\text{si possono dividere in diversi punti, ottenendo, ad esempio, tante entropie}}
 \end{eqnarray*}
 
-\textcolor{Red}{TODO: vdere proprietà libro pag 33 sez 2.6?}
+% \textcolor{Red}{TODO: vdere proprietà libro pag 33 sez 2.6?}
 
 
 \subsection{Inferenza}
-\textcolor{Red}{TODO: capitolo 3, esercizio 3.8 pag 57}
+% \textcolor{Red}{TODO: capitolo 3, esercizio 3.8 pag 57}
+Dal libro di MacKay, Esercizio 3.8 pag.~57.
 
 
 \chapter{Compressione}
-\textcolor{Red}{TODO: capitolo 4, esercizio 4.1 pag 66}
+% \textcolor{Red}{TODO: capitolo 4, esercizio 4.1 pag 66}
+Dal libro di MacKay, Esercizio 4.1 pag.~66.
 
 
 \section{Il Teorema Della Codifica Sorgente}
@@ -221,9 +223,9 @@ Abbiamo visto che
 % LEZIONE 3
 % \textcolor{Red}{LEZ 3}
 
-\textcolor{Red}{TODO: soluzione esercizio 4.1}
+% \textcolor{Red}{TODO: soluzione esercizio 4.1}
 
-\textcolor{Red}{TODO: muddy children puzzle}
+% \textcolor{Red}{TODO: muddy children puzzle}
 
 
 
@@ -267,7 +269,7 @@ $$
 È iniettiva nella codifica ma non sul messaggio. Una codifica di questo tipo viene detta \textbf{not uniquely decodable} (non univocamente decodificabile).
 
 \begin{definition}[Univocamente decodificabile]
-    Un codice $\varphi:\mathcal{A}\to\mathcal{B}^*$ è univocamente decodificabile (uniquely decodable) se
+    Una codifica $\varphi:\mathcal{A}\to\mathcal{B}^*$ è univocamente decodificabile (uniquely decodable) se
     $$
         \forall m_1,m_2\in\mathcal{A}^* \qquad \varphi(m_1)\neq\varphi(m_2)
     $$
@@ -357,7 +359,7 @@ Ci chiediamo, qual è una codifica sicuramente UD e senza delay?
         &\forall a_i,a_j\in\mathcal{A} \quad \varphi(a_i)\in\mathcal{B}^*\text{ non è un prefisso di }\varphi(a_j)\in\mathcal{B}^*&
     \end{eqnarray*}
 \end{definition}
-Al posto di codice prefisso (prefix code) utilizzeremo il termine prefisso (prefix). \textcolor{Red}{è corretto?}
+% Al posto di codice prefisso (prefix code) utilizzeremo il termine prefisso (prefix). \textcolor{Red}{è corretto?}
 
 \paragraph{Esempio 3 (vedi sopra)} $\varphi$ non è un prefisso, perché la codifica di $b$ è $1$, che è un prefisso della codifica di $c$, ovvero 10.
 
@@ -1022,8 +1024,8 @@ $$
 \end{definition}
 \textbf{Osservazione}: il teorema di Shannon ci dice che $EL(\varphi)\geq\mathcal{H}_D(P)$, ma il valore $\mathcal{H}_D(P)$ è sempre raggiungibile?
 
-\begin{definition}[Codice Ottimale]
-    Un codice è ottimale se non esiste un altro codice UD con EL più piccola.
+\begin{definition}[Codifica Ottimale]
+    Una codifica è ottimale se non esiste un'altra codifica UD con EL più piccola.
 \end{definition}
 Mostreremo come, con il codeice di Huffman, non esistono altri codici con EL più piccola. Inoltre, mostreremo che il codice di Huffman è ottimale anche per tuple di lunghezza $n$.
 
@@ -1220,8 +1222,8 @@ Ci chiediamo perché Huffmann (merge delle foglie) è ottimale, mentre Shannon-F
 Capitolo 6 del libro di MacKay. In questo capitolo discuteremo uno schema di compressione dei dati. La codifica Lempel-Ziv è un metodo ``universale'', progettato secondo la filosofia per cui vorremmo un unico algoritmo di compressione che faccia un lavoro ragionevole per qualsiasi fonte. In effetti, per molte fonti della vita reale, le proprietà universali di questo algoritmo valgono solo nel limite di quantità di dati eccessivamente grandi, ma, comunque, la compressione Lempel-Ziv è ampiamente utilizzata e spesso efficace.
 
 
-\subsection{Un po' di Storia}
-\textcolor{Red}{TODO: scrivere la storia}
+% \subsection{Un po' di Storia}
+% \textcolor{Red}{TODO: scrivere la storia}
 
 
 \subsection{Lempel-Ziv}
