@@ -347,7 +347,7 @@ In altre parole:
 \end{center}
 Nel caso peggiore $x=111\dots1$, quindi la complessità è lineare $\Theta(n)$.
 
-\subparagraph{URM} Si ha una URM con $x$ nel registro $R_0$. È suffieciente una singola istruzione $S(0)$, quindi la complessità è $\Theta(1)$.
+\subparagraph{URM} Si ha una URM con $x$ nel registro $R_0$. È sufficiente una singola istruzione $S(0)$, quindi la complessità è $\Theta(1)$.
 
 
 \subsection{URM + Prodotto}
@@ -508,7 +508,7 @@ $L$ è ricorsivo. Infatti, la macchina $\mathcal{M}$ può eseguire al massimo 10
 \begin{definition}[Macchina di Turing a $k$-nastri]
     Una macchina di Turing a $k$-nastri è u\-na tupla $\mathcal{M}=(K,\Sigma,\delta,s)$ con $K,\Sigma,s$ definite come per una macchina di Turing, e
     $$
-        \delta : K\times\Sigma \to (K\cup\{\text{yes},\text{no},\text{halt}\}) \times
+        \delta : K\times\Sigma^k \to (K\cup\{\text{yes},\text{no},\text{halt}\}) \times
                                     (\Sigma \times \{\gets,\to,-\})^k
     $$    
 \end{definition}
@@ -669,7 +669,7 @@ Vedremo come il risultato generale indica che questo è il peggior incremento ch
         \node[left] at (-.3,-.75) {$\mathcal{M}'$};
     \end{tikzpicture}
 \end{center}
-Per imitare i vari cursori, si può ingrandire l'alfabeto:
+Per imitare i vari puntatori, si può ingrandire l'alfabeto:
 $$
     \Sigma \cup \underline{\Sigma} \cup \{\rhd'\}
     \qquad 
@@ -728,7 +728,7 @@ Bisogna sempre pagare il tempo lineare $n+2$ per leggere l'input. Questo risulta
 
 Vogliamo codificare blocchi di $m$ passi in un singolo passo: $\Sigma'=\Sigma^m$. Quando $\mathcal{M}'$ legge una cella, sta in realtà leggendo $m$ simboli. 
 \begin{itemize}
-    \item Si copia il nastro di input da $\mathcal{M}$ a $\mathcal{M}'$, e lo si traduce da $\Sigma$ a $\Sigma'$: questo costa $n+1$.
+    \item Si copia il nastro di input da $\mathcal{M}$ a $\mathcal{M}'$, e lo si traduce da $\Sigma$ a $\Sigma'$: questo costa $n+2$.
     \item Per quanto riguarda il puntatore, sappiamo che in $\mathcal{M}$ gli stati sono in $K$, mentre in $\mathcal{M}'$ sono in $K\times\{1,\dots,m\}^k$. In $\mathcal{M}'$ devo sapere dove sta il puntatore, ma se in $\mathcal{M}$ viene letto qualcosa nei successivi $m$ passi (si cambia quindi di cella in $\mathcal{M}'$), gli stati di $\mathcal{M}'$ sono in $K\times\{1,\dots,m\}^k\times (\Sigma^m)^{2k}$.
 \end{itemize}
 I passi di $\mathcal{M}'$ sono quindi $n+2+f(n)\cdot\varepsilon$. \hfill $\square$\medskip
@@ -978,8 +978,8 @@ Il libro dimostra che
 \end{theorem}
 In particolare 
 \begin{align*}
-    \underbrace{\text{MdT}}_{f(n)} &\to^{\text{simula}} \underbrace{\text{RAM}}_{O(f(n))}\\
-    \underbrace{\text{RAM}}_{f(n)} &\to^{\text{simula}} \underbrace{\text{MdT a 7-nastri}}_{O((f(n))^3)}\\
+    \underbrace{\text{MdT}}_{f(n)} &\to^{\text{simulata da}} \underbrace{\text{RAM}}_{O(f(n))}\\
+    \underbrace{\text{RAM}}_{f(n)} &\to^{\text{simulata da}} \underbrace{\text{MdT a 7-nastri}}_{O((f(n))^3)}\\
 \end{align*}
 Ad esempio, quando si sommano due numeri, si ottiene al massimo 1 bit in più dell'input maggiore.
 
@@ -2749,7 +2749,7 @@ Questo significa che Reachability può essere risolto senza memorizzare il grafo
 
 \begin{corollary}
     $$
-        \text{N}\mathbb{L} = \text{SPACE}\left( (\log n)^2 \right)
+        \text{N}\mathbb{L} \subseteq \text{SPACE}\left( (\log n)^2 \right)
     $$
 \end{corollary}
 Sappiamo che $\mathbb{L}\subseteq\text{N}\mathbb{L}$. Se dimostrassimo che Reachability $\in$ SPACE$(\log n)$, allora $\mathbb{L}=\text{N}\mathbb{L}$.\medskip

@@ -4,7 +4,7 @@ Programma del corso:
 \begin{itemize}
     \item Teoria dell'Informazione
     \item Teoria della Complessità
-    \item Algoritmi su Grafi ecc \dots
+    % \item Algoritmi su Grafi ecc \dots
 \end{itemize}
 
 
@@ -26,10 +26,55 @@ Un messaggio è una sequenza di lettere (simboli) da un alfabeto. Qual è l'info
 
 Si ha quindi che
 \begin{itemize}
-    \item Bassa probabilità di un evento 
+    \item Bassa probabilità di un evento $\to$ alta quantità di informazione
+    \item Alta probabilità di un evento $\to$ bassa quantità di informazione
 \end{itemize}
 
-...
+\paragraph{Quantità di informazione di un evento} Proviamo a definire la quantità di informazione di un evento $h(E)$ come
+$$
+    h(E) = \frac{1}{p(E)}
+$$
+con $E$ evento e $p(E)$ la sua probabilità. Se analissizmo i casi limite otteniamo 
+\begin{itemize}
+    \item $p(E)=1 \to h(E)=1$, ovvero nel caso di un evento certo, la quantità di informazione è 1 (ma vorremmo fosse 0)
+    \item $p(E)= 0 \to h(E)=\infty$, cioè quando un evento è impossibile (il messaggio non arriva), la quantità di informazione è infinita
+\end{itemize}
+Proviamo quindi con una trasformazione logaritmica:
+$$
+    h(E) = \log_2\frac{1}{p(E)} = -\log_2(p(E))
+$$
+In questo modo, i casi limite sono 
+\begin{itemize}
+    \item $p(E)=1 \to h(E)=0$, ovvero nel caso di un evento certo, la quantità di informazione è 0
+    \item $p(E)= 0 \to h(E)=\infty$, cioè quando un evento è impossibile (il messaggio non arriva), la quantità di informazione è infinita
+\end{itemize}
+Siamo interessati a muoverci verso la media. Dato un alfabeto $\mathcal{A}=\{a_1,a_2,\dots,a_k\}$ e una distribuzione di probabilità $P=\{p_1,p_2,\dots,p_k\}$, con $p_i$ probabilità di osservare $a_i$, la \textbf{quantità di informazione media} (anche detta \textbf{entropia}) è
+$$
+    \mathcal{H}(P) = -\sum_{i=1}^k p_i\log_2(p_i)
+$$
+\begin{definition}[Entropia]
+    $$
+    \mathcal{H}(P) = \sum_{i=1}^k p_i\cdot\log_2\frac{1}{p_i} = -\sum_{i=1}^k p_i\log_2(p_i)
+    $$
+\end{definition}
+
+\paragraph{Esempio 1} Moneta equa, $\mathcal{A}=\{H,T\}$, $P(H)=P(T)=\nicefrac{1}{2}$. La quantità di informazione media è
+$$
+    \mathcal{H}(P) = \frac{1}{2}\left(-\log_2\frac{1}{2}\right) + \frac{1}{2}\left(-\log_2\frac{1}{2}\right) = 
+    \frac{1}{2}(\log_22) + \frac{1}{2}(\log_22)=
+    \frac{1}{2}+\frac{1}{2} = 1
+$$
+La quantità di informazione che si ottiene, in media, lanciando una moneta equa è 1 bit.
+
+Se, invece, si ha una moneta truccata, con $P(H)=0.9$ e $P(T)=0.1$, la quantità di informazione media è
+$$
+    \mathcal{H}(P) = 0.9\cdot\log_2\frac{10}{9} + 0.1\cdot\log_2 10 \approx 0.9\cdot 0.1 + 0.1\cdot 2.3 = 0.32
+$$
+Nel caso di una moneta molto truccata, con $P(H)=1$ e $P(T)=0$, la quantità di informazione media è
+$$
+    \mathcal{H}(P) = 1\cdot\log_2\frac{1}{1} + 0\cdot\log_2 0 = 0
+$$
+
 
 % LEZIONE 2
 \subsection{Teorema di Bayes}
@@ -47,7 +92,7 @@ p(a_i|b_j) = \dfrac{p(b_j|a_i)\cdot p(a_i)}{p(b_j)}
 $$
 con $p(b_j)$ fattore di normalizzazione.
 
-\textcolor{Red}{TODO: vedere al capitolo 2 del libro il prior, poterior, likelihood, ecc.}
+% \textcolor{Red}{TODO: vedere al capitolo 2 del libro il prior, poterior, likelihood, ecc.}
 
 
 
@@ -1526,7 +1571,7 @@ La divergenza di Kullback-Leibler è una misura della differenza tra due distrib
     D(P||Q) &= \sum_{x\in X} P(x)\log\left(\frac{P(x)}{Q(x)}\right)\\
     &= \sum_{x\in X} P(x) \left( \log\left(\frac{1}{Q(x)}\right) - \log\left(\frac{1}{P(x)}\right) \right)
 \end{align*}
-Notiamo che $\sum_{x\in X} P(x)\log\left(\frac{P(x)}{Q(x)}\right)$ è il vaore atteso di $\log\left(\frac{P(x)}{Q(x)}\right)$ rispetto a $P$. Inoltre, $\log\left(\frac{P(x)}{Q(x)}\right)$ può essere espresso come $\log\left(\frac{1}{Q(x)}\right) - \log\left(\frac{1}{P(x)}\right)$, con $-P(x)\log\left(\frac{1}{P(x)}\right)$ entropia della distribuzione $P$.
+Notiamo che $\sum_{x\in X} P(x)\log\left(\frac{P(x)}{Q(x)}\right)$ è il valore atteso di $\log\left(\frac{P(x)}{Q(x)}\right)$ rispetto a $P$. Inoltre, $\log\left(\frac{P(x)}{Q(x)}\right)$ può essere espresso come $\log\left(\frac{1}{Q(x)}\right) - \log\left(\frac{1}{P(x)}\right)$, con $-P(x)\log\left(\frac{1}{P(x)}\right)$ entropia della distribuzione $P$.
 
 Il significato della divergenza, in questo contesto, è ``quanti bit in più devo usare per codificare una sorgente utilizzando $Q$ al posto di $P$'', con $P$ distribuzione reale dei dati.
 
@@ -1550,6 +1595,8 @@ Quest'ultima proprietà è una conseguenza della \textbf{disuguaglianza di Gibbs
 
 
 \subsection{Entropia e Mutual Information}
+
+\paragraph{Entropia Condizionale}
 Siano $X,Y$ variabili aleatorie. Come abbiamo già visto, l'entropia congiunta è 
 $$
     \mathcal{H}(X,Y) = \sum_{\substack{x\in X\\y\in Y}} p(x,y)\log \left(\frac{1}{p(x,y)}\right)
@@ -1571,15 +1618,16 @@ L'incertezza del valore di $X$ se si conosce il valore di $Y$ è quindi
     &= \sum_{\substack{x\in X\\y\in Y}} p(x,y)\log \left(\frac{1}{p(x|y)}\right)
 \end{align*}
 
-
-\paragraph{$\bm{X}$ e $\bm{Y}$ indipendenti} Se $X$ e $Y$ sono indipendenti, allora
+\paragraph{Entropia Congiunta} % \paragraph{$\bm{X}$ e $\bm{Y}$ indipendenti} 
+Se $X$ e $Y$ sono indipendenti, allora
 \begin{align*}
     p(x,y) &= p(x)p(y)\\
     p(x|y) = p(x) \quad &\Rightarrow \quad \mathcal{H}(X,Y) = \mathcal{H}(X)
 \end{align*}
 (Dimostrare che se $X$ e $Y$ sono indipendenti, allora $\mathcal{H}(X,Y) = \mathcal{H}(X)$)
 
-\paragraph{$\bm{X}$ e $\bm{Y}$ dipendenti} Conosciuta anche come \emph{chain rule} per l'entropia. L'entropia congiunta, $\mathcal{H}(X,Y)$, l'entropia condizionale, $\mathcal{H}(X|Y)$ o $\mathcal{H}(Y|X)$, e l'entropia marginale, $\mathcal{H}(X)$ o $\mathcal{H}(Y)$, sono legate dalla seguente relazione
+% \paragraph{$\bm{X}$ e $\bm{Y}$ dipendenti} 
+Se $X$ e $Y$ sono dipendenti (conosciuta anche come \emph{chain rule} per l'entropia), l'entropia congiunta, $\mathcal{H}(X,Y)$, l'entropia condizionale, $\mathcal{H}(X|Y)$ o $\mathcal{H}(Y|X)$, e l'entropia marginale, $\mathcal{H}(X)$ o $\mathcal{H}(Y)$, sono legate dalla seguente relazione
 \begin{align*}
     \mathcal{H}(X,Y) &= \mathcal{H}(X) + \mathcal{H}(Y|X)\\
     &= \mathcal{H}(Y) + \mathcal{H}(X|Y)
@@ -1824,7 +1872,7 @@ Codificandolo in binario, si ha, ad esempio, $\bin(P)=300$. Si può concludere c
 $$
     K(010) \leq 300
 $$
-Per poter scrivere $=$ invece che $\leq$, bisognerebbe dimostrare che tutti i programmi di lunghezza 299 non producono in output la stringa $010$. Ma almeno uno di essi potrebbe non terminare, e è impossibile dimostrarlo.\bigskip
+Per poter scrivere $=$ invece che $\leq$, bisognerebbe dimostrare che tutti i programmi di lunghezza 299 non producono in output la stringa $010$. Ma almeno uno di essi potrebbe non terminare, ed è impossibile dimostrarlo.\bigskip
 
 Dall'esempio precedente abbiamo visto come non sia possibile calcolare la complessità di Kolmogorov di una stringa. Tuttavia, possiamo calcolare la complessità di Kolmogorov di una stringa con una certa precisione dando dei \emph{bounds}.
 
@@ -1934,7 +1982,7 @@ $$
     K(x) \leq 2\log|x| + 2 + 1 + |x| \leq 2|x| + 3
 $$
 
-Un'ulteriore soluzione è quella di utilizzare il trucco precedente sulla lunghezza della lunghezza di $x$, e così via. In generale, si ha
+Un'ulteriore soluzione è quella di utilizzare il ``trucco'' precedente sulla lunghezza della lunghezza di $x$, e così via. In generale, si ha
 $$
     K(x) \leq \dots \leq \dots \leq 2\log^*|x| + |x| + c
 $$
@@ -2005,7 +2053,7 @@ $$
 $$
     \varphi_K(x) = \bin(\mathcal{M})
 $$
-con $\varphi_K(x)$ codifica di Kolmogorov di $x$, e $\mathcal{M}$ la più corta macchina di Turing che produce $x$ in output (con input vuoto). $\varphi_K(x)$ è UD. $\mathcal{U}$ decodifica $\varphi_K(x)$, ovvero invio un programma, io e il ricevente abbiamo la stessa macchina di Turing universale (il ``compilatore''), e il ricevente riceve in programma.
+con $\varphi_K(x)$ codifica di Kolmogorov di $x$, e $\mathcal{M}$ la più corta macchina di Turing che produce $x$ in output (con input vuoto). $\varphi_K(x)$ è UD e prefisso. $\mathcal{U}$ decodifica $\varphi_K(x)$, ovvero invio un programma, io e il ricevente abbiamo la stessa macchina di Turing universale (il ``compilatore''), e il ricevente riceve il programma.
 $$
     |\varphi_K(x)| = K(x)
 $$
@@ -2026,7 +2074,7 @@ $$
     \frac{E_n(K(x))}{n} \geq \mathcal{H}(P)
 $$
 
-\paragraph{Da Entropia a Complessità} Ogni codice $\varphi(x)$ può essere interpretato come un particolare programma che produce in output la stringa (codificata) $x$. Quindi 
+\paragraph{Da Entropia a Complessità} Ogni codifica $\varphi(x)$ può essere interpretata come un particolare programma che produce in output la stringa (codificata) $x$. Quindi 
 $$
     K(x) \leq |\varphi(x)| + \text{Decoder }\varphi
 $$
