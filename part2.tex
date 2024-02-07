@@ -2437,9 +2437,9 @@ $$
 $$
 Sia
 $$
-    N(i) = \sum_{h=0}^i |\sigma_h|^i
+    N(i) = \sum_{h=0}^i |\Sigma_h|^i
 $$
-con $\sigma_h$ alfabeto di $\mathcal{M}_h$ ($|\sigma_h|^i$ è il numero di input di lunghezza $i$ per $\mathcal{M}_i$). $N(i)$ è un numero molto grande. Ad esempio, $|x|=i$ input per $\mathcal{M}_3$, $\mathcal{M}_3\downarrow$.
+con $\Sigma_h$ alfabeto di $\mathcal{M}_h$ ($|\Sigma_h|^i$ è il numero di input di lunghezza $i$ per $\mathcal{M}_h$). $N(i)$ è un numero molto grande. Ad esempio, $|x|=i$ input per $\mathcal{M}_3$, $\mathcal{M}_3\downarrow$.
 
 Si considerino $N(i)+1$ intervalli della forma $[k_j,k_{j+1})$. Per il principio della piccionaia, $\exists [k_l,k_{l+1})$ tale che nessuna delle macchine $\mathcal{M}_0,\dots,\mathcal{M}_i$ termina in un numero di passi che cade nell'intervallo $[k_l,k_{l+1})$. In altre parole, $f(i)=k_l$, e $P(i,f(i))$ è vera.
 
@@ -2582,7 +2582,7 @@ Il numero di configurazioni in questa forma, ovvero il numero di nodi di $G_\mat
     |V_\mathcal{N}(x)| &=& (|k|+2)\cdot(|x|+2)\cdot\prod_{i=2}^{k-1} |\Sigma|^{2\cdot f(|x|)}\\
     &=& (|k|+2)\cdot(\textcolor{RoyalBlue}{|x|}+2)\cdot|\Sigma|^{2\cdot \textcolor{RoyalBlue}{f(|x|)}\cdot(k-2)}
 \end{eqnarray*}
-con $+2$ per yes e no, e $k$ numero di nastri della macchina. I \textcolor{RoyalBlue}{termini che non dipendono dalla macchina} sono \textcolor{RoyalBlue}{$|x|+2$} e \textcolor{RoyalBlue}{$f(|x|)$}. Quindi
+con $+2$ per yes e no, e $k$ numero di nastri della macchina. I \textcolor{RoyalBlue}{termini che dipendono dalla macchina} sono \textcolor{RoyalBlue}{$|x|+2$} e \textcolor{RoyalBlue}{$f(|x|)$}. Quindi
 \begin{eqnarray*}
     (|k|+2)\cdot(|x|+2)\cdot|\Sigma|^{2\cdot f(|x|)\cdot(k-2)}~ \leq~ \alpha^{f(|x|)+\log(|x|)}\\
     |G_\mathcal{N}(x)| ~\leq ~\left(\alpha^{f(|x|)+\log(|x|)}\right)^2 ~\leq ~\gamma^{f(|x|)+\log(|x|)}
@@ -2827,7 +2827,7 @@ Conosciamo $|S(k-1)|$, possiamo controllare se $u\in S(k)$
         if (*$v\in S(k-1)$*)
             m := m+1
             if (*$G(v,u)$*) then reply := true
-    if (m = (*$|S(k-1|)$*)) then reply 
+    if (m = (*$|S(k-1)|$*)) then reply 
     else "no"
 \end{lstlisting}
 Il passaggio $v\in S(k-1)$ viene eseguito nondeterministicamente.
